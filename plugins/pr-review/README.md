@@ -11,9 +11,13 @@ In OpenWebIDE, open **Sessions → Skills → Import folder** and select
 Ask the agent to review changes. The skill and its resource use the existing
 project-skill format and importer in either workspace mode.
 
-This manual import creates a project skill, not a plugin installation. Plugin
-installation and updates are not implemented yet. The package is intentionally
-absent from `marketplace.json` until a real commit-pinned release can be listed.
+This manual import creates a project skill, not a plugin installation. Builds
+with host installation support can also prepare the package through
+**Settings → Plugins**, using this repository's URL, the full release commit
+from `marketplace.json`, and `plugins/pr-review` as the package directory.
+Installing the package does not activate its skill; use manual import to enable
+it for agent runs. Catalog browsing, automatic activation and updates remain
+future work.
 
 ## Contribution
 
