@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Publish the four API 2 plugins and PR Review 0.1.1 with immutable source pins in the Open WebIDE marketplace.
+
 - Add plugin API 2 platform tool groups and first-party Web, Project Memory, Scheduling and Skill Authoring plugins.
 
 - Inherit each release’s repository from its marketplace source; catalog entries

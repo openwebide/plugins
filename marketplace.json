@@ -12,10 +12,90 @@
       ],
       "releases": [
         {
+          "version": "0.1.1",
+          "source": {
+            "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
+            "path": "plugins/pr-review"
+          }
+        },
+        {
           "version": "0.1.0",
           "source": {
             "commit": "e79185c2b25f713503b70e23ee7e91e66c5af208",
             "path": "plugins/pr-review"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "web",
+      "displayName": "Web",
+      "description": "Search the web and fetch pages using the existing web tools.",
+      "categories": [
+        "tools"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
+            "path": "plugins/web"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "memory",
+      "displayName": "Project Memory",
+      "description": "Search and manage durable project memories.",
+      "categories": [
+        "tools"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
+            "path": "plugins/memory"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "scheduling",
+      "displayName": "Scheduling",
+      "description": "Schedule prompts and monitor follow-up checks on the host.",
+      "categories": [
+        "tools"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
+            "path": "plugins/scheduling"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "skill-authoring",
+      "displayName": "Skill Authoring",
+      "description": "Create, improve and manage reusable project skills.",
+      "categories": [
+        "skills",
+        "tools"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
+            "path": "plugins/skill-authoring"
           }
         }
       ]

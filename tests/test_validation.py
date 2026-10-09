@@ -43,7 +43,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (5, 1))
+        self.assertEqual(validate.validate_repository(ROOT), (5, 5))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_unknown_contributions_and_api_are_rejected(self):
