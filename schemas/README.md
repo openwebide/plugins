@@ -54,5 +54,6 @@ commit contents, publisher ownership or runtime compatibility. Verifying pinned
 source content belongs to future install/publish tooling. Archive sources and
 language-discovery metadata will be added with those features.
 
-The official catalog stays empty until actual package releases are published.
-Draft packages can still be validated and their skills imported manually.
+The official catalog lists PR Review 0.1.0 at an immutable commit. Listing a
+package does not activate its contributions or enable app catalog browsing.
+Additional draft packages can still be validated and their skills imported manually.

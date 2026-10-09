@@ -1,5 +1,25 @@
 {
   "schemaVersion": 1,
   "name": "OpenWebIDE Official",
-  "plugins": []
+  "plugins": [
+    {
+      "publisher": "openwebide",
+      "name": "pr-review",
+      "displayName": "PR Review",
+      "description": "Review working-tree changes, branches and pull requests using existing agent tools.",
+      "categories": [
+        "skills"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "repository": "https://github.com/openwebide/plugins.git",
+            "commit": "e79185c2b25f713503b70e23ee7e91e66c5af208",
+            "path": "plugins/pr-review"
+          }
+        }
+      ]
+    }
+  ]
 }

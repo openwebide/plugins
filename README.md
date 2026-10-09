@@ -5,13 +5,14 @@ tools, language support, and editor extensions.
 
 This repository is being prepared alongside the plugin system design in
 [OpenWebIDE's roadmap](https://github.com/openwebide/openwebide/blob/main/docs/roadmap.md).
-The catalog is empty; OpenWebIDE does not yet consume it. The skills-only
-authoring format has schemas and validation, while runtime contracts remain
-drafts rather than a supported plugin API.
+The catalog lists the commit-pinned PR Review package. Builds with host
+installation support can prepare explicit Git sources; catalog browsing and
+contribution activation remain pending. The initial skills-only format has
+schemas and validation; broader runtime contracts are still drafts.
 
 ## Repository layout
 
-- `marketplace.json`: the first-party catalog, currently with no listings.
+- `marketplace.json`: the first-party catalog with immutable package releases.
 - `plugins/`: first-party packages, each in its own directory.
 - `schemas/`: package and catalog schemas plus format documentation.
 - `scripts/validate.py`: offline validation for packages and catalog entries.
@@ -51,9 +52,9 @@ implicitly install or enable packages.
 ## Reference packages
 
 [PR Review](plugins/pr-review/README.md) is a skills-only reference package. Its
-skill can be imported manually into OpenWebIDE today; package installation is
-not implemented. See [plugins/README.md](plugins/README.md) for the remaining
-candidates. No packages are listed as published releases yet.
+skill can be imported manually into OpenWebIDE today. Release 0.1.0 is listed in
+`marketplace.json`; host installation prepares the package without activating
+the skill. See [plugins/README.md](plugins/README.md) for the remaining candidates.
 
 ## Validate locally
 
@@ -77,4 +78,4 @@ Add skills-only packages under `plugins/<name>/` using the reference manifest.
 Run validation and tests before submitting changes. Do not publish placeholder
 commit IDs or list unreleased packages in the catalog. Language, MCP and UI
 contributions require their contracts in the main app before schema support is
-added here. Automated release publishing and the app installer remain future work.
+added here. Automated release publishing, catalog browsing and contribution activation remain future work.

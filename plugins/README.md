@@ -1,8 +1,9 @@
 # First-party reference packages
 
 The [PR Review package](pr-review/README.md) is available for authoring validation
-and manual skill import. Plugin installation is not implemented, and no releases
-are published in the catalog. Other entries below are planned packages.
+and manual skill import. Release 0.1.0 is commit-pinned in the catalog. Host
+installation support prepares the package; agent activation still uses manual
+skill import. Other entries below are planned packages.
 
 | Package | Intended reference coverage |
 | --- | --- |
