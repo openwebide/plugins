@@ -7,7 +7,6 @@ import json
 import re
 import sys
 from pathlib import Path, PurePosixPath
-from urllib.parse import urlsplit
 
 import yaml
 from jsonschema import Draft202012Validator
@@ -198,11 +197,6 @@ def validate_catalog(catalog, checks=None):
             if release["version"] in versions:
                 raise Invalid(f"duplicate release version: {release['version']}")
             versions.add(release["version"])
-            url = urlsplit(release["source"]["repository"])
-            if not url.hostname or url.query or url.fragment or url.password:
-                raise Invalid("repository URL must identify a Git repository without credentials/query/fragment")
-            if url.scheme != "ssh" and url.username:
-                raise Invalid("repository credentials must not appear in catalog URLs")
     return catalog
 
 
@@ -227,7 +221,7 @@ def validate_repository(root):
     for listing in catalog["plugins"]:
         manifest = packages.get((listing["publisher"], listing["name"]))
         if manifest is None:
-            continue  # External listings do not require a local checkout.
+            continue  # Historical packages may be absent from the current checkout.
         if any(release["version"] == manifest["version"] for release in listing["releases"]):
             for key in ("displayName", "description"):
                 if listing[key] != manifest[key]:

@@ -30,11 +30,6 @@
     "source": {
       "type": "object",
       "properties": {
-        "repository": {
-          "type": "string",
-          "maxLength": 2048,
-          "pattern": "^(?:https?|ssh|git)://[^\\s]+$"
-        },
         "commit": {
           "type": "string",
           "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
@@ -54,7 +49,6 @@
         }
       },
       "required": [
-        "repository",
         "commit",
         "path"
       ],

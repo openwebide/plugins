@@ -42,7 +42,9 @@ changing files used by active runs or language-service sessions.
 
 The official marketplace uses the same format as custom sources. A source is a
 Git repository URL, ref and `marketplace.json` path; it need not be hosted on
-GitHub. Listings may point to package directories here or in other repositories.
+GitHub. All listed packages live in that marketplace repository. Releases specify
+only their immutable commit and package directory; they cannot override the
+repository. A standalone package can publish a marketplace file in its own repo.
 
 Catalogs can track branches, while installed releases resolve to immutable
 commits. File associations allow OpenWebIDE to suggest language packages without

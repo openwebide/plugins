@@ -38,16 +38,18 @@ implemented. Package dependencies and runtime provisioning are also deferred.
 array. An empty array is valid. Listings require package identity, display name,
 description, categories and at least one release.
 
-Each release contains a SemVer `version` and `source` with a Git repository URL,
-an immutable full commit ID and package directory `path` (`.` for the root).
-Branches and tags are not valid installed release references. Both SHA-1 and
-SHA-256 commit IDs are accepted. Supported repository URL schemes are HTTP,
-HTTPS, SSH and Git; URL credentials, queries and fragments are rejected (SSH
-usernames such as `git` are allowed). No forge release API is required.
+Each release contains a SemVer `version` and `source` with an immutable full
+commit ID and package directory `path` (`.` for the root). The repository is
+inherited from the configured marketplace source; listings and releases cannot
+provide a repository override. All packages belong to the marketplace's Git
+repository. Branches and tags are not valid installed release references. Both
+SHA-1 and SHA-256 commit IDs are accepted. Marketplace repository URLs and
+credentials are app configuration, not catalog fields. No forge release API is
+required.
 
 Only `skills` categories are supported initially. Duplicate identities/releases
 are rejected. For a listed version matching a local package, display metadata
-and categories must match that package. External listings need no local checkout.
+and categories must match that package. Historical packages may be absent from the current checkout.
 
 This validator is offline: it checks commit-ID syntax, not remote reachability,
 commit contents, publisher ownership or runtime compatibility. Verifying pinned

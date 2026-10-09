@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Inherit each release’s repository from its marketplace source; catalog entries
+  declare only the pinned commit and package directory and reject repository overrides.
+
 - Publish PR Review 0.1.0 in the official catalog with an immutable Git commit
   and document host preparation separately from skill activation.
 

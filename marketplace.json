@@ -14,7 +14,6 @@
         {
           "version": "0.1.0",
           "source": {
-            "repository": "https://github.com/openwebide/plugins.git",
             "commit": "e79185c2b25f713503b70e23ee7e91e66c5af208",
             "path": "plugins/pr-review"
           }

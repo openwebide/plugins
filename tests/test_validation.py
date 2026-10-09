@@ -38,7 +38,6 @@ class ValidationTests(unittest.TestCase):
             "displayName": self.manifest["displayName"], "description": self.manifest["description"],
             "categories": ["skills"],
             "releases": [{"version": "0.1.0", "source": {
-                "repository": "https://git.example.org/team/plugins.git",
                 "commit": "a" * 40, "path": "plugins/pr-review", **source,
             }}],
         }
@@ -166,7 +165,7 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate.Invalid, "duplicate contributed skill name"):
             validate.validate_package(self.package, self.checks)
 
-    def test_generic_git_source_and_root_package(self):
+    def test_commit_formats_and_root_package(self):
         self.catalog["plugins"] = [self.listing(path=".")]
         validate.validate_catalog(self.catalog, self.checks)
         self.catalog["plugins"] = [self.listing(commit="b" * 64)]
@@ -179,16 +178,16 @@ class ValidationTests(unittest.TestCase):
                 with self.assertRaises(validate.Invalid):
                     validate.validate_catalog(self.catalog, self.checks)
 
-    def test_repository_urls_exclude_credentials(self):
-        for url in ("https://token@git.example.org/repo.git",
-                    "ssh://git:secret@git.example.org/repo.git", "https:///repo.git",
-                    "https://git.example.org/repo.git?token=secret"):
-            with self.subTest(url=url):
-                self.catalog["plugins"] = [self.listing(repository=url)]
+    def test_catalog_cannot_redirect_packages_to_another_repository(self):
+        for location in ("listing", "release", "source"):
+            with self.subTest(location=location):
+                listing = self.listing()
+                target = {"listing": listing, "release": listing["releases"][0],
+                          "source": listing["releases"][0]["source"]}[location]
+                target["repository"] = "https://git.example.org/other/plugins.git"
+                self.catalog["plugins"] = [listing]
                 with self.assertRaises(validate.Invalid):
                     validate.validate_catalog(self.catalog, self.checks)
-        self.catalog["plugins"] = [self.listing(repository="ssh://git@git.example.org/repo.git")]
-        validate.validate_catalog(self.catalog, self.checks)
 
     def test_duplicate_catalog_identities_and_versions(self):
         listing = self.listing()
