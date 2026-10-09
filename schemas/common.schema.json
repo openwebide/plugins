@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/common.schema.json",
+  "title": "Common",
+  "$defs": {
+    "name": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "\\s"
+      }
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
+      "not": {
+        "pattern": "\\s"
+      }
+    },
+    "path": {
+      "type": "string",
+      "maxLength": 512,
+      "pattern": "^(?!\\.{1,2}(?:/|$))(?!.*\\/\\.{1,2}(?:/|$))(?:[A-Za-z0-9_@+.-]+/)*[A-Za-z0-9_@+.-]+$",
+      "not": {
+        "pattern": "\\s"
+      }
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "maxLength": 2048,
+          "pattern": "^(?:https?|ssh|git)://[^\\s]+$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "not": {
+            "pattern": "\\s"
+          }
+        },
+        "path": {
+          "anyOf": [
+            {
+              "$ref": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/common.schema.json#/$defs/path"
+            },
+            {
+              "const": "."
+            }
+          ]
+        }
+      },
+      "required": [
+        "repository",
+        "commit",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
