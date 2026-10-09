@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "scheduling",
+  "version": "0.1.0",
+  "displayName": "Scheduling",
+  "description": "Schedule prompts and monitor follow-up checks on the host.",
+  "license": "MIT",
+  "readme": "README.md",
+  "compatibility": {
+    "pluginApi": 2
+  },
+  "contributions": {
+    "skills": [],
+    "toolGroups": [
+      "scheduling"
+    ]
+  }
+}

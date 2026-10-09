@@ -1,14 +1,14 @@
-# First-party reference packages
+# First-party plugins
 
-The [PR Review package](pr-review/README.md) is available for authoring validation
-and manual skill import. Release 0.1.0 is commit-pinned in the catalog. Host
-installation support prepares the package; agent activation still uses manual
-skill import. Other entries below are planned packages.
+The first-party catalog includes PR Review, Web, Project Memory, Scheduling and
+Skill Authoring. These use the same validation, installation and project opt-out
+contracts as community plugins. See the repository README for current plugins.
+Other planned contributions are listed below.
 
 | Package | Intended reference coverage |
 | --- | --- |
 | GitHub integration | Account connections, MCP tools, review/issue skills and a declarative pull-request panel |
-| [PR review skills](pr-review/README.md) | Implemented reference package; manual skill import using existing tools |
+| [PR review skills](pr-review/README.md) | Review skill using core workspace tools |
 | Browser testing | Host runtime requirements, browser automation and artifacts |
 | Terraform | File recognition, syntax, formatting, an existing language server and optional agent workflows |
 | Git annotations | Editor hooks, declarative inline/gutter annotations, hover details and existing Git navigation actions |

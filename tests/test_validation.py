@@ -43,7 +43,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (1, 1))
+        self.assertEqual(validate.validate_repository(ROOT), (5, 1))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_unknown_contributions_and_api_are_rejected(self):
@@ -53,10 +53,23 @@ class ValidationTests(unittest.TestCase):
                 value["contributions"][field] = []
                 with self.assertRaises(validate.Invalid):
                     validate.check_schema(value, self.checks["Plugin"], "plugin")
-        self.manifest["compatibility"]["pluginApi"] = 2
+        self.manifest["compatibility"]["pluginApi"] = 3
         self.save_manifest()
         with self.assertRaises(validate.Invalid):
             validate.validate_package(self.package, self.checks)
+
+    def test_platform_tool_groups_require_api_two_and_have_bounded_known_capabilities(self):
+        value = copy.deepcopy(self.manifest)
+        value["contributions"]["skills"] = []
+        value["contributions"]["toolGroups"] = ["web"]
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(value, self.checks["Plugin"], "plugin")
+        value["compatibility"]["pluginApi"] = 2
+        validate.check_schema(value, self.checks["Plugin"], "plugin")
+        for groups in (["web", "web"], ["arbitrary-execution"], []):
+            value["contributions"]["toolGroups"] = groups
+            with self.assertRaises(validate.Invalid):
+                validate.check_schema(value, self.checks["Plugin"], "plugin")
 
     def test_empty_and_duplicate_skills(self):
         self.manifest["contributions"]["skills"] = []
@@ -201,6 +214,7 @@ class ValidationTests(unittest.TestCase):
 
     def test_local_catalog_metadata_matches_manifest(self):
         listing = self.listing()
+        listing["releases"][0]["version"] = self.manifest["version"]
         listing["description"] = "Incorrect description"
         self.catalog["plugins"] = [listing]
         (self.root / "marketplace.json").write_text(json.dumps(self.catalog))

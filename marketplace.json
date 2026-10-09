@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "name": "OpenWebIDE Official",
+  "name": "Open WebIDE",
   "plugins": [
     {
       "publisher": "openwebide",

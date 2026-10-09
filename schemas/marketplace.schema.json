@@ -44,7 +44,10 @@
             "minItems": 1,
             "uniqueItems": true,
             "items": {
-              "const": "skills"
+              "enum": [
+                "skills",
+                "tools"
+              ]
             }
           },
           "releases": {

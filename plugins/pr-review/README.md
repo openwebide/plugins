@@ -6,29 +6,13 @@ add a GitHub connection, MCP server, runtime or permission grant.
 
 ## Try the skill today
 
-In OpenWebIDE, open **Sessions → Skills → Import folder** and select
+In Open WebIDE, open **Sessions → Skills → Import folder** and select
 `skills/review-changes`. Inspect the draft, save it and enable it for the project.
 Ask the agent to review changes. The skill and its resource use the existing
 project-skill format and importer in either workspace mode.
 
-This manual import creates a project skill, not a plugin installation. Builds
-with host installation support can also prepare the package through
-**Settings → Plugins**, using this repository's URL, the full release commit
-from `marketplace.json`, and `plugins/pr-review` as the package directory.
-Installing the package does not activate its skill; use manual import to enable
-it for agent runs. Catalog browsing, automatic activation and updates remain
-future work.
-
-## Contribution
-
-- `review-changes`: scope identification, evidence-based review and concise
-  findings, with a supporting checklist loaded when needed.
-
-Example prompts:
-
-- “Review my uncommitted changes for bugs.”
-- “Review this branch against main; focus on concurrency regressions.”
-- “Review this PR and draft findings here.”
-
-Requests to implement a feature or explain code should not trigger this skill.
-Publishing comments or approvals is not part of the default review workflow.
+Manual skill import creates independent project data. Installing the plugin from
+Plugins enables its review skill in existing and future projects by default.
+Disable it for a project to save an opt-out. Notify is the default update policy;
+select another release or use Update All to change the installed version.
+Running tasks retain their original instructions/resources.

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "web",
+  "version": "0.1.0",
+  "displayName": "Web",
+  "description": "Search the web and fetch pages using the existing web tools.",
+  "license": "MIT",
+  "readme": "README.md",
+  "compatibility": {
+    "pluginApi": 2
+  },
+  "contributions": {
+    "skills": [],
+    "toolGroups": [
+      "web"
+    ]
+  }
+}

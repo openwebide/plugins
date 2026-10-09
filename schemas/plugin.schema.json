@@ -44,7 +44,10 @@
       "type": "object",
       "properties": {
         "pluginApi": {
-          "const": 1
+          "enum": [
+            1,
+            2
+          ]
         }
       },
       "required": [
@@ -57,7 +60,7 @@
       "properties": {
         "skills": {
           "type": "array",
-          "minItems": 1,
+          "minItems": 0,
           "maxItems": 100,
           "uniqueItems": true,
           "items": {
@@ -72,12 +75,47 @@
             ],
             "additionalProperties": false
           }
+        },
+        "toolGroups": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "web",
+              "memory",
+              "scheduling",
+              "skill-authoring"
+            ]
+          }
         }
       },
       "required": [
         "skills"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "skills": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "skills"
+          ]
+        },
+        {
+          "properties": {
+            "toolGroups": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "toolGroups"
+          ]
+        }
+      ]
     }
   },
   "required": [
@@ -91,5 +129,34 @@
     "compatibility",
     "contributions"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "properties": {
+              "toolGroups": {
+                "minItems": 1
+              }
+            },
+            "required": [
+              "toolGroups"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 2
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

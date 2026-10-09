@@ -1,14 +1,14 @@
-# OpenWebIDE plugins
+# Open WebIDE plugins
 
-Official OpenWebIDE plugin marketplace and reference implementations for agent
+Official Open WebIDE plugin marketplace and reference implementations for agent
 tools, language support, and editor extensions.
 
-This repository is being prepared alongside the plugin system design in
-[OpenWebIDE's roadmap](https://github.com/openwebide/openwebide/blob/main/docs/roadmap.md).
-The catalog lists the commit-pinned PR Review package. Builds with host
-installation support can prepare explicit Git sources; catalog browsing and
-contribution activation remain pending. The initial skills-only format has
-schemas and validation; broader runtime contracts are still drafts.
+The catalog publishes immutable first-party releases for PR Review, Web, Project
+Memory, Scheduling and Skill Authoring. The Open WebIDE app installs validated
+snapshots on bridge hosts and enables them across existing/new projects by
+default, with saved per-project opt-outs. Plugin API 1 supports skills; API 2 adds
+optional platform tool groups. Arbitrary tool runtimes, language services and
+editor/UI contribution contracts remain on the roadmap.
 
 ## Repository layout
 
@@ -30,13 +30,16 @@ contracts; they are not separate package types.
 
 Packages install and execute on bridge hosts: the paired native host for local
 projects, or the server/container host for remote projects. Browser and phone
-clients consume their metadata and service results through OpenWebIDE. Plugins
+clients consume their metadata and service results through Open WebIDE. Plugins
 do not install browser code or native software on client devices.
 
-The database records user-wide installations and configuration, with project
-activation and host readiness tracked separately. Hosts maintain persistent Git
-caches and commit-pinned package versions. Updates prepare a new version without
-changing files used by active runs or language-service sessions.
+The database records user-wide installations and verified contribution snapshots.
+Existing and future projects inherit them; Disable saves a project opt-out.
+Updates preserve opt-outs and keep active runs on their pinned content. Notify
+is the default update policy, with individual updates and Update All in the app.
+Automatic compatible updates and Off are per-plugin preferences. Catalog checks
+run while the app is open; unattended host checks and fresh-install defaults are
+still being designed.
 
 ## Marketplace model
 
@@ -47,37 +50,21 @@ only their immutable commit and package directory; they cannot override the
 repository. A standalone package can publish a marketplace file in its own repo.
 
 Catalogs can track branches, while installed releases resolve to immutable
-commits. File associations allow OpenWebIDE to suggest language packages without
+commits. File associations allow Open WebIDE to suggest language packages without
 sending source files or project paths to catalog hosts. Suggestions do not
 implicitly install or enable packages.
 
 ## Reference packages
 
-[PR Review](plugins/pr-review/README.md) is a skills-only reference package. Its
-skill can be imported manually into OpenWebIDE today. Release 0.1.0 is listed in
-`marketplace.json`; host installation prepares the package without activating
-the skill. See [plugins/README.md](plugins/README.md) for the remaining candidates.
+| Plugin | Contributions |
+| --- | --- |
+| [PR Review](plugins/pr-review/README.md) | Review workflow and checklist skill |
+| [Web](plugins/web/README.md) | Web search and page retrieval tools |
+| [Project Memory](plugins/memory/README.md) | Project memory tools and context |
+| [Scheduling](plugins/scheduling/README.md) | Scheduled prompts and monitoring tools |
+| [Skill Authoring](plugins/skill-authoring/README.md) | Authoring/evaluation skill and skill management tools |
 
-## Validate locally
-
-Requires Python 3.12 or newer:
-
-```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python scripts/validate.py
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-Validate a standalone package with `scripts/validate.py --package /path/to/package`.
-Validation uses local schemas, never fetches repositories and never executes
-package code. See [schema documentation](schemas/README.md) for supported fields
-and the checks that still belong to future installation/publishing tooling.
-
-## Contributing
-
-Add skills-only packages under `plugins/<name>/` using the reference manifest.
-Run validation and tests before submitting changes. Do not publish placeholder
-commit IDs or list unreleased packages in the catalog. Language, MCP and UI
-contributions require their contracts in the main app before schema support is
-added here. Automated release publishing, catalog browsing and contribution activation remain future work.
+Tool groups use the existing shared host/platform service handlers and normal
+approvals. File editing, shell execution, git and task coordination remain core.
+User-created skills remain independent project data. The marketplace does not
+choose which plugins should be installed on fresh accounts.

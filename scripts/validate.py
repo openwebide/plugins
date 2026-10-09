@@ -226,7 +226,12 @@ def validate_repository(root):
             for key in ("displayName", "description"):
                 if listing[key] != manifest[key]:
                     raise Invalid(f"catalog {key} differs from local manifest: {manifest['name']}")
-            if listing["categories"] != ["skills"]:
+            categories = []
+            if manifest["contributions"]["skills"]:
+                categories.append("skills")
+            if manifest["contributions"].get("toolGroups"):
+                categories.append("tools")
+            if sorted(listing["categories"]) != categories:
                 raise Invalid(f"catalog categories differ from local contributions: {manifest['name']}")
     return len(packages), len(catalog["plugins"])
 

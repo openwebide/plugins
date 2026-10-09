@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add plugin API 2 platform tool groups and first-party Web, Project Memory, Scheduling and Skill Authoring plugins.
+
 - Inherit each release’s repository from its marketplace source; catalog entries
   declare only the pinned commit and package directory and reject repository overrides.
 

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "memory",
+  "version": "0.1.0",
+  "displayName": "Project Memory",
+  "description": "Search and manage durable project memories.",
+  "license": "MIT",
+  "readme": "README.md",
+  "compatibility": {
+    "pluginApi": 2
+  },
+  "contributions": {
+    "skills": [],
+    "toolGroups": [
+      "memory"
+    ]
+  }
+}
