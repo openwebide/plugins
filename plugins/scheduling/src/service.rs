@@ -653,6 +653,192 @@ struct HistoryRetention {
     #[serde(default)]
     recent: Vec<i64>,
 }
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+struct CleanupProgress {
+    #[serde(default)]
+    jobs: i64,
+    #[serde(default)]
+    runs: i64,
+}
+#[derive(Default)]
+struct CleanupResult {
+    errors: Vec<String>,
+    jobs: Vec<i64>,
+    runs: Vec<i64>,
+}
+fn result_pending(task: &Task, run: i64, due: &Due) -> bool {
+    task.value
+        .state
+        .pending
+        .iter()
+        .any(|pending| pending.id == run)
+        || (task.value.draft.enabled
+            && task.value.state.generation == due.generation
+            && task.value.next_run == Some(due.due_at))
+}
+fn terminal_run(record: &Value) -> bool {
+    matches!(
+        record["state"].as_str(),
+        Some("completed" | "failed" | "cancelled" | "interrupted")
+    )
+}
+fn terminal_job(record: &Value) -> bool {
+    matches!(
+        record["state"].as_str(),
+        Some("completed" | "failed" | "cancelled" | "expired")
+    )
+}
+/// Return the retained run (if any) that must be saved before freeing this event.
+fn cleanup_job<'a>(
+    job: &'a Value,
+    tasks: &[Task],
+    runs: &'a [Value],
+) -> Option<(i64, Due, Option<&'a Value>)> {
+    if !terminal_job(job) {
+        return None;
+    }
+    if job["event"] == "task_due" {
+        let due = occurrence(job["key"].as_str()?)?;
+        let needed = tasks
+            .iter()
+            .find(|task| task.id == due.task_id)
+            .is_some_and(|task| {
+                task.value.draft.enabled
+                    && task.value.state.generation == due.generation
+                    && task.value.next_run == Some(due.due_at)
+            });
+        return (!needed).then_some((0, due, None));
+    }
+    if job["event"] != "task_completed" {
+        return None;
+    }
+    let run_id: i64 = job["key"].as_str()?.strip_prefix("$run:")?.parse().ok()?;
+    if run_id <= 0 {
+        return None;
+    }
+    let payload = &job["payload"];
+    let (due, run) = if let Some(key) = payload["run"]["key"].as_str() {
+        let due = occurrence(key)?;
+        if payload["run"]["id"].as_i64() != Some(run_id)
+            || !terminal_run(&payload["run"])
+            || payload["data"]["task_id"].as_i64() != Some(due.task_id)
+            || payload["data"]["generation"].as_u64() != Some(due.generation)
+            || payload["data"]["due_at"].as_i64() != Some(due.due_at)
+        {
+            return None;
+        }
+        (due, Some(&payload["run"]))
+    } else {
+        // A cancelled waiting callback may never have received a terminal snapshot.
+        if !matches!(job["state"].as_str(), Some("cancelled" | "expired")) {
+            return None;
+        }
+        let due: Due = serde_json::from_value(payload.clone()).ok()?;
+        if due.task_id <= 0 || due.due_at < 0 {
+            return None;
+        }
+        let run = runs.iter().find(|run| run["id"].as_i64() == Some(run_id));
+        if let Some(run) = run
+            && (!terminal_run(run)
+                || run["key"]
+                    .as_str()
+                    .and_then(occurrence)
+                    .is_none_or(|actual| {
+                        actual.task_id != due.task_id
+                            || actual.generation != due.generation
+                            || actual.due_at != due.due_at
+                    }))
+        {
+            return None;
+        }
+        (due, run)
+    };
+    let task = tasks.iter().find(|task| task.id == due.task_id);
+    if task.is_some_and(|task| result_pending(task, run_id, &due)) {
+        return None;
+    }
+    Some((run_id, due, task.and(run)))
+}
+fn cleanup_work(
+    host: &mut RecoveryHost<'_, impl Host>,
+    progress: &mut CleanupProgress,
+    tasks: &[Task],
+    runs: &[Value],
+    jobs: &[Value],
+) -> CleanupResult {
+    let mut result = CleanupResult::default();
+    for (capability, records, cursor) in [
+        ("jobs", jobs, &mut progress.jobs),
+        ("runs", runs, &mut progress.runs),
+    ] {
+        let ordered = records
+            .iter()
+            .filter(|record| record["id"].as_i64().is_some_and(|id| id > *cursor))
+            .chain(
+                records
+                    .iter()
+                    .filter(|record| record["id"].as_i64().is_some_and(|id| id <= *cursor)),
+            );
+        let mut attempts = 0;
+        let mut after = *cursor;
+        for record in ordered {
+            if attempts == 2 || host.remaining < 2 {
+                break;
+            }
+            let Some(id) = record["id"].as_i64().filter(|id| *id > 0) else {
+                continue;
+            };
+            let candidate = if capability == "jobs" {
+                cleanup_job(record, tasks, runs)
+            } else {
+                record["key"]
+                    .as_str()
+                    .and_then(occurrence)
+                    .filter(|due| {
+                        terminal_run(record)
+                            && !tasks
+                                .iter()
+                                .find(|task| task.id == due.task_id)
+                                .is_some_and(|task| result_pending(task, id, due))
+                    })
+                    .map(|due| {
+                        let snapshot = tasks
+                            .iter()
+                            .any(|task| task.id == due.task_id)
+                            .then_some(record);
+                        (id, due, snapshot)
+                    })
+            };
+            let Some((_, due, snapshot)) = candidate else {
+                continue;
+            };
+            attempts += 1;
+            let deleted = (|| {
+                if let Some(snapshot) = snapshot {
+                    record_history(host, due.task_id, due.due_at, snapshot)?;
+                }
+                host.call(
+                    capability,
+                    json!({"action":"delete","id":id,"revision":record["revision"]}),
+                )?;
+                Ok::<_, String>(())
+            })();
+            if let Err(error) = deleted {
+                result.errors.push(error);
+                if host.remaining == 0 {
+                    break;
+                }
+            } else if capability == "jobs" {
+                result.jobs.push(id);
+            } else {
+                result.runs.push(id);
+            }
+            after = id;
+        }
+        *cursor = after;
+    }
+    result
+}
 fn retained_result(record: &Value, tasks: &[Task]) -> bool {
     let value = &record["value"];
     tasks
@@ -765,12 +951,31 @@ pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
         .map_err(|error| error.to_string())?
         .unwrap_or_default();
     let tasks = tasks(&mut host)?;
+    let mut cleanup: CleanupProgress = previous
+        .as_ref()
+        .and_then(|record| record["value"].get("cleanup"))
+        .map(|value| serde_json::from_value(value.clone()))
+        .transpose()
+        .map_err(|error| error.to_string())?
+        .unwrap_or_default();
     let mut errors = Vec::new();
     if let Err(error) = retain_history(&mut host, &mut history, &tasks) {
         errors.push(error);
     }
-    let runs = work(&mut host, "runs")?;
-    let jobs = work(&mut host, "jobs")?;
+    let mut runs = work(&mut host, "runs")?;
+    let mut jobs = work(&mut host, "jobs")?;
+    let cleaned = cleanup_work(&mut host, &mut cleanup, &tasks, &runs, &jobs);
+    errors.extend(cleaned.errors);
+    runs.retain(|record| {
+        !record["id"]
+            .as_i64()
+            .is_some_and(|id| cleaned.runs.contains(&id))
+    });
+    jobs.retain(|record| {
+        !record["id"]
+            .as_i64()
+            .is_some_and(|id| cleaned.jobs.contains(&id))
+    });
     // Visit every record fairly, independent of creation order or permanently failing records.
     let ordered = tasks
         .iter()
@@ -799,7 +1004,7 @@ pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
             }
         }
     }
-    let value = json!({"after":cursor,"history":history});
+    let value = json!({"after":cursor,"history":history,"cleanup":cleanup});
     let operation = previous.map_or_else(||json!({"action":"create","value":value}),|record|json!({"action":"update","id":record["id"],"revision":record["revision"],"value":value}));
     // Reserve the cursor write outside the work budget (total remains below 128 host calls).
     recovery_record(host.host, operation)?;
