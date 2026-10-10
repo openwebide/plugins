@@ -69,6 +69,12 @@
               ],
               "additionalProperties": false
             }
+          },
+          "icon": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192,
+            "description": "Optional inline static SVG icon for discovery; use the same drawing as the plugin manifest."
           }
         },
         "required": [

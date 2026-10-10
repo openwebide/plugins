@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "pr-review",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "PR Review",
   "description": "Review working-tree changes, branches and pull requests using existing agent tools.",
   "license": "MIT",
@@ -17,5 +17,6 @@
         "path": "skills/review-changes/SKILL.md"
       }
     ]
-  }
+  },
+  "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"6\" cy=\"5\" r=\"2\"/><circle cx=\"6\" cy=\"19\" r=\"2\"/><circle cx=\"18\" cy=\"19\" r=\"2\"/><path d=\"M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3\"/></svg>"
 }

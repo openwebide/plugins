@@ -505,3 +505,23 @@ First-party executable plugins must use exactly the same public extension
 contract as community plugins and own their implementation. General host
 capabilities are allowed; plugin-specific built-in feature proxies, privileged
 interfaces and fallback implementations are not.
+
+## Plugin icons
+
+An optional `icon` string in `plugin.json` contains inline static SVG. Copy the
+same drawing into the catalog listing so it appears before installation. Omitted
+icons use the app’s puzzle symbol. Icons use a fixed 24 × 24 viewBox, inherit
+`currentColor`, and require no runtime capability or image download.
+
+```json
+{"icon":"<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"}
+```
+
+The host and repository validator accept bounded `path`, `circle`, `ellipse`,
+`rect`, `line`, `polyline`, `polygon` and `g` drawings. Use numeric geometry,
+`none`/`currentColor` paint, and standard line caps/joins. SVG must be at most
+8 KiB with shallow nesting; scripts, links, external assets, styles, text,
+animations, DTDs and processing instructions are rejected. The app rebuilds
+approved markup instead of inserting publisher content verbatim. PNG/data-URL
+icons are not part of this contract. First-party icon publication remains in
+progress alongside the executable rollout.

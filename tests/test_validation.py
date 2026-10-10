@@ -312,5 +312,37 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn("Traceback", result.stderr)
 
 
+    def test_static_svg_icons_validate_for_manifests_and_catalogs(self):
+        self.catalog["plugins"] = [self.listing()]
+        icon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>'
+        self.manifest["icon"] = icon
+        (self.package / "plugin.json").write_text(json.dumps(self.manifest))
+        validate.validate_package(self.package, self.checks)
+        self.catalog["plugins"][0]["icon"] = icon
+        validate.validate_catalog(self.catalog, self.checks)
+
+    def test_icons_reject_executable_external_and_oversized_svg(self):
+        self.catalog["plugins"] = [self.listing()]
+        for icon in ('<svg><script/></svg>', '<svg><use href="https://example.com/a"/></svg>',
+                     '<svg onload="alert(1)"/>', '<svg><foreignObject/></svg>',
+                     '<svg><path fill="url(#paint)"/></svg>', '<svg><circle r="NaN"/></svg>',
+                     '<!DOCTYPE svg><svg/>', '<svg>' + ' ' * 8192 + '</svg>'):
+            with self.subTest(icon=icon[:80]):
+                self.manifest["icon"] = icon
+                (self.package / "plugin.json").write_text(json.dumps(self.manifest))
+                with self.assertRaises(validate.Invalid):
+                    validate.validate_package(self.package, self.checks)
+                self.catalog["plugins"][0]["icon"] = icon
+                with self.assertRaises(validate.Invalid):
+                    validate.validate_catalog(self.catalog, self.checks)
+
+    def test_first_party_drawings_use_the_same_metadata_in_each_listing(self):
+        catalog = validate.read_json(ROOT / "marketplace.json")
+        for listing in catalog["plugins"]:
+            manifest = validate.read_json(ROOT / "plugins" / listing["name"] / "plugin.json")
+            self.assertEqual(listing["icon"], manifest["icon"])
+            validate.validate_icon(manifest["icon"])
+
+
 if __name__ == "__main__":
     unittest.main()

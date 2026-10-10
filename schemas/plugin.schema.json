@@ -252,6 +252,12 @@
         "capabilities"
       ],
       "additionalProperties": false
+    },
+    "icon": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8192,
+      "description": "Optional inline static SVG drawing, using a 0 0 24 24 viewBox and currentColor. The host validates a bounded drawing subset."
     }
   },
   "required": [
