@@ -3,18 +3,144 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "memory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Project Memory",
   "description": "Search and manage durable project memories.",
   "license": "MIT",
   "readme": "README.md",
   "compatibility": {
-    "pluginApi": 2
+    "pluginApi": 3
   },
   "contributions": {
     "skills": [],
-    "toolGroups": [
-      "memory"
+    "tools": [
+      {
+        "name": "memory_create",
+        "description": "Store a durable project fact or convention. Omit title for an automatic name unless the user supplied a specific name. Avoid credentials, secrets and transient task state.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "auto_title": {
+              "type": "boolean"
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "memory_search",
+        "description": "Search project memories by text; empty query lists recent entries. Returns bounded excerpts.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "memory_read",
+        "description": "Read a full project memory, including its current revision.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "memory_update",
+        "description": "Update a project memory using its current revision; read again after a conflict.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "auto_title": {
+              "type": "boolean"
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "memory_delete",
+        "description": "Delete a project memory using its current revision.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      }
+    ]
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "memory_plugin",
+    "sdkVersion": "0.1.0",
+    "capabilities": [
+      "collections"
     ]
   }
 }

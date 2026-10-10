@@ -149,8 +149,22 @@ prototype. Private records are scoped by authenticated account, project and
 plugin source, with bounded pages and revision checks. The host attaches authority
 outside plugin code; plugins cannot supply account or project IDs. Source updates
 can retain those records, but a different marketplace source does not inherit
-another plugin's namespace. General shared collection, job and workspace
-primitives and full deployment verification remain in development.
+another plugin's namespace. The separate `collections` grant enables general CRUD
+on documented app-visible project collections. The prototype's `memories`
+adapter preserves existing UI data; it enforces ownership, the user's opt-out,
+schema bounds and revision checks. Plugin code owns search, ranking, naming and
+formatting. See the unlisted [Memory source reference](../plugins/memory/README.md).
+Job/workspace primitives and full deployment verification remain in development.
+
+The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
+optional prompt text and a list of the plugin's own tools to disable. The default
+implementation contributes nothing. Context requests carry a byte budget (at
+most 8 KiB). The runtime permits only clock calls and list/read operations on
+private records or shared collections; mutations are denied before reaching the
+host. Plugins cannot disable another plugin's tools. This hook is supported in
+the host execution protocol; run-planning integration remains in development.
+The source checker accepts `--context` in place of a tool name to exercise the
+hook with a JSON input such as `{"budget_bytes":512}` and capability fixtures.
 
 The prototype compiler uses the native macOS sandbox or bubblewrap for native
 Linux users. Root containers use the app's packaged compiler launcher, which

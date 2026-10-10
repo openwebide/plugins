@@ -187,12 +187,13 @@
         },
         "capabilities": {
           "type": "array",
-          "maxItems": 5,
+          "maxItems": 6,
           "uniqueItems": true,
           "items": {
             "enum": [
               "http",
               "records",
+              "collections",
               "jobs",
               "workspace",
               "clock"
