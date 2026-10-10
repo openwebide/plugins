@@ -249,9 +249,13 @@ identities. Recovery requeues only unconsumed prompts; a stopped host after
 consumption produces `interrupted` without replay. Local workspace execution
 requires a user-authorized host folder binding. These are daemon primitives;
 plugin code cannot supply lease authority or choose another execution host.
-Raw run dispatch and completion delivery are still being connected. These
-primitives are not a completed Scheduling implementation or a built-in scheduler
-proxy. Plugins supply timing, prompts, recurrence and result interpretation.
+The bridge prototype dispatches raw submissions through the shared agent runner
+on server and paired hosts. Busy conversations release unconsumed claims; status
+reporting retries transient failures while leases stay alive. Lease loss or
+shutdown cancels owned preparation/execution. Reports retain bounded raw output,
+without interpreting outcomes. Durable completion callbacks remain unfinished,
+as does executable Scheduling. Plugins supply timing, prompts, recurrence and
+result interpretation through these general primitives.
 
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
