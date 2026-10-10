@@ -3,13 +3,13 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "skill-authoring",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Skill Authoring",
   "description": "Create, improve and manage reusable project skills.",
   "license": "MIT",
   "readme": "README.md",
   "compatibility": {
-    "pluginApi": 2
+    "pluginApi": 3
   },
   "contributions": {
     "skills": [
@@ -17,8 +17,242 @@
         "path": "skills/skill-authoring/SKILL.md"
       }
     ],
-    "toolGroups": [
-      "skill-authoring"
+    "tools": [
+      {
+        "name": "skill_list",
+        "description": "List enabled skills, 20 per page. Follow next_offset.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "skill_read",
+        "description": "Read skill instructions or a named resource. Follow next_offset; default 4000 characters, maximum 8000.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "resource": {
+              "type": "string"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8000
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "skill_create",
+        "description": "Save a reusable skill. Read skill_creator for the authoring workflow. Resources are data and never execute automatically.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "draft": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "instructions": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "binary": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "content"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instructions"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "draft"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "skill_update",
+        "description": "Update at the read revision; reread after conflicts. Omitted enabled/resources/metadata are preserved.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "draft": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "instructions": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "binary": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "content"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instructions"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "draft"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "skill_delete",
+        "description": "Delete a personal skill at its read revision.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "skill_creator",
+        "description": "Get an authoring and evaluation workflow for a goal or existing skill. Continue with the user; does not evaluate or save automatically.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "goal": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "goal"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      }
+    ]
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "skill_authoring_plugin",
+    "sdkVersion": "0.1.0",
+    "capabilities": [
+      "collections"
     ]
   }
 }

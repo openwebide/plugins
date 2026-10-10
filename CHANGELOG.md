@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add an unlisted API 3 Rust Skill Authoring source implementation that owns its six tool handlers, validation, resource paging, update preservation, authoring workflow and read-only context catalog through the public SDK. Full deployment and executable default migration remain in progress.
+
 - Document custom marketplace setup, immutable publishing and validation; distinguish
   the supported format from the planned Rust SDK/WASM artifact flow and require
   first-party executable plugins to own their behavior through the public contract.

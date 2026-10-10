@@ -164,6 +164,9 @@ cannot be mutated through this interface. List pages contain at most eight full
 skills, with the usual `next` cursor. Shared record mutations remain bounded by
 the record payload limit. Schema validation and revision conflicts are persistence
 constraints; authoring, search and prompt policy belong in plugin source.
+See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/README.md)
+for tool handlers, draft validation, preserved update fields, resource paging and
+bounded context catalogs implemented entirely through the public SDK.
 Job/workspace primitives and full deployment verification remain in development.
 
 The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
