@@ -9,9 +9,11 @@ Plugins. They browse and install its releases through the Plugins interface.
 
 Plugin API 1 supports skills. API 2 also supports a fixed set of platform tool
 groups. Those tool groups select built-in behavior and are transitional; they do
-not let authors supply new executable handlers. WASM artifacts, custom handlers,
-MCP contributions remain future work. The Rust SDK and source compiler are in
-development; executable first-party releases are not listed yet.
+not let authors supply new executable handlers. The API 3 prototype accepts Rust
+source with public SDK tool handlers, context hooks and durable events. Hosts
+compile source on installation; catalog artifact URLs are not used. MCP, language
+and UI contributions remain future work. Full production deployment is still in
+progress; executable first-party releases are not listed yet.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative
@@ -115,7 +117,7 @@ Notify; publishing a release does not replace that pinned installation silently.
 
 ## Rust source plugins (in development)
 
-The intended executable contract lets authors implement behavior in Rust using a
+The executable prototype lets authors implement behavior in Rust using a
 public, versioned SDK and host interfaces. A marketplace release pins the source
 commit and directory containing plugin.json, Cargo.toml, Cargo.lock and Rust
 source. The execution host compiles that source into a WASM component on install,
@@ -133,8 +135,8 @@ The host caches compiled output by source, SDK and toolchain; a failed build mus
 preserve the working installation. Full installation/runtime support is still in
 development and the example is not an official marketplace release.
 
-The proposed SDK home is the Open WebIDE app's Rust workspace, published as a
-versioned crate with versioned component interface definitions. Plugins consume
+The SDK lives in the Open WebIDE app's Rust workspace with versioned component
+interface definitions; registry publication remains pending. Plugins consume
 released interfaces without accessing app internals. A separate SDK repository
 is not required to use it from a custom marketplace.
 
@@ -143,6 +145,13 @@ WIT interfaces and an isolated authoring checker. Until a registry release is
 published, follow [the Rust example's checkout instructions](../examples/rust-plugin/README.md)
 to use it. Host compilation supplies its embedded SDK; installed plugins do not
 reach into the app's implementation crates.
+
+Official defaults use that same source format and capability contract. App
+**distribution builds**, rather than marketplace publishers, compile the selected
+commit-pinned subset through the normal host compiler sandbox and embed validated
+WASM components. First installation can then work offline. A custom marketplace
+still ships Rust source and Cargo.lock; its users' hosts compile it on installation.
+Precompilation grants no extra capabilities, app imports or built-in fallbacks.
 
 The public `http`, `clock`, `completion` and private `records` primitives are available in the
 prototype. Private records are scoped by authenticated account, project and

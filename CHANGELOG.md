@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Explain how custom marketplaces ship SDK Rust source while app distribution builds compile and embed the selected official defaults using the same public contract and capability rules.
+
 - Add a source-owned enable/disable tool to the unlisted Scheduling Rust plugin, preserving titles and checking revisions and elapsed one-time schedules. Accept UI conversation context for monitor cancellation and reject mismatched conversations.
 
 - Document raw run claim recovery, stale-delivery guards and local host folder authorization in the SDK prototype.
