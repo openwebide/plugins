@@ -36,6 +36,10 @@ An executing component keeps its original code and grant across installation
 updates; later invocations use the updated version. Deployment checks also verify
 recovery from validation failures, admission limits and cancellation freeing
 invocation capacity.
+Restarting during a streamed agent response records one interrupted result with
+the original message and does not replay the accepted prompt. With task history
+at quota, source journals a real preflight failure; bounded Rust reconciliation
+frees space and flushes that journal once through the public SDK.
 Complete recovery/failure verification, retention and browser default
 deployment remain in progress. Task and monitor UI mutations use declared SDK
 tools; deployed paired-host browser verification is still pending. Do not treat
