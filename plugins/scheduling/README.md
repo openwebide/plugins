@@ -29,7 +29,10 @@ pins the earlier API 2 platform switch. The source has native policy/workflow te
 and an actual compiled-component contract against shared host storage in both
 project modes. Source creates SDK history bindings; the app projects live run
 progress and retains terminal snapshots after raw-run deletion. Production
-installation, complete recovery/failure verification, retention and default
+HTTP deployment checks now cover CRUD, configured naming, delivered agent work,
+bounded monitors, cancellation, pending-task recovery after deployment restarts
+and pending-occurrence handoff between two compiled source versions on both hosts.
+Complete recovery/failure verification, retention and browser default
 deployment remain in progress. Task and monitor UI mutations use declared SDK
 tools; deployed paired-host browser verification is still pending. Do not treat
 this draft as a completed install/run/update lifecycle.
