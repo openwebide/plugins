@@ -182,6 +182,16 @@ fast configuration is an error. Plugins choose prompts, result validation and
 fallback behavior; the Memory reference tries fast, then primary, then its own
 content-derived title. Context hooks cannot call completion.
 
+Event handlers declare their names in `contributions.events` and return the same
+names from `Plugin::events()`. Implement `Plugin::event(EventInput)` to own the
+callback behavior; the input contains a name and JSON payload, with a 256 KiB
+payload limit. The host checks manifest/export agreement and invokes handlers
+with the same capability rules and isolated WASM runtime as tools. Event-only
+plugins can use `skills: []` and omit `tools`. The source checker accepts `--event`
+with `{"name":"job_due","payload":{}}` to exercise a declared handler. Durable
+job registration and delivery are still under development; declaring an event
+does not subscribe it to a working scheduler yet.
+
 The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
 optional prompt text and a list of the plugin's own tools to disable. The default
 implementation contributes nothing. Context requests carry a byte budget (at

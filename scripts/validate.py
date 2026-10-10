@@ -181,7 +181,7 @@ def validate_package(root, checks=None):
     if "executable" in manifest:
         for path in ("Cargo.toml", "Cargo.lock"):
             package_path(root, path)
-        tools = manifest["contributions"]["tools"]
+        tools = manifest["contributions"].get("tools", [])
         if len({tool["name"] for tool in tools}) != len(tools):
             raise Invalid("duplicate executable tool name")
     if "readme" in manifest:

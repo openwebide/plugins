@@ -77,6 +77,23 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
+    def test_event_only_rust_plugin_and_event_contract(self):
+        import shutil
+        package = self.root / "rust-events"
+        shutil.copytree(ROOT / "examples/rust-plugin", package)
+        manifest = json.loads((package / "plugin.json").read_text())
+        manifest["contributions"] = {"skills": [], "events": ["job_due"]}
+        (package / "plugin.json").write_text(json.dumps(manifest))
+        validate.validate_package(package, self.checks)
+        for events in (["job_due", "job_due"], ["../invalid"], []):
+            invalid = copy.deepcopy(manifest)
+            invalid["contributions"]["events"] = events
+            with self.assertRaises(validate.Invalid):
+                validate.check_schema(invalid, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 2
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
     def test_unknown_contributions_and_api_are_rejected(self):
         for field in ("mcpServers", "languages", "panels", "hooks"):
             with self.subTest(field=field):

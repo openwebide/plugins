@@ -131,6 +131,17 @@
             ],
             "additionalProperties": false
           }
+        },
+        "events": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9_]+$"
+          }
         }
       },
       "required": [
@@ -166,6 +177,16 @@
           },
           "required": [
             "tools"
+          ]
+        },
+        {
+          "properties": {
+            "events": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "events"
           ]
         }
       ]
@@ -269,13 +290,7 @@
         ],
         "properties": {
           "contributions": {
-            "required": [
-              "tools"
-            ],
             "properties": {
-              "tools": {
-                "minItems": 1
-              },
               "toolGroups": {
                 "maxItems": 0
               }
@@ -293,6 +308,9 @@
           "contributions": {
             "properties": {
               "tools": {
+                "maxItems": 0
+              },
+              "events": {
                 "maxItems": 0
               }
             }
