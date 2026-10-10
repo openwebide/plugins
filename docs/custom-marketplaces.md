@@ -102,6 +102,22 @@ that step. Offline validation checks format and package resources, not whether a
 remote commit exists or contains the claimed version. Open WebIDE verifies the
 actual pinned package during installation.
 
+For executable Rust plugins, also copy `scripts/validate_rust.py` and the workflow's
+`rust` job. That job checks out the public Open WebIDE SDK, installs its pinned
+Rust toolchain, runs native tests and strict native/WASI Clippy, and builds each
+component for `wasm32-wasip2`. Skills-only marketplaces can omit that job.
+To run the same checks locally with an app checkout:
+
+```sh
+CARGO_TARGET_DIR=/path/to/openwebide/target python3 scripts/validate_rust.py \
+  --sdk /path/to/openwebide/crates/plugin-sdk
+```
+
+Use `--package plugins/my-plugin` to check one plugin. The checker requires a
+matching SDK version and a committed Cargo.lock, and includes executable examples.
+These checks validate source compilation; the host still validates component
+exports against the manifest and enforces approved capabilities at installation.
+
 Push the catalog commit, then add a source in Settings → Plugins:
 
 - Repository: your public clone URL, such as `https://git.example.org/team/plugins.git`.

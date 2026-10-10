@@ -18,7 +18,8 @@ Language services and editor/UI contribution contracts remain on the roadmap.
 - `schemas/`: package and catalog schemas plus format documentation.
 - `scripts/validate.py`: offline validation for packages and catalog entries.
 - `tests/`: validator regression coverage.
-- `.github/workflows/validate.yml`: package validation and tests in CI.
+- `.github/workflows/validate.yml`: catalog validation, Rust tests, strict Clippy,
+  and WASM source builds against the public host SDK in CI.
 - `LICENSE`: MIT license for this repository. Packaged upstream dependencies
   retain their own licenses.
 

@@ -22,3 +22,23 @@ jobs:
       - run: python -m pip install -r requirements-dev.txt
       - run: python scripts/validate.py
       - run: python -m unittest discover -s tests -v
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: openwebide/openwebide
+          path: .host-sdk
+          persist-credentials: false
+      - name: Install the host's pinned Rust toolchain
+        run: |
+          channel=$(python3 -c 'import tomllib; print(tomllib.load(open(".host-sdk/rust-toolchain.toml", "rb"))["toolchain"]["channel"])')
+          rustup toolchain install "$channel" --profile minimal --component clippy --target wasm32-wasip2
+      - name: Test and compile executable plugin sources
+        env:
+          CARGO_TARGET_DIR: ${{ github.workspace }}/target
+        run: python3 scripts/validate_rust.py --sdk .host-sdk/crates/plugin-sdk
