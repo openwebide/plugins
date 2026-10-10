@@ -243,6 +243,12 @@ with that key is a conflict. Operations `list` (optional `after`), `read` (`id`)
 pages to 16 entries. Delete releases retained keys and quota. Plugin prompts use
 the ordinary durable conversation queue, with host-only delivery and atomic
 message insertion/consumption; users can remove them to cancel pending runs.
+The app prototype supplies internal host claims, renewable leases, status reports
+and busy-claim release. Reclaimed prompts receive fresh revisions and runner
+identities. Recovery requeues only unconsumed prompts; a stopped host after
+consumption produces `interrupted` without replay. Local workspace execution
+requires a user-authorized host folder binding. These are daemon primitives;
+plugin code cannot supply lease authority or choose another execution host.
 Raw run dispatch and completion delivery are still being connected. These
 primitives are not a completed Scheduling implementation or a built-in scheduler
 proxy. Plugins supply timing, prompts, recurrence and result interpretation.

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Document raw run claim recovery, stale-delivery guards and local host folder authorization in the SDK prototype.
+
 - Add the prototype runs capability to the public manifest schema and document durable submissions, conversation scope and queue guards; host dispatch and completion remain in progress.
 
 - Document automatic durable event delivery, lease-loss cancellation and at-least-once effects in the SDK prototype.
