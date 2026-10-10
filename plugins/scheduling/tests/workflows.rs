@@ -15,6 +15,7 @@ struct Fixture {
     conversations: Vec<Value>,
     fail_arm: bool,
     fail_update: Option<i64>,
+    fail_history: bool,
     history: BTreeMap<String, Value>,
     recovery: Option<Value>,
 }
@@ -83,6 +84,9 @@ impl Host for Fixture {
                     "conversations" => Ok(json!({"records":self.conversations,"next":null})),
                     "task_runs" => {
                         assert_eq!(action, "create");
+                        if self.fail_history {
+                            return Err("History write unavailable".into());
+                        }
                         let value = operation["value"].clone();
                         let key = value["key"].as_str().unwrap().to_owned();
                         let index = self.history.len() + 1;
@@ -585,6 +589,195 @@ fn retained_callback_recovery_ignores_live_unreleased_and_other_task_jobs() {
     }
     assert!(service::reconcile(&mut host).unwrap().ok);
     assert!((2..=6).all(|id| host.jobs.contains_key(&id)));
+}
+
+#[test]
+fn preflight_failure_advances_once_and_records_visible_history() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.conversations.clear();
+    host.now = 105;
+    let input = || Due {
+        task_id: 1,
+        generation: 1,
+        due_at: 105,
+    };
+    assert!(service::due(&mut host, input()).unwrap().ok);
+    assert!(host.runs.is_empty());
+    assert_eq!(host.next(), None);
+    let failure = &host.history["preflight:1:1:105"]["value"];
+    assert_eq!(failure["snapshot"]["status"], "failed");
+    assert!(
+        failure["snapshot"]["detail"]
+            .as_str()
+            .unwrap()
+            .contains("no longer exists")
+    );
+    assert!(failure["run_id"].is_null());
+    let revision = host.tasks[&1]["revision"].clone();
+    service::due(&mut host, input()).unwrap();
+    assert_eq!(host.tasks[&1]["revision"], revision);
+    assert_eq!(host.history.len(), 1);
+}
+
+#[test]
+fn preflight_failure_repairs_history_after_drop_and_preserves_it_across_edits() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.conversations.clear();
+    host.now = 105;
+    host.fail_history = true;
+    assert!(
+        service::due(
+            &mut host,
+            Due {
+                task_id: 1,
+                generation: 1,
+                due_at: 105
+            }
+        )
+        .is_err()
+    );
+    assert!(host.history.is_empty());
+    assert_eq!(host.next(), None);
+    assert!(host.tasks[&1]["value"]["state"]["preflight"].is_object());
+    host.conversations = Fixture::new().conversations;
+    let revision = host.tasks[&1]["revision"].as_i64().unwrap();
+    service::execute(
+        &mut host,
+        "schedule_update",
+        json!({"id":1,"revision":revision,
+        "draft":draft(Schedule::Once { at: 200 }, SessionTarget::Existing)}),
+    )
+    .unwrap();
+    host.fail_history = false;
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.history["preflight:1:1:105"]["value"]["due_at"], 105);
+    assert!(host.tasks[&1]["value"]["state"]["preflight"].is_null());
+    assert_eq!(host.next(), Some(200));
+    assert!(host.runs.is_empty());
+}
+
+#[test]
+fn missing_model_advances_recurrence_and_stops_monitors() {
+    let mut host = Fixture::new();
+    host.create(draft(
+        Schedule::Cron {
+            expression: "* * * * *".into(),
+            timezone: "UTC".into(),
+        },
+        SessionTarget::New,
+    ));
+    host.config = json!({"primary":null,"default_connection":null,"servers":[]});
+    host.now = 120;
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 120,
+        },
+    )
+    .unwrap();
+    assert_eq!(host.next(), Some(180));
+    assert!(
+        host.history["preflight:1:1:120"]["value"]["snapshot"]["detail"]
+            .as_str()
+            .unwrap()
+            .contains("Configure a model")
+    );
+
+    let mut monitor = Fixture::new();
+    service::execute(
+        &mut monitor,
+        "monitor",
+        json!({"action":"start","session_id":1,
+        "prompt":"Check build", "delay_seconds":5,"interval_seconds":30,"max_checks":3}),
+    )
+    .unwrap();
+    monitor.conversations.clear();
+    monitor.now = 105;
+    service::due(
+        &mut monitor,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    assert_eq!(monitor.next(), None);
+    assert_eq!(monitor.tasks[&1]["value"]["draft"]["enabled"], false);
+    assert_eq!(monitor.history.len(), 1);
+}
+
+#[test]
+fn unavailable_explicit_model_records_failure_without_submitting_a_run() {
+    let mut host = Fixture::new();
+    let mut scheduled = draft(Schedule::Once { at: 105 }, SessionTarget::Existing);
+    scheduled.model = Some(scheduling_plugin::schedule::ModelSelection {
+        server_id: 1,
+        model: "Pinned model".into(),
+    });
+    host.create(scheduled);
+    host.config["servers"][0]["enabled"] = json!(false);
+    host.now = 105;
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    assert!(host.runs.is_empty());
+    assert_eq!(host.next(), None);
+    assert!(
+        host.history["preflight:1:1:105"]["value"]["snapshot"]["detail"]
+            .as_str()
+            .unwrap()
+            .contains("server is unavailable")
+    );
+    assert_eq!(
+        host.tasks[&1]["value"]["draft"]["model"]["model"],
+        "Pinned model"
+    );
+}
+
+#[test]
+fn preflight_failure_preserves_a_run_accepted_before_configuration_changed() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.now = 105;
+    host.fail_update = Some(1);
+    assert!(
+        service::due(
+            &mut host,
+            Due {
+                task_id: 1,
+                generation: 1,
+                due_at: 105
+            }
+        )
+        .is_err()
+    );
+    assert_eq!(host.runs.len(), 1);
+    host.fail_update = None;
+    host.conversations.clear();
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    assert_eq!(host.runs.len(), 1);
+    assert_eq!(host.history.len(), 1);
+    assert!(host.history.contains_key("run:1"));
+    assert_eq!(host.next(), None);
 }
 
 #[test]

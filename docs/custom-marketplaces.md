@@ -417,6 +417,13 @@ The Scheduling reference uses this bounded recovery path. Executable Scheduling
 remains unfinished; plugins supply
 timing, prompts, recurrence and result interpretation through these primitives.
 
+Scheduling also owns failures detected before prompt submission, such as a missing
+conversation or configured model. It first checks for an already accepted occurrence,
+then saves a failure journal and advances recurrence (or stops a monitor). Its
+reconciler records a terminal `task_runs` snapshot with no raw run and clears the
+journal only after that history write succeeds. Edits preserve unfinished journals;
+host transport errors remain retryable rather than being classified by error text.
+
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
 `complete` function returns a `CompletionResponse` containing `text`. The host

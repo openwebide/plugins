@@ -31,6 +31,14 @@ pub struct State {
     pub pending: Vec<Pending>,
     #[serde(default)]
     pub last_result: Option<Value>,
+    #[serde(default)]
+    pub preflight: Option<PreflightFailure>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PreflightFailure {
+    pub key: String,
+    pub due_at: i64,
+    pub detail: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Pending {
@@ -496,6 +504,7 @@ pub fn execute(host: &mut impl Host, name: &str, mut arguments: Value) -> Result
                         source_version: env!("CARGO_PKG_VERSION").into(),
                         deleting: false,
                         last_result: old.value.state.last_result.clone(),
+                        preflight: old.value.state.preflight.clone(),
                         pending: vec![],
                     },
                 },
@@ -790,6 +799,7 @@ fn reconcile_task(
         )?;
         return Ok(());
     }
+    old = flush_preflight(host, old)?;
     // A released callback retains its terminal run snapshot after raw-run cleanup.
     // Repair failed delivery through ordinary scoped APIs, then free its queue slot.
     // Never race a pending/leased delivery or reinterpret an unreleased callback.
@@ -912,6 +922,51 @@ fn record_history(host: &mut impl Host, task: i64, due: i64, run: &Value) -> Res
     )?;
     Ok(())
 }
+/// Finish journaled failure history before clearing its durable repair marker.
+fn flush_preflight(host: &mut impl Host, old: Task) -> Result<Task, String> {
+    let Some(failure) = &old.value.state.preflight else {
+        return Ok(old);
+    };
+    collection(
+        host,
+        "task_runs",
+        json!({"action":"create","value":{
+            "key":failure.key,"task_id":old.id,"due_at":failure.due_at,"run_id":null,
+            "snapshot":{"status":"failed","detail":failure.detail}
+        }}),
+    )?;
+    let mut value = old.value.clone();
+    value.state.preflight = None;
+    save(host, Some(&old), value)
+}
+fn preflight_failed(
+    host: &mut impl Host,
+    old: Task,
+    input: &Due,
+    now: i64,
+    detail: String,
+) -> Result<Outcome, String> {
+    let mut value = old.value.clone();
+    value.state.preflight = Some(PreflightFailure {
+        key: format!("preflight:{}:{}:{}", old.id, input.generation, input.due_at),
+        due_at: input.due_at,
+        detail: detail.clone(),
+    });
+    value.state.last_result = Some(json!({"state":"failed","detail":detail}));
+    value.next_run = if value.monitor.is_some() {
+        value.draft.enabled = false;
+        None
+    } else {
+        value.draft.schedule.next_after(now)?
+    };
+    let advanced = save(host, Some(&old), value)?;
+    let advanced = flush_preflight(host, advanced)?;
+    arm(host, &advanced)?;
+    Ok(outcome(
+        json!({"failed":true}),
+        "Task preflight failure recorded",
+    ))
+}
 /// Queue a raw prompt; record prerequisites close the read/edit/submit race.
 pub fn due(host: &mut impl Host, input: Due) -> Result<Outcome, String> {
     let Some(old) = tasks(host)?
@@ -923,6 +978,7 @@ pub fn due(host: &mut impl Host, input: Due) -> Result<Outcome, String> {
             "Deleted occurrence ignored",
         ));
     };
+    let old = flush_preflight(host, old)?;
     if !old.value.draft.enabled
         || old.value.state.generation != input.generation
         || old.value.next_run != Some(input.due_at)
@@ -951,12 +1007,35 @@ pub fn due(host: &mut impl Host, input: Due) -> Result<Outcome, String> {
         serde_json::from_value(configuration["records"][0]["value"].clone())
             .map_err(|error| error.to_string())?;
     let default = config.default_model().ok();
-    let selection = conversations::select(&old.value.draft, &metadata, default.as_ref())?;
     let key = format!("task:{}:{}:{}", old.id, input.generation, input.due_at);
-    let response=host.call("runs",json!({"action":"submit","key":key,"prompt":old.value.draft.prompt,
+    let selection = conversations::select(&old.value.draft, &metadata, default.as_ref()).and_then(
+        |selection| {
+            if config
+                .servers
+                .iter()
+                .any(|server| server.id == selection.model.server_id && server.enabled)
+            {
+                Ok(selection)
+            } else {
+                Err("The configured model server is unavailable for this task".into())
+            }
+        },
+    );
+    let response = match selection {
+        Ok(selection) => host.call("runs",json!({"action":"submit","key":key,"prompt":old.value.draft.prompt,
         "target":selection.target,"model":selection.model,
         "prerequisites":[{"capability":"collections","collection":"tasks","id":old.id,"revision":old.revision}],
-        "completion":{"event":"task_completed","payload":{"task_id":old.id,"generation":input.generation,"due_at":input.due_at}}}))?;
+        "completion":{"event":"task_completed","payload":{"task_id":old.id,"generation":input.generation,"due_at":input.due_at}}}))?,
+        Err(detail) => {
+            // A lost acknowledgement may have queued this occurrence before its
+            // conversation/configuration changed. Preserve that accepted work.
+            if let Some(run) = work(host, "runs")?.into_iter().find(|run| run["key"] == key) {
+                json!({"runs":[run]})
+            } else {
+                return preflight_failed(host, old, &input, now, detail);
+            }
+        }
+    };
     let run = &response["runs"][0];
     let id = run["id"].as_i64().ok_or("No queued run returned")?;
     record_history(host, old.id, input.due_at, run)?;
