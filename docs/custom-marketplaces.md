@@ -195,18 +195,24 @@ let queued: serde_json::Value = openwebide_plugin_sdk::jobs(&serde_json::json!({
 
 Times are Unix seconds. New jobs require a current or future due time, and an
 optional expiry strictly after it. Keys contain 1–128 letters, numbers or `-_.:`.
-An identical key/time/event/payload/source request returns the original job,
+An identical key/time/event/payload/source/scope request returns the original job,
 including after its due time; changing those values under the same key is a
 conflict. Account, project, plugin identity and execution host are attached by
 the host and cannot be supplied in this request. Jobs keep the creating source
-version and model context across plugin updates. Chained jobs retain the
-originating conversation; background callback grants receive neither chat
-authority nor a manual-editing override.
+version and model context across plugin updates. `schedule` defaults to
+`"scope": "origin"`, retaining its creating conversation for follow-up work.
+Choose `"scope": "project"` for saved work that must survive deleting that chat;
+it keeps the project/model context while dropping the conversation anchor. In
+projectless contexts this is the account's global conversation realm. Chained
+origin jobs retain their parent's origin; project jobs do not acquire one. A
+scope change under an existing key is a conflict. Background callback grants
+receive neither chat authority nor a manual-editing override.
 
 Operations `list` (optional `after` cursor), `read` (`id`), `cancel` (`id`,
 `revision`) and `delete` (`id`, `revision`) return `{jobs, next_after}`. States are
-`pending`, `leased`, `completed`, `failed`, `cancelled` and `expired`. Cancel
-accepts pending/leased jobs. Delete accepts only terminal jobs and also removes
+`waiting`, `pending`, `leased`, `completed`, `failed`, `cancelled` and `expired`.
+`waiting` is reserved for run completion events. Cancel accepts waiting, pending
+and leased jobs. Delete accepts only terminal jobs and also removes
 their retained idempotency keys. Each namespace/project holds at most 1,000 jobs;
 plugins own retention policy. Payloads are limited to 64 KiB of serialized JSON;
 list pages hold at most 64 jobs and 1 MiB. The host leases bounded delivery
@@ -216,9 +222,30 @@ attempts. Disabled or removed plugins receive no new delivery claims.
 The bridge prototype polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable
-keys and revision checks to make effects repeatable. Run submission/completion,
-workspace primitives and full deployment verification remain in development. These foundations do not make the transitional
-Scheduling catalog release an executable plugin.
+keys and revision checks to make effects repeatable. App-visible task/monitor
+collections, the Scheduling policy migration and full deployment verification
+remain in development. These foundations do not make the transitional Scheduling
+catalog release an executable plugin.
+
+The `collections` capability also offers read-only `conversations` metadata:
+
+```rust
+let page: serde_json::Value = openwebide_plugin_sdk::collections(
+    "conversations", &serde_json::json!({"action": "list", "after": 0})
+)?;
+```
+
+It returns `{enabled, records, next}` with at most 32 records/1 MiB, ordered by
+ascending ID. Continue with `after: next` until `next` is null. `read` accepts a
+conversation `id`; create/update/delete are rejected. Values include `name`,
+`created_at`, `last_activity`, `archived`, `pinned`, `auto_title`, `origin`,
+`connection_id`, raw `model_override` settings and connection `{id, model,
+enabled}` metadata. Only your granted project's owned conversations appear;
+projectless grants see the account's global realm. Message text and connection
+credentials are omitted. Read-only record revisions are opaque positive content
+tokens; `updated_at` is the activity timestamp. Rank/filter/select targets in
+plugin code. Origin-bound jobs can discover their retained origin; project events
+have none. These metadata reads do not grant chat or queue-consumption authority.
 
 The prototype `runs` grant supports general durable prompt submissions:
 
