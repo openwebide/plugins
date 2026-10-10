@@ -101,7 +101,16 @@ impl Draft {
                     .map_err(|_| "Binary resources require valid base64")?;
             }
         }
-        if serde_json::to_vec(self).map_err(|e| e.to_string())?.len() > 131072 {
+        let mut bytes = serde_json::to_vec(&self.metadata)
+            .map_err(|e| e.to_string())?
+            .len()
+            + self.name.len()
+            + self.description.len()
+            + self.instructions.len();
+        for resource in &self.resources {
+            bytes += resource.name.len() + resource.content.len();
+        }
+        if bytes > 131072 {
             return Err("Skill content is limited to 128 KiB".into());
         }
         Ok(())
@@ -136,7 +145,7 @@ impl Collections for Host {
 fn all(host: &mut impl Collections) -> Result<Option<Vec<Record>>, String> {
     let mut after = 0;
     let mut records = Vec::new();
-    for _ in 0..13 {
+    for _ in 0..100 {
         let page = host.call(json!({"action":"list","after":after}))?;
         if !page.enabled {
             return Ok(None);
@@ -555,6 +564,30 @@ mod tests {
         );
         host.disabled = true;
         assert!(execute(&mut host, "skill_creator", json!({"goal":"Build checks"})).is_err());
+    }
+    #[test]
+    fn existing_large_ui_drafts_keep_resources_when_an_update_omits_them() {
+        let mut host = host();
+        host.record.value.draft.instructions = "I".repeat(30000);
+        host.record.value.draft.resources = (0..3)
+            .map(|index| Resource {
+                name: format!("references/{index}.txt"),
+                content: "\u{1}".repeat(30000),
+                binary: false,
+            })
+            .collect();
+        host.record.value.draft.validate().unwrap();
+        assert!(
+            serde_json::to_vec(&host.record.value.draft).unwrap().len() > 131072,
+            "JSON escaping must not redefine the existing data limit"
+        );
+        execute(&mut host,"skill_update",json!({"id":1,"revision":3,"draft":{
+            "name":"build-guide","description":"Edited description","instructions":"Updated instructions"
+        }})).unwrap();
+        assert_eq!(
+            host.writes[0]["value"]["draft"]["resources"][2]["content"],
+            "\u{1}".repeat(30000)
+        );
     }
     #[test]
     fn context_is_bounded_and_disables_only_own_tools_when_opted_out() {

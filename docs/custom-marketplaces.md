@@ -161,8 +161,10 @@ for personal skills or the owning plugin's publisher, name, version and commit.
 It is read-only. Managed skills cannot be edited or deleted through collections;
 manage their owning plugin instead. Disabled skills are omitted from reads and
 cannot be mutated through this interface. List pages contain at most eight full
-skills, with the usual `next` cursor. Shared record mutations remain bounded by
-the record payload limit. Schema validation and revision conflicts are persistence
+skills and approximately 1 MiB of serialized records, with the usual `next` cursor.
+Skills mutations admit the existing 128 KiB data schema with up to 1 MiB of JSON
+payload for escaping; private records retain their 64 KiB value limit.
+Schema validation and revision conflicts are persistence
 constraints; authoring, search and prompt policy belong in plugin source.
 See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/README.md)
 for tool handlers, draft validation, preserved update fields, resource paging and
