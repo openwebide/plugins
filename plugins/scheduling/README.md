@@ -17,7 +17,9 @@ records are anchored to their owned conversation and expire within 24 hours.
 A declared one-minute `reconcile` background event adopts idle legacy records,
 rebuilds missing/failed timers, repairs run/history bookkeeping and terminal
 results, completes interrupted deletions and invalidates old work after source
-version changes. Interrupted monitor checks still consume their original finite
+version changes. This cancels prior-generation jobs and active runs; their
+terminal history retains the original message, and accepted one-time prompts
+are not requeued. Interrupted monitor checks still consume their original finite
 budget and retain their original expiry. Repairs use current revisions; a racing
 edit or unavailable host operation is retried on a later tick. Reconciliation
 visits at most eight records per tick with a bounded host-call budget and a
