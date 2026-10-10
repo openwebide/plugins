@@ -18,5 +18,30 @@
       }
     ]
   },
-  "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"6\" cy=\"5\" r=\"2\"/><circle cx=\"6\" cy=\"19\" r=\"2\"/><circle cx=\"18\" cy=\"19\" r=\"2\"/><path d=\"M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3\"/></svg>"
+  "icon": {
+    "elements": [
+      {
+        "type": "circle",
+        "cx": 6,
+        "cy": 5,
+        "r": 2
+      },
+      {
+        "type": "circle",
+        "cx": 6,
+        "cy": 19,
+        "r": 2
+      },
+      {
+        "type": "circle",
+        "cx": 18,
+        "cy": 19,
+        "r": 2
+      },
+      {
+        "type": "path",
+        "d": "M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3"
+      }
+    ]
+  }
 }

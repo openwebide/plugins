@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-import xml.etree.ElementTree as ET
 import re
 import sys
 from pathlib import Path, PurePosixPath
@@ -81,48 +79,12 @@ def check_schema(value, validator, label):
 
 
 def validate_icon(source):
-    """Match the host's bounded, static drawing subset; never execute SVG."""
-    if len(source.encode("utf-8")) > 8192 or "<!" in source or "<?" in source:
-        raise Invalid("icon must be a static SVG drawing of at most 8 KiB")
-    try:
-        root = ET.fromstring(source)
-    except ET.ParseError as error:
-        raise Invalid("icon must be valid SVG") from error
-    def tag(node):
-        if node.tag.startswith("{"):
-            namespace, name = node.tag[1:].split("}", 1)
-            if namespace != "http://www.w3.org/2000/svg":
-                raise Invalid("icon namespace must be SVG")
-            return name
-        return node.tag
-    if tag(root) != "svg" or 1 + sum(1 + (node.text is not None) + (node.tail is not None) for node in root.iter()) > 128:
-        raise Invalid("icon must be a bounded SVG drawing")
-    def attribute(name, value):
-        if name == "viewBox": return value.split() == ["0", "0", "24", "24"]
-        if name in ("fill", "stroke"): return value in ("none", "currentColor")
-        if name == "stroke-linecap": return value in ("butt", "round", "square")
-        if name == "stroke-linejoin": return value in ("miter", "round", "bevel")
-        if name in ("fill-rule", "clip-rule"): return value in ("nonzero", "evenodd")
-        if name in ("d", "points"):
-            letters = "MmLlHhVvCcSsQqTtAaZzEe" if name == "d" else "eE"
-            return bool(value.strip()) and all(c in "0123456789 .,+-\t\r\n" + letters for c in value)
-        bounds = {"stroke-width": (0, 4), "opacity": (0, 1), "fill-opacity": (0, 1), "stroke-opacity": (0, 1), "width": (0, 1024), "height": (0, 1024)}
-        bounds.update({name: (-1024, 1024) for name in ("x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry")})
-        if name not in bounds: return False
-        if not value or any(c not in "0123456789.+-eE" for c in value): return False
-        try: number = float(value)
-        except ValueError: return False
-        return math.isfinite(number) and bounds[name][0] <= number <= bounds[name][1]
-    def visit(node, depth):
-        name = tag(node)
-        if depth > 12 or name not in ("svg", "g", "path", "circle", "ellipse", "rect", "line", "polyline", "polygon") or (depth and name == "svg"):
-            raise Invalid("icon supports only static drawing primitives")
-        if any(not attribute(name, value) for name, value in node.attrib.items()):
-            raise Invalid("icon contains an unsupported attribute")
-        if (node.text or "").strip() or (node.tail or "").strip():
-            raise Invalid("icon cannot contain text")
-        for child in node: visit(child, depth + 1)
-    visit(root, 0)
+    """The schema defines the drawing vocabulary; enforce the total byte budget."""
+    if len(json.dumps(source, separators=(",", ":"), ensure_ascii=False).encode("utf-8")) > 8192:
+        raise Invalid("icon must be a structured drawing of at most 8 KiB")
+    for element in source["elements"]:
+        if element["type"] == "path" and not element["d"].strip():
+            raise Invalid("icon path must not be empty")
 
 
 def package_path(root, relative):

@@ -508,20 +508,22 @@ interfaces and fallback implementations are not.
 
 ## Plugin icons
 
-An optional `icon` string in `plugin.json` contains inline static SVG. Copy the
-same drawing into the catalog listing so it appears before installation. Omitted
-icons use the app’s puzzle symbol. Icons use a fixed 24 × 24 viewBox, inherit
-`currentColor`, and require no runtime capability or image download.
+The optional `icon` object in `plugin.json` uses the shared JSON schema. Copy it
+into the catalog listing so it appears before installation. Omitted icons use
+the app’s puzzle symbol. The app renders a fixed 24 × 24 SVG with `currentColor`,
+no fill, a two-unit stroke, and rounded line caps and joins.
 
 ```json
-{"icon":"<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"}
+{"icon":{"elements":[{"type":"circle","cx":12,"cy":12,"r":10},{"type":"path","d":"M12 6v6l4 2"}]}}
 ```
 
-The host and repository validator accept bounded `path`, `circle`, `ellipse`,
-`rect`, `line`, `polyline`, `polygon` and `g` drawings. Use numeric geometry,
-`none`/`currentColor` paint, and standard line caps/joins. SVG must be at most
-8 KiB with shallow nesting; scripts, links, external assets, styles, text,
-animations, DTDs and processing instructions are rejected. The app rebuilds
-approved markup instead of inserting publisher content verbatim. PNG/data-URL
-icons are not part of this contract. First-party icon publication remains in
-progress alongside the executable rollout.
+Elements can be `path`, `circle`, `ellipse`, `rect`, `line`, `polyline`, or
+`polygon`. Geometry uses JSON numbers; polyline and polygon `points` are arrays
+of `[x, y]` pairs. A rectangle’s `rx` is optional. Coordinates are bounded to
+±1024; dimensions and radii must be nonnegative. Drawings require 1–64 elements,
+2–128 points per polyline/polygon, and at most 8 KiB of compact JSON. Unknown
+properties and element types are rejected. Paths accept only SVG drawing commands
+and numeric characters. Icons need no runtime capability or download: the app
+creates the markup from typed metadata, with sizing and colors controlled by its
+design system. First-party icon publication remains in progress alongside the
+executable rollout.

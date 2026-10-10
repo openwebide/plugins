@@ -26,7 +26,32 @@
           }
         }
       ],
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"6\" cy=\"5\" r=\"2\"/><circle cx=\"6\" cy=\"19\" r=\"2\"/><circle cx=\"18\" cy=\"19\" r=\"2\"/><path d=\"M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3\"/></svg>"
+      "icon": {
+        "elements": [
+          {
+            "type": "circle",
+            "cx": 6,
+            "cy": 5,
+            "r": 2
+          },
+          {
+            "type": "circle",
+            "cx": 6,
+            "cy": 19,
+            "r": 2
+          },
+          {
+            "type": "circle",
+            "cx": 18,
+            "cy": 19,
+            "r": 2
+          },
+          {
+            "type": "path",
+            "d": "M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3"
+          }
+        ]
+      }
     },
     {
       "publisher": "openwebide",
@@ -45,7 +70,27 @@
           }
         }
       ],
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><ellipse cx=\"12\" cy=\"12\" rx=\"4\" ry=\"10\"/><path d=\"M2 12h20\"/></svg>"
+      "icon": {
+        "elements": [
+          {
+            "type": "circle",
+            "cx": 12,
+            "cy": 12,
+            "r": 10
+          },
+          {
+            "type": "ellipse",
+            "cx": 12,
+            "cy": 12,
+            "rx": 4,
+            "ry": 10
+          },
+          {
+            "type": "path",
+            "d": "M2 12h20"
+          }
+        ]
+      }
     },
     {
       "publisher": "openwebide",
@@ -64,7 +109,22 @@
           }
         }
       ],
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"3\" width=\"15\" height=\"18\" rx=\"2\"/><path d=\"M5 7H3m2 5H3m2 5H3M9 7h7m-7 5h7m-7 5h4\"/></svg>"
+      "icon": {
+        "elements": [
+          {
+            "type": "rect",
+            "x": 5,
+            "y": 3,
+            "width": 15,
+            "height": 18,
+            "rx": 2
+          },
+          {
+            "type": "path",
+            "d": "M5 7H3m2 5H3m2 5H3M9 7h7m-7 5h7m-7 5h4"
+          }
+        ]
+      }
     },
     {
       "publisher": "openwebide",
@@ -83,7 +143,20 @@
           }
         }
       ],
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"
+      "icon": {
+        "elements": [
+          {
+            "type": "circle",
+            "cx": 12,
+            "cy": 12,
+            "r": 10
+          },
+          {
+            "type": "path",
+            "d": "M12 6v6l4 2"
+          }
+        ]
+      }
     },
     {
       "publisher": "openwebide",
@@ -103,7 +176,14 @@
           }
         }
       ],
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 5c-3-2-6-2-9-1v16c3-1 6-1 9 1m0-16v7m0-7c3-2 6-2 9-1v5M14 18l5-5 2 2-5 5-3 1 1-3\"/></svg>"
+      "icon": {
+        "elements": [
+          {
+            "type": "path",
+            "d": "M12 5c-3-2-6-2-9-1v16c3-1 6-1 9 1m0-16v7m0-7c3-2 6-2 9-1v5M14 18l5-5 2 2-5 5-3 1 1-3"
+          }
+        ]
+      }
     }
   ]
 }

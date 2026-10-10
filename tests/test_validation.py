@@ -312,22 +312,24 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn("Traceback", result.stderr)
 
 
-    def test_static_svg_icons_validate_for_manifests_and_catalogs(self):
+    def test_structured_icons_validate_for_manifests_and_catalogs(self):
         self.catalog["plugins"] = [self.listing()]
-        icon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>'
+        icon = {"elements": [{"type": "circle", "cx": 12, "cy": 12, "r": 10}]}
         self.manifest["icon"] = icon
         (self.package / "plugin.json").write_text(json.dumps(self.manifest))
         validate.validate_package(self.package, self.checks)
         self.catalog["plugins"][0]["icon"] = icon
         validate.validate_catalog(self.catalog, self.checks)
 
-    def test_icons_reject_executable_external_and_oversized_svg(self):
+    def test_icons_reject_unknown_attributes_markup_and_oversized_drawings(self):
         self.catalog["plugins"] = [self.listing()]
-        for icon in ('<svg><script/></svg>', '<svg><use href="https://example.com/a"/></svg>',
-                     '<svg onload="alert(1)"/>', '<svg><foreignObject/></svg>',
-                     '<svg><path fill="url(#paint)"/></svg>', '<svg><circle r="NaN"/></svg>',
-                     '<!DOCTYPE svg><svg/>', '<svg>' + ' ' * 8192 + '</svg>'):
-            with self.subTest(icon=icon[:80]):
+        for icon in ('<svg/>', {"elements": [{"type": "script"}]},
+                     {"elements": [{"type": "path", "d": "M0 0", "onload": "alert(1)"}]},
+                     {"elements": [{"type": "path", "d": "<script>"}]},
+                     {"elements": [{"type": "circle", "cx": 12, "cy": 12, "r": -1}]},
+                     {"elements": [{"type": "path", "d": "M0 0 " * 2000}]},
+                     {"elements": [{"type": "path", "d": "M0 0"}] * 65}):
+            with self.subTest(icon=str(icon)[:80]):
                 self.manifest["icon"] = icon
                 (self.package / "plugin.json").write_text(json.dumps(self.manifest))
                 with self.assertRaises(validate.Invalid):

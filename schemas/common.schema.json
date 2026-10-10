@@ -53,6 +53,242 @@
         "path"
       ],
       "additionalProperties": false
+    },
+    "icon": {
+      "type": "object",
+      "properties": {
+        "elements": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "path"
+                  },
+                  "d": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8192,
+                    "pattern": "^[0-9 .,+\\-\\t\\r\\nMmLlHhVvCcSsQqTtAaZzEe]+$"
+                  }
+                },
+                "required": [
+                  "type",
+                  "d"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "circle"
+                  },
+                  "cx": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "cy": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "r": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  }
+                },
+                "required": [
+                  "type",
+                  "cx",
+                  "cy",
+                  "r"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "ellipse"
+                  },
+                  "cx": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "cy": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "rx": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  },
+                  "ry": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  }
+                },
+                "required": [
+                  "type",
+                  "cx",
+                  "cy",
+                  "rx",
+                  "ry"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "rect"
+                  },
+                  "x": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "width": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  },
+                  "height": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  },
+                  "rx": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1024
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "line"
+                  },
+                  "x1": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "y1": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "x2": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  },
+                  "y2": {
+                    "type": "number",
+                    "minimum": -1024,
+                    "maximum": 1024
+                  }
+                },
+                "required": [
+                  "type",
+                  "x1",
+                  "y1",
+                  "x2",
+                  "y2"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "polyline"
+                  },
+                  "points": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 128,
+                    "items": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "type": "number",
+                        "minimum": -1024,
+                        "maximum": 1024
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "points"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "polygon"
+                  },
+                  "points": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 128,
+                    "items": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "type": "number",
+                        "minimum": -1024,
+                        "maximum": 1024
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "points"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "elements"
+      ],
+      "additionalProperties": false
     }
   }
 }

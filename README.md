@@ -14,7 +14,7 @@ Language services and editor/UI contribution contracts remain on the roadmap.
 ## Repository layout
 
 - `marketplace.json`: the first-party catalog with immutable package releases.
-- Optional inline SVG icons in manifests and listings use a shared static drawing contract; see [Plugin icons](docs/custom-marketplaces.md#plugin-icons).
+- Optional structured JSON icons in manifests and listings use a shared drawing schema; see [Plugin icons](docs/custom-marketplaces.md#plugin-icons).
 - `plugins/`: first-party packages, each in its own directory.
 - `schemas/`: package and catalog schemas plus format documentation.
 - `scripts/validate.py`: offline validation for packages and catalog entries.
