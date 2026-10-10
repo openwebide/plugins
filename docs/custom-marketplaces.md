@@ -154,6 +154,16 @@ on documented app-visible project collections. The prototype's `memories`
 adapter preserves existing UI data; it enforces ownership, the user's opt-out,
 schema bounds and revision checks. Plugin code owns search, ranking, naming and
 formatting. See the unlisted [Memory source reference](../plugins/memory/README.md).
+The `skills` collection preserves existing UI skill IDs, revisions, resources and
+metadata. Writes accept `{"draft": {...}}`, using the documented `SkillDraft`
+schema; reads return `{"draft": {...}, "origin": ...}`. `origin` is either null
+for personal skills or the owning plugin's publisher, name, version and commit.
+It is read-only. Managed skills cannot be edited or deleted through collections;
+manage their owning plugin instead. Disabled skills are omitted from reads and
+cannot be mutated through this interface. List pages contain at most eight full
+skills, with the usual `next` cursor. Shared record mutations remain bounded by
+the record payload limit. Schema validation and revision conflicts are persistence
+constraints; authoring, search and prompt policy belong in plugin source.
 Job/workspace primitives and full deployment verification remain in development.
 
 The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
@@ -162,7 +172,8 @@ implementation contributes nothing. Context requests carry a byte budget (at
 most 8 KiB). The runtime permits only clock calls and list/read operations on
 private records or shared collections; mutations are denied before reaching the
 host. Plugins cannot disable another plugin's tools. This hook is supported in
-the host execution protocol; run-planning integration remains in development.
+shared local and remote run planning before model tool selection, including when
+model tools are disabled. Full deployment verification remains in development.
 The source checker accepts `--context` in place of a tool name to exercise the
 hook with a JSON input such as `{"budget_bytes":512}` and capability fixtures.
 
