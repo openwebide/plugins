@@ -6,9 +6,12 @@ tools, language support, and editor extensions.
 The catalog publishes immutable first-party releases for PR Review, Web, Project
 Memory, Scheduling and Skill Authoring. The Open WebIDE app installs validated
 snapshots on bridge hosts and enables them across existing/new projects by
-default, with saved per-project opt-outs. Plugin API 1 supports skills; API 2 adds
-optional platform tool groups. Unlisted API 3 reference sources own executable
-behavior through the public Rust SDK; production rollout remains in progress.
+default, with saved per-project opt-outs. Plugin API 1 supports skills; API 3
+supports Rust source handlers, context hooks and events through the public SDK.
+Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historical
+API 2 tool-group releases require an update before activation on current hosts.
+The executable releases are listed on the implementation branch; integration
+into official main and the remaining manual PWA checks are still pending.
 Language services and editor/UI contribution contracts remain on the roadmap.
 
 ## Repository layout

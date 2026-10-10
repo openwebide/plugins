@@ -5,9 +5,11 @@ redirect handling, Stack Overflow question retrieval, HTML sanitization and
 Markdown formatting. The SDK supplies general HTTP transport; no built-in Web
 handler is called. Requests and execution happen on the bridge host.
 
-This API 3 release is in development and is not listed in marketplace.json yet.
-The catalog retains the older API 2 release until execution support and migration
-verification are complete. Installation requires the source compiler and SDK 0.1.0.
+Version 0.2.1 is an executable API 3 release in the candidate catalog.
+Installation requires the host source compiler and SDK 0.1.0; packaged hosts
+embed its validated component as a default. Production checks exercise source
+execution and sanitized page retrieval through both host transports. Official
+main integration and the remaining manual PWA checks are pending.
 
 Exports `search_web` and `fetch_web_page`; declares only `http` capability.
 Search queries use DuckDuckGo, Stack Exchange, crates.io, GitHub and Wikipedia

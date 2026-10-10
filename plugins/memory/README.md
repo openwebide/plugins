@@ -2,10 +2,9 @@
 
 Search and manage durable project memories.
 
-Version 0.2.1 is an unlisted source implementation for the development Rust SDK
-and plugin API 3. The marketplace still lists the earlier API 2 release until
-run-planning and lifecycle integration are verified. This source depends only on
-the public SDK and Serde, with no application internals or built-in tool calls.
+Version 0.2.1 is an executable API 3 release in the candidate catalog and the
+compiled default bundle. It depends only on the public SDK and Serde, with no
+application internals or built-in tool calls.
 
 The plugin owns argument validation, case-insensitive search, recent-first
 ranking, bounded excerpts, fallback title generation, CRUD result formatting and
@@ -17,15 +16,16 @@ Memory switch. It does not implement the plugin's search or context policy.
 
 The context hook reads stored facts as data and emits bounded JSON excerpts.
 When Memory is disabled it contributes no prompt and disables its own tools.
-Context hooks cannot mutate collections or request model completions. The development host runs them through
+Context hooks cannot mutate collections or request model completions. The host runs them through
 shared planning before selecting model tools in both local and remote sessions,
 including when model tools are disabled. The separate `completion` capability
 lets this source own its automatic-title prompt and result validation, trying the
 configured fast model, then primary, then a content-derived fallback. Manual
 titles skip model requests, and project opt-out prevents naming requests.
-Existing UI automatic naming integration and full lifecycle verification remain
-in progress; this release is not yet the
-installed default.
+Production checks verify fresh defaults, CRUD/context, configured automatic
+naming, project opt-out and uninstall persistence through both hosts. Browser
+contracts cover editing, SDK chat dispatch, context, conflicts and disabling.
+Official main integration and the remaining manual PWA checks are pending.
 
 See [Rust source authoring](../../docs/custom-marketplaces.md#rust-source-plugins-in-development) for host prerequisites,
 SDK checkout and isolated compilation checks. With the development SDK checkout:

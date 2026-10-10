@@ -7,13 +7,13 @@ Plugins. They browse and install its releases through the Plugins interface.
 
 ## Supported today
 
-Plugin API 1 supports skills. API 2 also supports a fixed set of platform tool
-groups. Those tool groups select built-in behavior and are transitional; they do
-not let authors supply new executable handlers. The API 3 prototype accepts Rust
-source with public SDK tool handlers, context hooks and durable events. Hosts
-compile source on installation; catalog artifact URLs are not used. MCP, language
-and UI contributions remain future work. Full production deployment is still in
-progress; executable first-party releases are not listed yet.
+Plugin API 1 supports skills. API 3 accepts Rust source with public SDK tool
+handlers, context hooks and durable events. Hosts compile source on installation;
+catalog artifact URLs are not used. Updated hosts retain historical API 2
+platform tool-group receipts for migration but require executable updates before
+activation. MCP, language and UI contributions remain future work. Executable
+first-party releases are in the candidate catalog and compiled default bundle;
+official main integration and the remaining manual PWA checks are pending.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative
@@ -180,7 +180,7 @@ another plugin's namespace. The separate `collections` grant enables general CRU
 on documented app-visible project collections. The prototype's `memories`
 adapter preserves existing UI data; it enforces ownership, the user's opt-out,
 schema bounds and revision checks. Plugin code owns search, ranking, naming and
-formatting. See the unlisted [Memory source reference](../plugins/memory/README.md).
+formatting. See the [Memory source reference](../plugins/memory/README.md).
 The `skills` collection preserves existing UI skill IDs, revisions, resources and
 metadata. Writes accept `{"draft": {...}}`, using the documented `SkillDraft`
 schema; reads return `{"draft": {...}, "origin": ...}`. `origin` is either null
@@ -193,7 +193,7 @@ Skills mutations admit the existing 128 KiB data schema with up to 1 MiB of JSON
 payload for escaping; private records retain their 64 KiB value limit.
 Schema validation and revision conflicts are persistence
 constraints; authoring, search and prompt policy belong in plugin source.
-See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/README.md)
+See the [Skill Authoring source reference](../plugins/skill-authoring/README.md)
 for tool handlers, draft validation, preserved update fields, resource paging and
 bounded context catalogs implemented entirely through the public SDK.
 
@@ -525,5 +525,4 @@ of `[x, y]` pairs. A rectangle’s `rx` is optional. Coordinates are bounded to
 properties and element types are rejected. Paths accept only SVG drawing commands
 and numeric characters. Icons need no runtime capability or download: the app
 creates the markup from typed metadata, with sizing and colors controlled by its
-design system. First-party icon publication remains in progress alongside the
-executable rollout.
+design system. The first-party candidate releases each provide a distinct drawing.

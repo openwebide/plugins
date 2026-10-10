@@ -1,6 +1,6 @@
 # Scheduling
 
-The unlisted API 3 Rust source owns scheduled prompts and bounded follow-up checks.
+The API 3 Rust source owns scheduled prompts and bounded follow-up checks.
 It uses only the public Open WebIDE SDK: scoped collections and records, clocks, one-shot
 jobs, raw prompt runs and bounded model completion. It does not call built-in
 Scheduling behavior or import application crates.
@@ -26,8 +26,8 @@ visits at most eight records per tick with a bounded host-call budget and a
 private persistent cursor; failing records do not starve later ones. A work-budget
 interruption preserves partial progress and resumes that record on the next tick.
 
-This migration is **not released in the live marketplace yet**. The catalog still
-pins the earlier API 2 platform switch. The source has native policy/workflow tests
+Version 0.2.1 is listed in the candidate catalog and included in the compiled
+default bundle. Official main integration remains pending. The source has native policy/workflow tests
 and an actual compiled-component contract against shared host storage in both
 project modes. Source creates SDK history bindings; the app projects live run
 progress and retains terminal snapshots after raw-run deletion. Production
@@ -42,7 +42,7 @@ Restarting during a streamed agent response records one interrupted result with
 the original message and does not replay the accepted prompt. With task history
 at quota, source journals a real preflight failure; bounded Rust reconciliation
 frees space and flushes that journal once through the public SDK.
-Complete recovery/failure verification, retention and browser default
-deployment remain in progress. Task and monitor UI mutations use declared SDK
-tools; deployed paired-host browser verification is still pending. Do not treat
-this draft as a completed install/run/update lifecycle.
+Current production checks also verify fresh defaults, catalog updates and
+configured naming followed by completed agent runs on both host transports.
+Task and monitor UI mutations use declared SDK tools. Manual browser checks for
+retention, quota recovery and legacy task adoption remain pending.

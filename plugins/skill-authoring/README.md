@@ -2,9 +2,10 @@
 
 Create, improve and manage reusable project skills.
 
-Version 0.2.1 is an unlisted Rust source implementation for the development SDK
-and plugin API 3. The marketplace retains the historical API 2 release until the
-full installation/run lifecycle and executable defaults are verified.
+Version 0.2.1 is an executable API 3 release in the candidate catalog and the
+compiled default bundle. Production checks verify CRUD, resources, context,
+preserved update fields and catalog installation through both host transports.
+Official main integration and the remaining manual PWA checks are pending.
 
 This plugin owns its six tool handlers: search and list pagination, instruction
 and resource paging, draft validation, preserving omitted fields when updating,
