@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Document automatic durable event delivery, lease-loss cancellation and at-least-once effects in the SDK prototype.
+
 - Document the SDK HTTP boundary: public and LAN services remain accessible, while Open WebIDE host control operations require their declared SDK capabilities.
 
 - Document the prototype SDK's durable job queue, version pinning, idempotency, leases, bounds and cleanup. Automatic background delivery and the executable Scheduling migration remain in progress.

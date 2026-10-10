@@ -213,10 +213,11 @@ list pages hold at most 64 jobs and 1 MiB. The host leases bounded delivery
 batches, renews active leases and rejects callbacks from cancelled or stale
 attempts. Disabled or removed plugins receive no new delivery claims.
 
-The queue, daemon RPC and SDK callbacks are implemented in the app prototype and
-verified through actual Rust/WASM execution. Automatic background delivery, run
-submission/completion, workspace primitives and full deployment verification
-remain in development. These foundations do not make the transitional
+The bridge prototype polls for due events and delivers them through the shared
+plugin executor, renewing leases during compilation and execution. Losing a lease
+cancels the active actor. Delivery is at least once, so plugin code must use stable
+keys and revision checks to make effects repeatable. Run submission/completion,
+workspace primitives and full deployment verification remain in development. These foundations do not make the transitional
 Scheduling catalog release an executable plugin.
 
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
