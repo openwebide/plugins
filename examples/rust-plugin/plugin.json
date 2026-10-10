@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "example",
+  "name": "echo",
+  "version": "0.1.0",
+  "displayName": "Echo",
+  "description": "Return a message using plugin-owned Rust code.",
+  "license": "MIT",
+  "readme": "README.md",
+  "compatibility": {
+    "pluginApi": 3
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "echo_plugin",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "tools": [
+      {
+        "name": "echo_message",
+        "description": "Return a message using plugin-owned Rust code.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      }
+    ]
+  }
+}

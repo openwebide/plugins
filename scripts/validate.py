@@ -178,6 +178,12 @@ def validate_package(root, checks=None):
         if name in names:
             raise Invalid(f"duplicate contributed skill name: {name}")
         names.add(name)
+    if "executable" in manifest:
+        for path in ("Cargo.toml", "Cargo.lock"):
+            package_path(root, path)
+        tools = manifest["contributions"]["tools"]
+        if len({tool["name"] for tool in tools}) != len(tools):
+            raise Invalid("duplicate executable tool name")
     if "readme" in manifest:
         package_path(root, manifest["readme"])
     return manifest
@@ -229,7 +235,7 @@ def validate_repository(root):
             categories = []
             if manifest["contributions"]["skills"]:
                 categories.append("skills")
-            if manifest["contributions"].get("toolGroups"):
+            if manifest["contributions"].get("toolGroups") or manifest["contributions"].get("tools"):
                 categories.append("tools")
             if sorted(listing["categories"]) != categories:
                 raise Invalid(f"catalog categories differ from local contributions: {manifest['name']}")

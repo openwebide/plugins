@@ -46,7 +46,8 @@
         "pluginApi": {
           "enum": [
             1,
-            2
+            2,
+            3
           ]
         }
       },
@@ -88,6 +89,48 @@
               "skill-authoring"
             ]
           }
+        },
+        "tools": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096,
+                "pattern": "\\S"
+              },
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "object"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "requires_approval": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "description",
+              "parameters",
+              "requires_approval"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
@@ -114,8 +157,56 @@
           "required": [
             "toolGroups"
           ]
+        },
+        {
+          "properties": {
+            "tools": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "tools"
+          ]
         }
       ]
+    },
+    "executable": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "const": "Cargo.toml"
+        },
+        "library": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "sdkVersion": {
+          "const": "0.1.0"
+        },
+        "capabilities": {
+          "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "http",
+              "records",
+              "jobs",
+              "workspace",
+              "clock"
+            ]
+          }
+        }
+      },
+      "required": [
+        "manifest",
+        "library",
+        "sdkVersion",
+        "capabilities"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -152,6 +243,55 @@
             "properties": {
               "pluginApi": {
                 "const": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 3
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "executable"
+        ],
+        "properties": {
+          "contributions": {
+            "required": [
+              "tools"
+            ],
+            "properties": {
+              "tools": {
+                "minItems": 1
+              },
+              "toolGroups": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "executable"
+          ]
+        },
+        "properties": {
+          "contributions": {
+            "properties": {
+              "tools": {
+                "maxItems": 0
               }
             }
           }

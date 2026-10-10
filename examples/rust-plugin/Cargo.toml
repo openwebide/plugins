@@ -1,0 +1,13 @@
+[package]
+name = "example-plugin"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "echo_plugin"
+crate-type = ["cdylib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"

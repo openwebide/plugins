@@ -46,6 +46,37 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(validate.validate_repository(ROOT), (5, 5))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
+    def test_rust_source_example_and_required_lockfile(self):
+        import shutil
+        package = self.root / "rust-plugin"
+        shutil.copytree(ROOT / "examples/rust-plugin", package)
+        self.assertEqual(validate.validate_package(package, self.checks)["compatibility"]["pluginApi"], 3)
+        (package / "Cargo.lock").unlink()
+        with self.assertRaises(validate.Invalid):
+            validate.validate_package(package, self.checks)
+
+    def test_executable_contract_rejects_unsupported_sdk_capabilities_and_duplicate_tools(self):
+        import shutil
+        package = self.root / "rust-plugin"
+        shutil.copytree(ROOT / "examples/rust-plugin", package)
+        original = json.loads((package / "plugin.json").read_text())
+        for key, value in (("sdkVersion", "9.0.0"), ("manifest", "../Cargo.toml"),
+                           ("library", "../escape"), ("capabilities", ["built_in_web"])):
+            with self.subTest(key=key):
+                manifest = copy.deepcopy(original)
+                manifest["executable"][key] = value
+                with self.assertRaises(validate.Invalid):
+                    validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest = copy.deepcopy(original)
+        manifest["contributions"]["tools"] *= 2
+        (package / "plugin.json").write_text(json.dumps(manifest))
+        with self.assertRaises(validate.Invalid):
+            validate.validate_package(package, self.checks)
+        manifest = copy.deepcopy(original)
+        manifest["compatibility"]["pluginApi"] = 2
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
     def test_unknown_contributions_and_api_are_rejected(self):
         for field in ("mcpServers", "languages", "panels", "hooks"):
             with self.subTest(field=field):
