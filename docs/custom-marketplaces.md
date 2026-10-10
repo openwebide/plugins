@@ -152,6 +152,14 @@ can retain those records, but a different marketplace source does not inherit
 another plugin's namespace. General shared collection, job and workspace
 primitives and full deployment verification remain in development.
 
+The prototype compiler uses the native macOS sandbox or bubblewrap for native
+Linux users. Root containers use the app's packaged compiler launcher, which
+drops privileges and requires fully enforced Landlock ABI 3. The default Docker
+security profile is sufficient. Dependencies are retrieved in an isolated fetch
+phase, then package build scripts and macros compile without network access.
+Sources and the SDK/toolchain remain read-only. These host requirements do not
+change the marketplace manifest or add an author-side artifact publishing step.
+
 An update that adds runtime capabilities requires explicit review, even under
 Automatic updates and even for a compatible version. Compilation alone does not
 activate that update. The previous installed version remains active until the
