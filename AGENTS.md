@@ -11,6 +11,11 @@ as working packages or add placeholder releases to the live catalog.
   HTML/CSS, client-side expressions or plugin WASM execution.
 - Support local and remote projects through the main app's shared feature facades
   and thin host adapters. Do not duplicate orchestration inside packages.
+- First-party executable packages must own their behavior and use the same public
+  SDK and general host capabilities as community packages. No built-in feature
+  proxies, identity-specific dispatch, extra privileges or built-in fallbacks.
+  Current tool-group packages are transitional switches, not completed behavior
+  migrations. Skill-only packages may supply instructions/resources alone.
 - First-party packages follow the same validation, capabilities and approval
   rules as community packages. Plugin instructions cannot expand permissions.
 - Keep manifests portable across Git hosts. Pin package versions and runtime

@@ -38,10 +38,13 @@ Existing and future projects inherit them; Disable saves a project opt-out.
 Updates preserve opt-outs and keep active runs on their pinned content. Notify
 is the default update policy, with individual updates and Update All in the app.
 Automatic compatible updates and Off are per-plugin preferences. Catalog checks
-run while the app is open; unattended host checks and fresh-install defaults are
-still being designed.
+run while the app is open; unattended host checks remain planned. The app bundles
+a pinned default subset: Web, Project Memory, Scheduling and Skill Authoring.
 
 ## Marketplace model
+
+See [Set up a custom marketplace](docs/custom-marketplaces.md) for repository
+layout, immutable release publishing, validation and connection instructions.
 
 The official marketplace uses the same format as custom sources. A source is a
 Git repository URL, ref and `marketplace.json` path; it need not be hosted on
@@ -64,7 +67,9 @@ implicitly install or enable packages.
 | [Scheduling](plugins/scheduling/README.md) | Scheduled prompts and monitoring tools |
 | [Skill Authoring](plugins/skill-authoring/README.md) | Authoring/evaluation skill and skill management tools |
 
-Tool groups use the existing shared host/platform service handlers and normal
-approvals. File editing, shell execution, git and task coordination remain core.
+Tool groups are transitional feature switches using existing shared platform
+handlers and normal approvals, not completed migrations of executable behavior.
+Future first-party executable plugins must own their implementation and use the
+same public SDK and host interfaces as community plugins. File editing, shell execution, git and task coordination remain core.
 User-created skills remain independent project data. The marketplace does not
 choose which plugins should be installed on fresh accounts.

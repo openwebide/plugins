@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Document custom marketplace setup, immutable publishing and validation; distinguish
+  the supported format from the planned Rust SDK/WASM artifact flow and require
+  first-party executable plugins to own their behavior through the public contract.
+
 - Publish the four API 2 plugins and PR Review 0.1.1 with immutable source pins in the Open WebIDE marketplace.
 
 - Add plugin API 2 platform tool groups and first-party Web, Project Memory, Scheduling and Skill Authoring plugins.
