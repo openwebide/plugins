@@ -17,10 +17,14 @@ Memory switch. It does not implement the plugin's search or context policy.
 
 The context hook reads stored facts as data and emits bounded JSON excerpts.
 When Memory is disabled it contributes no prompt and disables its own tools.
-Context hooks cannot mutate collections. The development host runs them through
+Context hooks cannot mutate collections or request model completions. The development host runs them through
 shared planning before selecting model tools in both local and remote sessions,
-including when model tools are disabled. Plugin-owned model-assisted naming and
-full lifecycle verification remain in progress; this release is not yet the
+including when model tools are disabled. The separate `completion` capability
+lets this source own its automatic-title prompt and result validation, trying the
+configured fast model, then primary, then a content-derived fallback. Manual
+titles skip model requests, and project opt-out prevents naming requests.
+Existing UI automatic naming integration and full lifecycle verification remain
+in progress; this release is not yet the
 installed default.
 
 See [Rust source authoring](../../docs/custom-marketplaces.md#rust-source-plugins-in-development) for host prerequisites,

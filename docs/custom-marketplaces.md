@@ -144,7 +144,7 @@ published, follow [the Rust example's checkout instructions](../examples/rust-pl
 to use it. Host compilation supplies its embedded SDK; installed plugins do not
 reach into the app's implementation crates.
 
-The public `http`, `clock` and private `records` primitives are available in the
+The public `http`, `clock`, `completion` and private `records` primitives are available in the
 prototype. Private records are scoped by authenticated account, project and
 plugin source, with bounded pages and revision checks. The host attaches authority
 outside plugin code; plugins cannot supply account or project IDs. Source updates
@@ -170,6 +170,17 @@ See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/R
 for tool handlers, draft validation, preserved update fields, resource paging and
 bounded context catalogs implemented entirely through the public SDK.
 Job/workspace primitives and full deployment verification remain in development.
+
+The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
+`prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
+`complete` function returns a `CompletionResponse` containing `text`. The host
+uses the session's configured model and supplies its credentials; a plugin cannot
+select a server ID, URL or account. Inputs are bounded to 32 KiB, requested outputs
+to 1–1024 tokens and returned text to 16 KiB. The host enforces model context and
+output limits, disables tools and uses a 30-second completion deadline. Missing
+fast configuration is an error. Plugins choose prompts, result validation and
+fallback behavior; the Memory reference tries fast, then primary, then its own
+content-derived title. Context hooks cannot call completion.
 
 The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
 optional prompt text and a list of the plugin's own tools to disable. The default

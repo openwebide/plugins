@@ -140,7 +140,8 @@
     "library": "memory_plugin",
     "sdkVersion": "0.1.0",
     "capabilities": [
-      "collections"
+      "collections",
+      "completion"
     ]
   }
 }

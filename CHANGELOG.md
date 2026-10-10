@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add the public completion capability to the unlisted Memory Rust source. The plugin owns naming prompts, fast/primary fallback, title validation and content-derived fallback; manual titles and project opt-out skip model calls.
+
 - Add an unlisted API 3 Rust Skill Authoring source implementation that owns its six tool handlers, validation, resource paging, update preservation, authoring workflow and read-only context catalog through the public SDK. Full deployment and executable default migration remain in progress.
 
 - Document custom marketplace setup, immutable publishing and validation; distinguish
