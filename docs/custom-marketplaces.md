@@ -169,7 +169,48 @@ constraints; authoring, search and prompt policy belong in plugin source.
 See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/README.md)
 for tool handlers, draft validation, preserved update fields, resource paging and
 bounded context catalogs implemented entirely through the public SDK.
-Job/workspace primitives and full deployment verification remain in development.
+
+The prototype `jobs` capability supplies a durable one-shot event queue. Declare
+`jobs` in the executable capabilities and the event name in `contributions.events`
+and `Plugin::events()`. Plugin source computes due times, recurrence and event
+behavior. The host supplies storage, immutable program snapshots and leases.
+
+```rust
+let queued: serde_json::Value = openwebide_plugin_sdk::jobs(&serde_json::json!({
+    "action": "schedule",
+    "key": "task-42-occurrence-1",
+    "due_at": 1900000000,
+    "expires_at": null,
+    "event": "task_due",
+    "payload": { "task_id": 42 }
+}))?;
+```
+
+Times are Unix seconds. New jobs require a current or future due time, and an
+optional expiry strictly after it. Keys contain 1–128 letters, numbers or `-_.:`.
+An identical key/time/event/payload/source request returns the original job,
+including after its due time; changing those values under the same key is a
+conflict. Account, project, plugin identity and execution host are attached by
+the host and cannot be supplied in this request. Jobs keep the creating source
+version and model context across plugin updates. Chained jobs retain the
+originating conversation; background callback grants receive neither chat
+authority nor a manual-editing override.
+
+Operations `list` (optional `after` cursor), `read` (`id`), `cancel` (`id`,
+`revision`) and `delete` (`id`, `revision`) return `{jobs, next_after}`. States are
+`pending`, `leased`, `completed`, `failed`, `cancelled` and `expired`. Cancel
+accepts pending/leased jobs. Delete accepts only terminal jobs and also removes
+their retained idempotency keys. Each namespace/project holds at most 1,000 jobs;
+plugins own retention policy. Payloads are limited to 64 KiB of serialized JSON;
+list pages hold at most 64 jobs and 1 MiB. The host leases bounded delivery
+batches, renews active leases and rejects callbacks from cancelled or stale
+attempts. Disabled or removed plugins receive no new delivery claims.
+
+The queue, daemon RPC and SDK callbacks are implemented in the app prototype and
+verified through actual Rust/WASM execution. Automatic background delivery, run
+submission/completion, workspace primitives and full deployment verification
+remain in development. These foundations do not make the transitional
+Scheduling catalog release an executable plugin.
 
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
@@ -196,7 +237,7 @@ The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
 optional prompt text and a list of the plugin's own tools to disable. The default
 implementation contributes nothing. Context requests carry a byte budget (at
 most 8 KiB). The runtime permits only clock calls and list/read operations on
-private records or shared collections; mutations are denied before reaching the
+private records, shared collections or durable jobs; mutations are denied before reaching the
 host. Plugins cannot disable another plugin's tools. This hook is supported in
 shared local and remote run planning before model tool selection, including when
 model tools are disabled. Full deployment verification remains in development.
