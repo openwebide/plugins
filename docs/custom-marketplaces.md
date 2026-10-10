@@ -112,19 +112,25 @@ executes plugin code on a phone or in the browser. Installs are enabled across
 projects by default, with per-project opt-outs. Update notifications default to
 Notify; publishing a release does not replace that pinned installation silently.
 
-## Planned Rust SDK and WASM publishing
+## Rust source plugins (in development)
 
 The intended executable contract lets authors implement behavior in Rust using a
-public, versioned SDK and host interfaces. Publisher CI compiles the implementation
-into a WASM component and publishes an artifact with a checksum, pinned source
-commit and host API compatibility requirements. The bridge validates and runs it
-using granted general host capabilities.
+public, versioned SDK and host interfaces. A marketplace release pins the source
+commit and directory containing plugin.json, Cargo.toml, Cargo.lock and Rust
+source. The execution host compiles that source into a WASM component on install,
+using the declared SDK and a pinned toolchain. Compilation is isolated from host
+files and network access after dependency retrieval. The bridge validates exported
+tools and runs the component using granted general host capabilities.
 
-Artifact hosting may use forge release attachments, repository files or another
-HTTPS service. The artifact fields, SDK crate and reusable build workflow are
-still to be defined; do not add speculative fields to today's manifests/catalogs,
-which reject unsupported contributions. Source packages continue to belong to
-the marketplace repository.
+Publish source rather than adding artifact URLs to marketplace.json. Packages
+continue to belong to the marketplace repository; the catalog uses the same
+immutable commit/directory release shape as skills. API 3's executable block
+declares Cargo.toml, the library name, SDK version and capabilities; contributions
+declares the exported tools. See examples/rust-plugin for an unlisted authoring
+example. Publisher CI should compile and validate source builds before publishing.
+The host caches compiled output by source, SDK and toolchain; a failed build must
+preserve the working installation. Full installation/runtime support is still in
+development and the example is not an official marketplace release.
 
 The proposed SDK home is the Open WebIDE app's Rust workspace, published as a
 versioned crate with versioned component interface definitions. Plugins consume
