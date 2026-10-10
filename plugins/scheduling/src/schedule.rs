@@ -101,7 +101,16 @@ impl Draft {
         {
             return Err("Choose a valid server and model for this task.".into());
         }
-        self.schedule.validate(now)
+        if let Schedule::Once { at } = self.schedule
+            && at < 0
+        {
+            return Err("Invalid schedule timestamp".into());
+        }
+        if self.enabled {
+            self.schedule.validate(now)
+        } else {
+            self.schedule.next_after(now).map(|_| ())
+        }
     }
 }
 

@@ -273,6 +273,17 @@ tokens; `updated_at` is the activity timestamp. Rank/filter/select targets in
 plugin code. Origin-bound jobs can discover their retained origin; project events
 have none. These metadata reads do not grant chat or queue-consumption authority.
 
+Read-only `configuration` metadata uses the same collection operations. Record 1
+contains account preferences `primary`, `fast`, `default_connection` and shared
+`servers: [{id, model, enabled}]`. It contains no server names, URLs, credentials
+or unrelated settings. List from cursor 0 or read ID 1 obtains the current snapshot;
+later list cursors are empty. Revisions are opaque positive content tokens and
+`updated_at` is 0. The value is bounded to 64 KiB and 256 servers. Source owns
+default-model precedence and can read it at delivery time instead of using a
+creating conversation's older model pin. Conversation `model_override` metadata
+uses the app's `{connection_id, model}` shape; raw run `model` uses
+`{server_id, model}`, so source must translate those fields.
+
 The prototype `runs` grant supports general durable prompt submissions:
 
 ```rust

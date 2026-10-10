@@ -9,10 +9,18 @@ pub struct Conversation {
 }
 #[derive(Clone, Debug, Deserialize)]
 pub struct Metadata {
+    #[serde(default)]
+    pub origin: bool,
     pub archived: bool,
     pub last_activity: i64,
-    pub model_override: Option<ModelSelection>,
+    pub model_override: Option<SessionModel>,
     pub connection: Option<Connection>,
+}
+#[derive(Clone, Debug, Deserialize)]
+pub struct SessionModel {
+    #[serde(alias = "server_id")]
+    pub connection_id: i64,
+    pub model: String,
 }
 #[derive(Clone, Debug, Deserialize)]
 pub struct Connection {
@@ -58,18 +66,25 @@ pub fn select(
         |row| Target::Session { id: row.id },
     );
     let configured = conversation.and_then(|row| {
-        row.value.model_override.clone().or_else(|| {
-            row.value
-                .connection
-                .as_ref()
-                .filter(|connection| connection.enabled)
-                .and_then(|connection| {
-                    connection.model.as_ref().map(|model| ModelSelection {
-                        server_id: connection.id,
-                        model: model.clone(),
+        row.value
+            .model_override
+            .as_ref()
+            .map(|selection| ModelSelection {
+                server_id: selection.connection_id,
+                model: selection.model.clone(),
+            })
+            .or_else(|| {
+                row.value
+                    .connection
+                    .as_ref()
+                    .filter(|connection| connection.enabled)
+                    .and_then(|connection| {
+                        connection.model.as_ref().map(|model| ModelSelection {
+                            server_id: connection.id,
+                            model: model.clone(),
+                        })
                     })
-                })
-        })
+            })
     });
     let model = draft
         .model
@@ -113,6 +128,7 @@ mod tests {
         Conversation {
             id,
             value: Metadata {
+                origin: false,
                 archived,
                 last_activity: activity,
                 model_override: None,
@@ -170,7 +186,10 @@ mod tests {
             select(&task, &rows, None).unwrap().model,
             model(9, "configured")
         );
-        rows[0].value.model_override = Some(model(8, "override"));
+        rows[0].value.model_override = Some(SessionModel {
+            connection_id: 8,
+            model: "override".into(),
+        });
         assert_eq!(
             select(&task, &rows, None).unwrap().model,
             model(8, "override")
@@ -205,5 +224,24 @@ mod tests {
         assert_eq!(selection.model, model(5, "new default"));
         task.model = Some(model(1, "\n"));
         assert!(select(&task, &rows, None).is_err());
+    }
+
+    #[test]
+    fn sdk_metadata_decodes_the_apps_connection_id_override_shape() {
+        let rows: Vec<Conversation> = openwebide_plugin_sdk::serde_json::from_value(
+            openwebide_plugin_sdk::serde_json::json!([{"id":1,"revision":2,"value":{
+                "origin":true,"archived":false,"last_activity":10,
+                "model_override":{"connection_id":8,"model":"session override"},
+                "connection":{"id":9,"model":"server default","enabled":true}
+            }}]),
+        )
+        .unwrap();
+        assert!(rows[0].value.origin);
+        assert_eq!(
+            select(&draft(SessionTarget::Existing), &rows, None)
+                .unwrap()
+                .model,
+            model(8, "session override")
+        );
     }
 }

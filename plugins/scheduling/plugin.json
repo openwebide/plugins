@@ -3,18 +3,366 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "scheduling",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Scheduling",
   "description": "Schedule prompts and monitor follow-up checks on the host.",
   "license": "MIT",
   "readme": "README.md",
   "compatibility": {
-    "pluginApi": 2
+    "pluginApi": 3
   },
   "contributions": {
     "skills": [],
-    "toolGroups": [
-      "scheduling"
+    "tools": [
+      {
+        "name": "schedule_list",
+        "description": "List saved scheduled prompts in this project or projectless scope.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "schedule_create",
+        "description": "Schedule a future prompt with normal approvals. Omit title for automatic naming. Existing defaults to this conversation; new creates one per occurrence; latest selects the most recently active unarchived conversation when due.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "draft": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "auto_title": {
+                  "type": "boolean"
+                },
+                "prompt": {
+                  "type": "string",
+                  "maxLength": 32768
+                },
+                "session_target": {
+                  "type": "string",
+                  "enum": [
+                    "existing",
+                    "new",
+                    "latest"
+                  ]
+                },
+                "session_id": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "model": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "server_id": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "model": {
+                          "type": "string",
+                          "maxLength": 256
+                        }
+                      },
+                      "required": [
+                        "server_id",
+                        "model"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "schedule": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "kind": {
+                          "const": "once"
+                        },
+                        "at": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "kind": {
+                          "const": "cron"
+                        },
+                        "expression": {
+                          "type": "string",
+                          "maxLength": 128
+                        },
+                        "timezone": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "expression",
+                        "timezone"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "prompt",
+                "schedule",
+                "enabled"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "draft"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "schedule_update",
+        "description": "Replace a saved scheduled prompt using its current revision. Set enabled false to pause. Changes invalidate prior timers and cancel pending work.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "draft": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "auto_title": {
+                  "type": "boolean"
+                },
+                "prompt": {
+                  "type": "string",
+                  "maxLength": 32768
+                },
+                "session_target": {
+                  "type": "string",
+                  "enum": [
+                    "existing",
+                    "new",
+                    "latest"
+                  ]
+                },
+                "session_id": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "model": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "server_id": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "model": {
+                          "type": "string",
+                          "maxLength": 256
+                        }
+                      },
+                      "required": [
+                        "server_id",
+                        "model"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "schedule": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "kind": {
+                          "const": "once"
+                        },
+                        "at": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "kind": {
+                          "const": "cron"
+                        },
+                        "expression": {
+                          "type": "string",
+                          "maxLength": 128
+                        },
+                        "timezone": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "expression",
+                        "timezone"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "prompt",
+                "schedule",
+                "enabled"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "draft"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "schedule_delete",
+        "description": "Remove a saved scheduled prompt using its current revision and cancel remaining work. Delivered content remains in chat.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
+        "name": "monitor",
+        "description": "Start, list or cancel bounded follow-up checks in a conversation. Checks stop on failure, cancellation, exhaustion or 24-hour expiry. Start requires prompt and delay_seconds. Cancel requires id and revision.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "start",
+                "list",
+                "cancel"
+              ]
+            },
+            "prompt": {
+              "type": "string",
+              "maxLength": 32768
+            },
+            "delay_seconds": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 86399
+            },
+            "interval_seconds": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 86400,
+              "default": 600
+            },
+            "max_checks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 24,
+              "default": 1
+            },
+            "session_id": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      }
+    ],
+    "events": [
+      "task_due",
+      "task_completed"
+    ]
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "scheduling_plugin",
+    "sdkVersion": "0.1.0",
+    "capabilities": [
+      "clock",
+      "collections",
+      "jobs",
+      "runs",
+      "completion"
     ]
   }
 }
