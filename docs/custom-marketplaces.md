@@ -253,9 +253,32 @@ The bridge prototype dispatches raw submissions through the shared agent runner
 on server and paired hosts. Busy conversations release unconsumed claims; status
 reporting retries transient failures while leases stay alive. Lease loss or
 shutdown cancels owned preparation/execution. Reports retain bounded raw output,
-without interpreting outcomes. Durable completion callbacks remain unfinished,
-as does executable Scheduling. Plugins supply timing, prompts, recurrence and
-result interpretation through these general primitives.
+without interpreting outcomes. Submit an optional completion event with your
+prompt:
+
+```rust
+let submitted: serde_json::Value = openwebide_plugin_sdk::runs(&serde_json::json!({
+    "action": "submit",
+    "key": "build-check:42",
+    "prompt": "Check the build and report the result.",
+    "target": {"kind": "origin"},
+    "completion": {"event": "build_finished", "payload": {"check": 42}}
+}))?;
+```
+
+Declare `build_finished` in `contributions.events` and `Plugin::events()`. Its
+`EventInput.payload` will contain `{run, data}`: `run` is the terminal run record
+with bounded raw output in `detail`, and `data` is your submitted payload (at most
+64 KiB). Submission reserves queue capacity; a full queue rolls back the prompt.
+The reserved event is `waiting` until a terminal status commits, including queued
+cancellation, preflight failure or interrupted-host recovery. It becomes `pending`
+in that same transaction. The event retains the submitting plugin version across
+updates and survives subsequent run-history deletion. Existing leased event
+delivery and disablement rules apply; use stable keys/revision checks because
+callbacks can execute again after a lost acknowledgement. A cancelled event stays
+cancelled when its run finishes. Deleted origin conversations do not grant new
+background authority. Executable Scheduling remains unfinished; plugins supply
+timing, prompts, recurrence and result interpretation through these primitives.
 
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
