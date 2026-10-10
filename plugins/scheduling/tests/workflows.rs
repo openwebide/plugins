@@ -14,7 +14,9 @@ struct Fixture {
     config: Value,
     conversations: Vec<Value>,
     fail_arm: bool,
+    fail_update: Option<i64>,
     history: BTreeMap<String, Value>,
+    recovery: Option<Value>,
 }
 impl Fixture {
     fn new() -> Self {
@@ -50,6 +52,27 @@ impl Host for Fixture {
         match capability {
             "clock" => Ok(json!({"unix_seconds":self.now})),
             "completion" => Err("Model is unavailable".into()),
+            "records" => {
+                assert_eq!(input["collection"], "recovery");
+                let op = &input["operation"];
+                match op["action"].as_str().unwrap() {
+                    "list" => (),
+                    "create" => {
+                        self.recovery = Some(json!({"id":1,"revision":1,"value":op["value"]}))
+                    }
+                    "update" => {
+                        let old = self.recovery.as_ref().ok_or("Missing recovery record")?;
+                        if old["revision"] != op["revision"] {
+                            return Err("Recovery conflict".into());
+                        }
+                        self.recovery = Some(
+                            json!({"id":1,"revision":old["revision"].as_i64().unwrap()+1,"value":op["value"]}),
+                        );
+                    }
+                    _ => panic!("Unexpected recovery operation"),
+                }
+                Ok(json!({"records":self.recovery.iter().collect::<Vec<_>>(),"next":null}))
+            }
             "collections" => {
                 let operation = &input["operation"];
                 let action = operation["action"].as_str().unwrap();
@@ -82,6 +105,9 @@ impl Host for Fixture {
                                 selected = Some(id);
                             }
                             "update" | "delete" => {
+                                if action == "update" && self.fail_update == Some(id) {
+                                    return Err("Revision conflict".into());
+                                }
                                 let current = self.tasks.get(&id).ok_or("Missing task")?;
                                 if current["revision"] != operation["revision"] {
                                     return Err("Revision conflict".into());
@@ -146,6 +172,15 @@ impl Host for Fixture {
                     "list" => {
                         Ok(json!({field:records.values().collect::<Vec<_>>(),"next_after":null}))
                     }
+                    "delete" => {
+                        let id = input["id"].as_i64().unwrap();
+                        let record = records.get(&id).ok_or("Missing work")?;
+                        if record["revision"] != input["revision"] {
+                            return Err("Revision conflict".into());
+                        }
+                        records.remove(&id);
+                        Ok(json!({field:[],"next_after":null}))
+                    }
                     "cancel" => {
                         let record = records
                             .get_mut(&input["id"].as_i64().unwrap())
@@ -173,6 +208,222 @@ fn draft(schedule: Schedule, target: SessionTarget) -> Draft {
         model: None,
     }
 }
+#[test]
+fn reconciliation_bounds_host_calls_and_rotates_past_permanent_failures() {
+    let mut host = Fixture::new();
+    for id in 1..=20 {
+        host.tasks.insert(
+            id,
+            json!({"id":id,"revision":1,"value":{
+                "draft":draft(Schedule::Once {at:105},SessionTarget::Existing),
+                "next_run":105,"monitor":null,"state":null
+            }}),
+        );
+    }
+    host.fail_update = Some(1);
+    for _ in 0..3 {
+        let before = host.calls.len();
+        service::reconcile(&mut host).unwrap();
+        assert!(host.calls.len() - before <= 128);
+    }
+    assert_eq!(host.jobs.len(), 19);
+    assert!(host.tasks[&1]["value"]["state"].is_null());
+    host.fail_update = None;
+    for _ in 0..3 {
+        let before = host.calls.len();
+        assert!(service::reconcile(&mut host).unwrap().ok);
+        assert!(host.calls.len() - before <= 128);
+    }
+    assert_eq!(host.jobs.len(), 20);
+}
+
+#[test]
+fn exhausted_recovery_budget_retains_cursor_and_cancellation_makes_progress() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.tasks.get_mut(&1).unwrap()["value"]["draft"]["enabled"] = json!(false);
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["generation"] = json!(2);
+    for id in 2..=250 {
+        host.jobs.insert(
+            id,
+            json!({"id":id,"revision":1,"state":"pending","key":format!("task:1:1:{id}")}),
+        );
+    }
+    for _ in 0..3 {
+        let before = host.calls.len();
+        service::reconcile(&mut host).unwrap();
+        assert!(host.calls.len() - before <= 128);
+    }
+    assert!(host.jobs.values().all(|job| job["state"] == "cancelled"));
+    assert_eq!(host.recovery.as_ref().unwrap()["value"]["after"], 1);
+}
+
+#[test]
+fn reconciliation_retries_each_record_independently_and_finishes_interrupted_deletion() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.create(draft(Schedule::Once { at: 110 }, SessionTarget::Existing));
+    for row in host.tasks.values_mut() {
+        row["value"]["state"] = Value::Null;
+    }
+    host.fail_update = Some(1);
+    assert!(!service::reconcile(&mut host).unwrap().ok);
+    assert!(host.tasks[&1]["value"]["state"].is_null());
+    assert_eq!(
+        host.tasks[&2]["value"]["state"]["source_version"],
+        env!("CARGO_PKG_VERSION")
+    );
+    host.fail_update = None;
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    // Actor dropped after disabling the task and persisting deletion intent.
+    host.tasks.get_mut(&1).unwrap()["value"]["draft"]["enabled"] = json!(false);
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["deleting"] = json!(true);
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert!(!host.tasks.contains_key(&1));
+    assert!(host.tasks.contains_key(&2));
+}
+
+#[test]
+fn reconciliation_expires_monitors_and_updated_checks_keep_the_original_budget() {
+    let mut host = Fixture::new();
+    service::execute(&mut host,"monitor",json!({"action":"start","prompt":"Check","delay_seconds":5,"interval_seconds":10,"max_checks":2})).unwrap();
+    host.now = 105;
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    let expiry = host.tasks[&1]["value"]["monitor"]["expires_at"].clone();
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["source_version"] = json!("previous");
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["monitor"]["remaining"], 1);
+    assert_eq!(host.tasks[&1]["value"]["monitor"]["expires_at"], expiry);
+    assert_eq!(host.next(), Some(115));
+    host.now = expiry.as_i64().unwrap();
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["draft"]["enabled"], false);
+    assert_eq!(host.next(), None);
+    assert_eq!(host.runs.len(), 1);
+}
+
+#[test]
+fn reconciliation_rearms_orphaned_overdue_and_failed_occurrences_without_duplicate_runs() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    // Actor dropped after saving the task but before arming its timer.
+    host.jobs.clear();
+    host.now = 110;
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.jobs.len(), 1);
+    assert_eq!(host.jobs[&1]["request"]["due_at"], 105);
+    // A terminal failed due handler is retried by source rather than stuck under its key.
+    host.jobs.get_mut(&1).unwrap()["state"] = json!("failed");
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.jobs.len(), 1);
+    assert_eq!(host.jobs[&1]["state"], "pending");
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    // Actor dropped after submitting its run, before advancing the task or recording history.
+    host.tasks.get_mut(&1).unwrap()["value"]["next_run"] = json!(105);
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["pending"] = json!([]);
+    host.history.clear();
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.next(), None);
+    assert_eq!(host.history.len(), 1);
+    assert_eq!(
+        host.tasks[&1]["value"]["state"]["pending"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.runs.len(), 1);
+}
+
+#[test]
+fn reconciliation_adopts_legacy_records_and_updates_generation_before_old_work_is_cancelled() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.tasks.get_mut(&1).unwrap()["value"]["state"] = Value::Null;
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["state"]["generation"], 1);
+    assert_eq!(
+        host.tasks[&1]["value"]["state"]["source_version"],
+        env!("CARGO_PKG_VERSION")
+    );
+    host.now = 105;
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    host.tasks.get_mut(&1).unwrap()["value"]["next_run"] = json!(120);
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["source_version"] = json!("previous source");
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["state"]["generation"], 2);
+    assert_eq!(host.runs[&1]["state"], "cancelled");
+    assert!(
+        host.jobs
+            .values()
+            .any(|job| job["key"] == "task:1:2:120" && job["state"] == "pending")
+    );
+    let generations = host
+        .calls
+        .iter()
+        .filter(|(capability, request)| {
+            capability == "collections" && request["operation"]["action"] == "update"
+        })
+        .count();
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["state"]["generation"], 2);
+    assert_eq!(
+        host.calls
+            .iter()
+            .filter(|(capability, request)| capability == "collections"
+                && request["operation"]["action"] == "update")
+            .count(),
+        generations
+    );
+}
+
+#[test]
+fn reconciliation_recovers_terminal_callbacks_idempotently() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    host.now = 105;
+    service::due(
+        &mut host,
+        Due {
+            task_id: 1,
+            generation: 1,
+            due_at: 105,
+        },
+    )
+    .unwrap();
+    host.runs.get_mut(&1).unwrap()["state"] = json!("completed");
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["value"]["state"]["last_result"]["id"], 1);
+    let revision = host.tasks[&1]["revision"].clone();
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.tasks[&1]["revision"], revision);
+}
+
 #[test]
 fn create_owns_origin_title_due_job_and_rolls_back_if_arm_fails() {
     let mut host = Fixture::new();

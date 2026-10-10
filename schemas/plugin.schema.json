@@ -142,6 +142,27 @@
             "maxLength": 64,
             "pattern": "^[a-z0-9_]+$"
           }
+        },
+        "background": {
+          "type": "object",
+          "properties": {
+            "event": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[a-z0-9_]+$"
+            },
+            "intervalSeconds": {
+              "type": "integer",
+              "minimum": 60,
+              "maximum": 86400
+            }
+          },
+          "required": [
+            "event",
+            "intervalSeconds"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [

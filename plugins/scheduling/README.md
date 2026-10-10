@@ -1,7 +1,7 @@
 # Scheduling
 
 The unlisted API 3 Rust source owns scheduled prompts and bounded follow-up checks.
-It uses only the public Open WebIDE SDK: scoped collections, clocks, one-shot
+It uses only the public Open WebIDE SDK: scoped collections and records, clocks, one-shot
 jobs, raw prompt runs and bounded model completion. It does not call built-in
 Scheduling behavior or import application crates.
 
@@ -12,12 +12,21 @@ selects conversations/models at delivery time, cancels prior work after edits an
 interprets monitor results. Declared `task_due` and `task_completed` events use
 revision-guarded raw submissions. Saved work uses project-scoped events; monitor
 records are anchored to their owned conversation and expire within 24 hours.
+A declared one-minute `reconcile` background event adopts idle legacy records,
+rebuilds missing/failed timers, repairs run/history bookkeeping and terminal
+results, completes interrupted deletions and invalidates old work after source
+version changes. Interrupted monitor checks still consume their original finite
+budget and retain their original expiry. Repairs use current revisions; a racing
+edit or unavailable host operation is retried on a later tick. Reconciliation
+visits at most eight records per tick with a bounded host-call budget and a
+private persistent cursor; failing records do not starve later ones. A work-budget
+interruption preserves partial progress and resumes that record on the next tick.
 
 This migration is **not released in the live marketplace yet**. The catalog still
 pins the earlier API 2 platform switch. The source has native policy/workflow tests
 and an actual compiled-component contract against shared host storage in both
 project modes. Source creates SDK history bindings; the app projects live run
 progress and retains terminal snapshots after raw-run deletion. Production
-installation, crash recovery, UI mutation integration, retention and default
+installation, complete recovery/failure verification, UI mutation integration, retention and default
 deployment remain in progress. Do not treat
 this draft as a completed install/run/update lifecycle.

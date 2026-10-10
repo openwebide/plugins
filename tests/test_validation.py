@@ -85,6 +85,30 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
+    def test_background_events_require_jobs_declared_exports_and_bounded_intervals(self):
+        import shutil
+        package = self.root / "background"
+        shutil.copytree(ROOT / "examples/rust-plugin", package)
+        original = json.loads((package / "plugin.json").read_text())
+        original["contributions"]["events"] = ["repair"]
+        original["contributions"]["background"] = {"event": "repair", "intervalSeconds": 60}
+        original["executable"]["capabilities"] = ["jobs"]
+        (package / "plugin.json").write_text(json.dumps(original))
+        validate.validate_package(package, self.checks)
+        for interval in (0, 59, 86401, 60.5):
+            invalid = copy.deepcopy(original)
+            invalid["contributions"]["background"]["intervalSeconds"] = interval
+            (package / "plugin.json").write_text(json.dumps(invalid))
+            with self.assertRaises(validate.Invalid):
+                validate.validate_package(package, self.checks)
+        for event, capabilities in (("undeclared", ["jobs"]), ("repair", ["records"])):
+            invalid = copy.deepcopy(original)
+            invalid["contributions"]["background"]["event"] = event
+            invalid["executable"]["capabilities"] = capabilities
+            (package / "plugin.json").write_text(json.dumps(invalid))
+            with self.assertRaises(validate.Invalid):
+                validate.validate_package(package, self.checks)
+
     def test_event_only_rust_plugin_and_event_contract(self):
         import shutil
         package = self.root / "rust-events"

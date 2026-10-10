@@ -184,6 +184,12 @@ def validate_package(root, checks=None):
         tools = manifest["contributions"].get("tools", [])
         if len({tool["name"] for tool in tools}) != len(tools):
             raise Invalid("duplicate executable tool name")
+    background = manifest["contributions"].get("background")
+    if background is not None:
+        if background["event"] not in manifest["contributions"].get("events", []):
+            raise Invalid("background event must be declared")
+        if "jobs" not in manifest.get("executable", {}).get("capabilities", []):
+            raise Invalid("background event requires executable jobs capability")
     if "readme" in manifest:
         package_path(root, manifest["readme"])
     return manifest

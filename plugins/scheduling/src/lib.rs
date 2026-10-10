@@ -17,7 +17,11 @@ impl Plugin for SchedulingPlugin {
             .expect("declared tool schemas")
     }
     fn events() -> Vec<String> {
-        vec!["task_due".into(), "task_completed".into()]
+        vec![
+            "task_due".into(),
+            "task_completed".into(),
+            "reconcile".into(),
+        ]
     }
     fn execute(name: &str, arguments: Value) -> Result<Outcome, String> {
         service::execute(&mut service::SdkHost, name, arguments)
@@ -32,6 +36,7 @@ impl Plugin for SchedulingPlugin {
                 &mut service::SdkHost,
                 serde_json::from_value(input.payload).map_err(|error| error.to_string())?,
             ),
+            "reconcile" if input.payload.is_null() => service::reconcile(&mut service::SdkHost),
             _ => Err("Unknown scheduling event".into()),
         }
     }

@@ -219,6 +219,33 @@ list pages hold at most 64 jobs and 1 MiB. The host leases bounded delivery
 batches, renews active leases and rejects callbacks from cancelled or stale
 attempts. Disabled or removed plugins receive no new delivery claims.
 
+Plugins may declare one periodic background event for reconciliation:
+
+```json
+"background": {"event": "reconcile", "intervalSeconds": 60}
+```
+
+Place this under `contributions`, also list `reconcile` in `events`, and declare
+the `jobs` capability. The interval must be 60–86,400 seconds. The host queues an
+initial tick for enabled installations and new project bindings, then repeats
+using persisted deadlines. Ticks use the same compiled component, leased worker
+and capability grants as other events, with null payload, project scope and no
+conversation, manual-edit override or inherited model pin. Source can read current
+configuration and choose explicit models for raw runs.
+
+Ticks use the current enabled binding. Updating or disabling a binding revokes
+its previous background delivery; explicitly scheduled jobs keep their immutable
+source snapshots. Only one tick per subscription can be pending or leased, and
+host bookkeeping is cleaned between ticks. Recovery ticks have bounded capacity
+separate from the 1,000 user-job quota, so source can clean a full queue. The
+`background:` key prefix is reserved for host delivery. Delivery remains at least
+once; reconcile using idempotency keys and revisions. The host does not interpret
+plugin state, adopt tasks, calculate recurrence or invoke built-in features.
+
+One-shot job deadlines may already be overdue when submitted; the host delivers
+them when available. User-facing future-date rules and catch-up behavior belong
+to plugin source.
+
 The bridge prototype polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable

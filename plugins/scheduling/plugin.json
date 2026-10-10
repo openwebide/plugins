@@ -350,8 +350,13 @@
     ],
     "events": [
       "task_due",
-      "task_completed"
-    ]
+      "task_completed",
+      "reconcile"
+    ],
+    "background": {
+      "event": "reconcile",
+      "intervalSeconds": 60
+    }
   },
   "executable": {
     "manifest": "Cargo.toml",
@@ -362,7 +367,8 @@
       "collections",
       "jobs",
       "runs",
-      "completion"
+      "completion",
+      "records"
     ]
   }
 }

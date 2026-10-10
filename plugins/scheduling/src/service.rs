@@ -24,6 +24,10 @@ pub struct State {
     #[serde(default)]
     pub generation: u64,
     #[serde(default)]
+    pub source_version: String,
+    #[serde(default)]
+    pub deleting: bool,
+    #[serde(default)]
     pub pending: Vec<Pending>,
     #[serde(default)]
     pub last_result: Option<Value>,
@@ -95,7 +99,12 @@ fn tasks(host: &mut impl Host) -> Result<Vec<Task>, String> {
     all::<Value>(host, "tasks")?
         .into_iter()
         .filter(|row| row["value"]["editable"].as_bool() != Some(false))
-        .map(|row| serde_json::from_value(row).map_err(|error| error.to_string()))
+        .map(|mut row| {
+            if row["value"]["state"].is_null() {
+                row["value"]["state"] = json!({});
+            }
+            serde_json::from_value(row).map_err(|error| error.to_string())
+        })
         .collect()
 }
 fn task(host: &mut impl Host, id: i64) -> Result<Task, String> {
@@ -292,6 +301,7 @@ fn create(
             monitor,
             state: State {
                 generation: 1,
+                source_version: env!("CARGO_PKG_VERSION").into(),
                 ..State::default()
             },
         },
@@ -463,6 +473,8 @@ pub fn execute(host: &mut impl Host, name: &str, mut arguments: Value) -> Result
                     monitor: None,
                     state: State {
                         generation,
+                        source_version: env!("CARGO_PKG_VERSION").into(),
+                        deleting: false,
                         last_result: old.value.state.last_result.clone(),
                         pending: vec![],
                     },
@@ -492,6 +504,7 @@ fn remove(host: &mut impl Host, id: i64, revision: i64, monitor: bool) -> Result
         .checked_add(1)
         .ok_or("Task generation exhausted")?;
     value.state.pending.clear();
+    value.state.deleting = true;
     let invalidated = save(host, Some(&old), value)?;
     cancel_work(host, id)?;
     collection(
@@ -507,6 +520,283 @@ pub struct Due {
     pub task_id: i64,
     pub generation: u64,
     pub due_at: i64,
+}
+fn work(host: &mut impl Host, capability: &str) -> Result<Vec<Value>, String> {
+    let field = if capability == "jobs" { "jobs" } else { "runs" };
+    let mut records = Vec::new();
+    let mut after = 0;
+    for _ in 0..64 {
+        let page = host.call(capability, json!({"action":"list","after":after}))?;
+        records.extend(
+            page[field]
+                .as_array()
+                .ok_or("Invalid work page")?
+                .iter()
+                .cloned(),
+        );
+        match page["next_after"].as_i64() {
+            Some(next) if next > after => after = next,
+            None => return Ok(records),
+            _ => return Err("Invalid work cursor".into()),
+        }
+    }
+    Err("Work traversal exceeded its bounded page budget".into())
+}
+fn occurrence(key: &str) -> Option<Due> {
+    let mut parts = key.split(':');
+    if parts.next()? != "task" {
+        return None;
+    }
+    let due = Due {
+        task_id: parts.next()?.parse().ok()?,
+        generation: parts.next()?.parse().ok()?,
+        due_at: parts.next()?.parse().ok()?,
+    };
+    (parts.next().is_none() && due.task_id > 0 && due.due_at >= 0).then_some(due)
+}
+
+/// Rebuild durable timers and occurrence state after dropped actors or source updates.
+/// Each repair uses normal revision checks. A racing edit is retried on the next tick.
+struct RecoveryHost<'a, H: Host> {
+    host: &'a mut H,
+    remaining: usize,
+}
+impl<H: Host> Host for RecoveryHost<'_, H> {
+    fn call(&mut self, capability: &str, request: Value) -> Result<Value, String> {
+        if self.remaining == 0 {
+            return Err("Recovery host-call budget exhausted; retry on the next tick".into());
+        }
+        self.remaining -= 1;
+        self.host.call(capability, request)
+    }
+}
+fn recovery_record(host: &mut impl Host, operation: Value) -> Result<Value, String> {
+    host.call(
+        "records",
+        json!({"collection":"recovery","operation":operation}),
+    )
+}
+pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
+    let now = clock(host)?;
+    let records = recovery_record(host, json!({"action":"list","after":0}))?;
+    let previous = records["records"]
+        .as_array()
+        .ok_or("Invalid recovery records")?
+        .first()
+        .cloned();
+    let after = previous
+        .as_ref()
+        .and_then(|record| record["value"]["after"].as_i64())
+        .unwrap_or(0);
+    let mut host = RecoveryHost {
+        host,
+        remaining: 110,
+    };
+    let runs = work(&mut host, "runs")?;
+    let jobs = work(&mut host, "jobs")?;
+    let tasks = tasks(&mut host)?;
+    // Visit every record fairly, independent of creation order or permanently failing records.
+    let ordered = tasks
+        .iter()
+        .filter(|task| task.id > after)
+        .chain(tasks.iter().filter(|task| task.id <= after));
+    let mut repaired = 0;
+    let mut attempted = 0;
+    let mut cursor = after;
+    let mut errors = Vec::new();
+    for old in ordered.take(8) {
+        if host.remaining == 0 {
+            break;
+        }
+        attempted += 1;
+        match reconcile_task(&mut host, old.clone(), now, &runs, &jobs) {
+            Ok(()) => {
+                repaired += 1;
+                cursor = old.id;
+            }
+            Err(error) => {
+                errors.push(error);
+                // Budget exhaustion may have made partial progress; continue this record next tick.
+                if host.remaining == 0 {
+                    break;
+                }
+                cursor = old.id;
+            }
+        }
+    }
+    let value = json!({"after":cursor});
+    let operation = previous.map_or_else(||json!({"action":"create","value":value}),|record|json!({"action":"update","id":record["id"],"revision":record["revision"],"value":value}));
+    // Reserve the cursor write outside the work budget (total remains below 128 host calls).
+    recovery_record(host.host, operation)?;
+    Ok(Outcome {
+        ok: errors.is_empty(),
+        content: json!({"reconciled":repaired,"attempted":attempted,"errors":errors}).to_string(),
+        summary: format!("Reconciled {repaired} tasks"),
+    })
+}
+fn reconcile_task(
+    host: &mut impl Host,
+    mut old: Task,
+    now: i64,
+    runs: &[Value],
+    jobs: &[Value],
+) -> Result<(), String> {
+    if old.value.state.source_version != env!("CARGO_PKG_VERSION") {
+        let mut value = old.value.clone();
+        value.state.generation = value
+            .state
+            .generation
+            .checked_add(1)
+            .ok_or("Task generation exhausted")?;
+        value.state.source_version = env!("CARGO_PKG_VERSION").into();
+        value.state.pending.clear();
+        // Keep an existing overdue occurrence. An already-delivered once task stays completed.
+        if value.next_run.is_none()
+            && value.draft.enabled
+            && value.monitor.is_none()
+            && matches!(value.draft.schedule, Schedule::Cron { .. })
+        {
+            value.next_run = value.draft.schedule.next_after(now)?;
+        }
+        if value.next_run.is_none()
+            && value.draft.enabled
+            && let Some(monitor) = &mut value.monitor
+        {
+            // An interrupted old check counts toward the original finite budget.
+            if !old.value.state.pending.is_empty() {
+                monitor.remaining = monitor.remaining.saturating_sub(1);
+            }
+            let next = now
+                .checked_add(monitor.interval_seconds)
+                .ok_or("Invalid monitor timestamp")?;
+            if monitor.remaining > 0 && next < monitor.expires_at {
+                value.next_run = Some(next);
+            } else {
+                value.draft.enabled = false;
+            }
+        }
+        old = save(host, Some(&old), value)?;
+    }
+    if old
+        .value
+        .monitor
+        .as_ref()
+        .is_some_and(|monitor| monitor.expires_at <= now || monitor.remaining <= 0)
+        && old.value.draft.enabled
+    {
+        let mut value = old.value.clone();
+        value.draft.enabled = false;
+        value.next_run = None;
+        old = save(host, Some(&old), value)?;
+    }
+    // Also repairs a drop after generation invalidation but before cancellation.
+    for (capability, records) in [("jobs", jobs), ("runs", runs)] {
+        for record in records {
+            let Some(due) = record["key"].as_str().and_then(occurrence) else {
+                continue;
+            };
+            if due.task_id != old.id {
+                continue;
+            }
+            if capability == "runs"
+                && old.value.next_run == Some(due.due_at)
+                && !old
+                    .value
+                    .state
+                    .pending
+                    .iter()
+                    .any(|pending| Some(pending.id) == record["id"].as_i64())
+            {
+                record_history(host, old.id, due.due_at, record)?;
+            }
+            if (!old.value.draft.enabled || due.generation != old.value.state.generation)
+                && matches!(
+                    record["state"].as_str(),
+                    Some("pending" | "leased" | "running" | "blocked" | "waiting")
+                )
+            {
+                host.call(
+                    capability,
+                    json!({"action":"cancel","id":record["id"],"revision":record["revision"]}),
+                )?;
+            }
+        }
+    }
+    if old.value.state.deleting {
+        collection(
+            host,
+            "tasks",
+            json!({"action":"delete","id":old.id,"revision":old.revision}),
+        )?;
+        return Ok(());
+    }
+    if !old.value.draft.enabled {
+        return Ok(());
+    }
+    for run in runs {
+        let Some(due) = run["key"].as_str().and_then(occurrence) else {
+            continue;
+        };
+        if due.task_id != old.id
+            || due.generation != old.value.state.generation
+            || (old.value.next_run != Some(due.due_at)
+                && !old
+                    .value
+                    .state
+                    .pending
+                    .iter()
+                    .any(|pending| Some(pending.id) == run["id"].as_i64()))
+        {
+            continue;
+        }
+        if matches!(
+            run["state"].as_str(),
+            Some("completed" | "failed" | "cancelled" | "interrupted")
+        ) {
+            completed(
+                host,
+                Completed {
+                    run: run.clone(),
+                    data: due,
+                },
+            )?;
+            old = task(host, old.id)?;
+        } else if old.value.next_run == Some(due.due_at) {
+            let mut value = old.value.clone();
+            let id = run["id"].as_i64().ok_or("Invalid recovered run")?;
+            if !value.state.pending.iter().any(|pending| pending.id == id) {
+                value.state.pending.push(Pending {
+                    id,
+                    key: run["key"].as_str().ok_or("Invalid recovered key")?.into(),
+                    due_at: due.due_at,
+                });
+            }
+            value.next_run = if value.monitor.is_some() {
+                None
+            } else {
+                value.draft.schedule.next_after(now)?
+            };
+            old = save(host, Some(&old), value)?;
+        }
+    }
+    if let Some(due_at) = old.value.next_run {
+        let key = format!("task:{}:{}:{due_at}", old.id, old.value.state.generation);
+        for job in jobs
+            .iter()
+            .filter(|job| job["key"].as_str() == Some(key.as_str()))
+        {
+            if matches!(
+                job["state"].as_str(),
+                Some("completed" | "failed" | "cancelled" | "expired")
+            ) {
+                host.call(
+                    "jobs",
+                    json!({"action":"delete","id":job["id"],"revision":job["revision"]}),
+                )?;
+            }
+        }
+    }
+    arm(host, &old)
 }
 fn record_history(host: &mut impl Host, task: i64, due: i64, run: &Value) -> Result<(), String> {
     let id = run["id"].as_i64().ok_or("Invalid history run")?;
