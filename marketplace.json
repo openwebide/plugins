@@ -12,6 +12,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "11c38f13460159dd2de294628adb6231aa6e6aef",
+            "path": "plugins/pr-review"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
@@ -57,11 +64,18 @@
       "publisher": "openwebide",
       "name": "web",
       "displayName": "Web",
-      "description": "Search the web and fetch pages using the existing web tools.",
+      "description": "Search public sources and convert web pages to Markdown on the execution host.",
       "categories": [
         "tools"
       ],
       "releases": [
+        {
+          "version": "0.2.1",
+          "source": {
+            "commit": "11c38f13460159dd2de294628adb6231aa6e6aef",
+            "path": "plugins/web"
+          }
+        },
         {
           "version": "0.1.0",
           "source": {
@@ -102,6 +116,13 @@
       ],
       "releases": [
         {
+          "version": "0.2.1",
+          "source": {
+            "commit": "11c38f13460159dd2de294628adb6231aa6e6aef",
+            "path": "plugins/memory"
+          }
+        },
+        {
           "version": "0.1.0",
           "source": {
             "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
@@ -136,6 +157,13 @@
       ],
       "releases": [
         {
+          "version": "0.2.1",
+          "source": {
+            "commit": "11c38f13460159dd2de294628adb6231aa6e6aef",
+            "path": "plugins/scheduling"
+          }
+        },
+        {
           "version": "0.1.0",
           "source": {
             "commit": "56d73b8c349f3c34ca885816453eabfd7564e8d6",
@@ -168,6 +196,13 @@
         "tools"
       ],
       "releases": [
+        {
+          "version": "0.2.1",
+          "source": {
+            "commit": "11c38f13460159dd2de294628adb6231aa6e6aef",
+            "path": "plugins/skill-authoring"
+          }
+        },
         {
           "version": "0.1.0",
           "source": {
