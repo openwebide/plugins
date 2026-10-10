@@ -170,6 +170,13 @@ See the unlisted [Skill Authoring source reference](../plugins/skill-authoring/R
 for tool handlers, draft validation, preserved update fields, resource paging and
 bounded context catalogs implemented entirely through the public SDK.
 
+The HTTP capability supports ordinary public and LAN services. The host adds
+a transport marker that plugin headers cannot remove; Open WebIDE rejects these
+requests to its authenticated backend and bridge control APIs, including credential
+bootstrap and WebSocket upgrades. Plugins must use declared SDK capabilities for
+host operations. HTTP does not supply TCP tunnels or allow its marker to be
+converted into a hop-by-hop header.
+
 The prototype `jobs` capability supplies a durable one-shot event queue. Declare
 `jobs` in the executable capabilities and the event name in `contributions.events`
 and `Plugin::events()`. Plugin source computes due times, recurrence and event
