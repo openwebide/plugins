@@ -222,10 +222,36 @@ attempts. Disabled or removed plugins receive no new delivery claims.
 The bridge prototype polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable
-keys and revision checks to make effects repeatable. App-visible task/monitor
-collections, the Scheduling policy migration and full deployment verification
+keys and revision checks to make effects repeatable. The Scheduling policy
+migration, task-history integration and full deployment verification
 remain in development. These foundations do not make the transitional Scheduling
 catalog release an executable plugin.
+
+The `tasks` collection offers scoped CRUD on existing task and monitor records,
+preserving IDs and history. Values include `draft`, `next_run`, plugin-owned JSON
+`state`, and optional `monitor` metadata (`session_id`, `interval_seconds`,
+`remaining`, `expires_at`). Reads additionally expose read-only `owner` and
+`editable` fields. Update/delete require a current revision; another plugin's
+task and goal-worker records cannot be mutated. Unowned legacy tasks can be
+adopted only after their prior deliveries finish, which stops legacy dispatch.
+The host enforces schema and ownership, while source owns scheduling and monitor
+policy. Lists hold at most 32 records and 1 MiB, using ascending ID cursors.
+
+To prevent a stale event from submitting work after its record changes, a raw run
+`submit` may include `prerequisites`, for example:
+
+```json
+"prerequisites": [
+  {"capability": "collections", "collection": "tasks", "id": 12, "revision": 3}
+]
+```
+
+Up to eight prerequisites are checked atomically with a new submission. Each
+requires the corresponding `records` or `collections` grant and uses the grant's
+scope. Missing, changed or disabled records reject the submission without side
+effects. Identical-key retries acknowledge existing work even if its record has
+advanced. This does not cancel work already queued or running; source must use
+the explicit cancellation operation for that.
 
 The `collections` capability also offers read-only `conversations` metadata:
 

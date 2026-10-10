@@ -1,0 +1,18 @@
+[package]
+name = "openwebide-scheduling-plugin"
+version = "0.2.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "scheduling_plugin"
+crate-type = ["cdylib", "rlib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"
+serde = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", default-features = false, features = ["std"] }
+chrono-tz = "0.10"
+croner = "4.0"
