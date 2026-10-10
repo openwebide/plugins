@@ -232,6 +232,11 @@ enum Command {
         revision: i64,
         draft: Draft,
     },
+    SetEnabled {
+        id: i64,
+        revision: i64,
+        enabled: bool,
+    },
     Delete {
         id: i64,
         revision: i64,
@@ -257,6 +262,8 @@ enum MonitorCommand {
     Cancel {
         id: i64,
         revision: i64,
+        #[serde(default)]
+        session_id: i64,
     },
 }
 const fn interval() -> i64 {
@@ -405,7 +412,19 @@ pub fn execute(host: &mut impl Host, name: &str, mut arguments: Value) -> Result
                     "Monitors listed",
                 ))
             }
-            MonitorCommand::Cancel { id, revision } => {
+            MonitorCommand::Cancel {
+                id,
+                revision,
+                session_id,
+            } => {
+                if session_id != 0
+                    && !task(host, id)?
+                        .value
+                        .monitor
+                        .is_some_and(|monitor| monitor.session_id == session_id)
+                {
+                    return Err("Monitor belongs to another conversation".into());
+                }
                 remove(host, id, revision, true)?;
                 Ok(outcome(json!([]), "Monitor cancelled"))
             }
@@ -416,6 +435,7 @@ pub fn execute(host: &mut impl Host, name: &str, mut arguments: Value) -> Result
         "schedule_create" => "create",
         "schedule_update" => "update",
         "schedule_delete" => "delete",
+        "schedule_set_enabled" => "set_enabled",
         _ => return Err("Unknown scheduling tool".into()),
     };
     let args = arguments
@@ -483,6 +503,46 @@ pub fn execute(host: &mut impl Host, name: &str, mut arguments: Value) -> Result
             cancel_work(host, id)?;
             arm(host, &saved)?;
             Ok(outcome(json!([excerpt(&saved)]), "Task updated"))
+        }
+        Command::SetEnabled {
+            id,
+            revision,
+            enabled,
+        } => {
+            let old = task(host, id)?;
+            if old.revision != revision || old.value.monitor.is_some() {
+                return Err("Saved task revision changed".into());
+            }
+            let mut value = old.value.clone();
+            value.draft.enabled = enabled;
+            value.next_run =
+                if enabled {
+                    Some(
+                        value.draft.schedule.next_after(now)?.ok_or(
+                            "This one-time task has already passed. Edit its date to resume.",
+                        )?,
+                    )
+                } else {
+                    None
+                };
+            value.state.generation = value
+                .state
+                .generation
+                .checked_add(1)
+                .ok_or("Task generation exhausted")?;
+            value.state.source_version = env!("CARGO_PKG_VERSION").into();
+            value.state.pending.clear();
+            let saved = save(host, Some(&old), value)?;
+            cancel_work(host, id)?;
+            arm(host, &saved)?;
+            Ok(outcome(
+                json!([excerpt(&saved)]),
+                if enabled {
+                    "Task resumed"
+                } else {
+                    "Task paused"
+                },
+            ))
         }
         Command::Delete { id, revision } => {
             remove(host, id, revision, false)?;

@@ -209,6 +209,87 @@ fn draft(schedule: Schedule, target: SessionTarget) -> Draft {
     }
 }
 #[test]
+fn enablement_preserves_titles_and_rejects_stale_and_elapsed_once_resumes() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    let title = host.tasks[&1]["value"]["draft"]["title"].clone();
+    host.calls.clear();
+    service::execute(
+        &mut host,
+        "schedule_set_enabled",
+        json!({"id":1,"revision":1,"enabled":false}),
+    )
+    .unwrap();
+    assert_eq!(host.tasks[&1]["value"]["draft"]["title"], title);
+    assert_eq!(host.tasks[&1]["value"]["draft"]["auto_title"], true);
+    assert_eq!(host.next(), None);
+    assert!(
+        !host
+            .calls
+            .iter()
+            .any(|(capability, _)| capability == "completion")
+    );
+    assert!(
+        service::execute(
+            &mut host,
+            "schedule_set_enabled",
+            json!({"id":1,"revision":1,"enabled":true})
+        )
+        .is_err()
+    );
+    service::execute(
+        &mut host,
+        "schedule_set_enabled",
+        json!({"id":1,"revision":2,"enabled":true}),
+    )
+    .unwrap();
+    assert_eq!(host.next(), Some(105));
+    host.now = 110;
+    service::execute(
+        &mut host,
+        "schedule_set_enabled",
+        json!({"id":1,"revision":3,"enabled":false}),
+    )
+    .unwrap();
+    assert!(
+        service::execute(
+            &mut host,
+            "schedule_set_enabled",
+            json!({"id":1,"revision":4,"enabled":true})
+        )
+        .is_err()
+    );
+    assert_eq!(host.tasks[&1]["revision"], 4);
+}
+
+#[test]
+fn monitor_cancel_accepts_ui_session_context_and_rejects_another_conversation() {
+    let mut host = Fixture::new();
+    service::execute(
+        &mut host,
+        "monitor",
+        json!({"action":"start","prompt":"Check","delay_seconds":5,"session_id":1}),
+    )
+    .unwrap();
+    assert!(
+        service::execute(
+            &mut host,
+            "monitor",
+            json!({"action":"cancel","id":1,"revision":1,"session_id":2})
+        )
+        .is_err()
+    );
+    assert!(host.tasks.contains_key(&1));
+    service::execute(
+        &mut host,
+        "monitor",
+        json!({"action":"cancel","id":1,"revision":1,"session_id":1}),
+    )
+    .unwrap();
+    assert!(host.tasks.is_empty());
+}
+
+#[test]
 fn reconciliation_bounds_host_calls_and_rotates_past_permanent_failures() {
     let mut host = Fixture::new();
     for id in 1..=20 {

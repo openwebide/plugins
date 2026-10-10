@@ -293,6 +293,33 @@
         "requires_approval": true
       },
       {
+        "name": "schedule_set_enabled",
+        "description": "Pause or resume a saved task using its current revision, preserving its title. Resuming a past one-time task requires editing its date first.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
+        "requires_approval": true
+      },
+      {
         "name": "monitor",
         "description": "Start, list or cancel bounded follow-up checks in a conversation. Checks stop on failure, cancellation, exhaustion or 24-hour expiry. Start requires prompt and delay_seconds. Cancel requires id and revision.",
         "parameters": {

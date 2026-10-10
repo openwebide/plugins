@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add a source-owned enable/disable tool to the unlisted Scheduling Rust plugin, preserving titles and checking revisions and elapsed one-time schedules. Accept UI conversation context for monitor cancellation and reject mismatched conversations.
+
 - Document raw run claim recovery, stale-delivery guards and local host folder authorization in the SDK prototype.
 
 - Add the prototype runs capability to the public manifest schema and document durable submissions, conversation scope and queue guards; host dispatch and completion remain in progress.

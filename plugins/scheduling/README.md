@@ -5,11 +5,13 @@ It uses only the public Open WebIDE SDK: scoped collections and records, clocks,
 jobs, raw prompt runs and bounded model completion. It does not call built-in
 Scheduling behavior or import application crates.
 
-The five tools are `schedule_list`, `schedule_create`, `schedule_update`,
-`schedule_delete` and `monitor`. Source validates five-field cron expressions and
+The six tools are `schedule_list`, `schedule_create`, `schedule_update`,
+`schedule_set_enabled`, `schedule_delete` and `monitor`. Source validates five-field cron expressions and
 IANA timezones, calculates recurrence across daylight-saving changes, names tasks,
 selects conversations/models at delivery time, cancels prior work after edits and
-interprets monitor results. Declared `task_due` and `task_completed` events use
+interprets monitor results. Pause/resume preserves the existing title and rejects
+stale revisions or elapsed one-time schedules; UI monitor cancellation verifies
+the owning conversation. Declared `task_due` and `task_completed` events use
 revision-guarded raw submissions. Saved work uses project-scoped events; monitor
 records are anchored to their owned conversation and expire within 24 hours.
 A declared one-minute `reconcile` background event adopts idle legacy records,
@@ -27,6 +29,7 @@ pins the earlier API 2 platform switch. The source has native policy/workflow te
 and an actual compiled-component contract against shared host storage in both
 project modes. Source creates SDK history bindings; the app projects live run
 progress and retains terminal snapshots after raw-run deletion. Production
-installation, complete recovery/failure verification, UI mutation integration, retention and default
-deployment remain in progress. Do not treat
+installation, complete recovery/failure verification, retention and default
+deployment remain in progress. Task and monitor UI mutations use declared SDK
+tools; deployed paired-host browser verification is still pending. Do not treat
 this draft as a completed install/run/update lifecycle.
