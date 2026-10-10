@@ -32,6 +32,10 @@ progress and retains terminal snapshots after raw-run deletion. Production
 HTTP deployment checks now cover CRUD, configured naming, delivered agent work,
 bounded monitors, cancellation, pending-task recovery after deployment restarts
 and pending-occurrence handoff between two compiled source versions on both hosts.
+An executing component keeps its original code and grant across installation
+updates; later invocations use the updated version. Deployment checks also verify
+recovery from validation failures, admission limits and cancellation freeing
+invocation capacity.
 Complete recovery/failure verification, retention and browser default
 deployment remain in progress. Task and monitor UI mutations use declared SDK
 tools; deployed paired-host browser verification is still pending. Do not treat
