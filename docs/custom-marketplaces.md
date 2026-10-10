@@ -106,6 +106,8 @@ For executable Rust plugins, also copy `scripts/validate_rust.py` and the workfl
 `rust` job. That job checks out the public Open WebIDE SDK, installs its pinned
 Rust toolchain, runs native tests and strict native/WASI Clippy, and builds each
 component for `wasm32-wasip2`. Skills-only marketplaces can omit that job.
+Keep the workflow's SDK commit pin when copying it: an arbitrary app branch may
+have a different component interface even while the SDK is in development.
 To run the same checks locally with an app checkout:
 
 ```sh
