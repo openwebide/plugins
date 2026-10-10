@@ -506,6 +506,88 @@ fn reconciliation_recovers_terminal_callbacks_idempotently() {
 }
 
 #[test]
+fn reconciliation_recovers_failed_retained_callbacks_after_raw_cleanup() {
+    for state in ["completed", "failed", "cancelled", "expired"] {
+        let mut host = Fixture::new();
+        host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+        host.now = 105;
+        service::due(
+            &mut host,
+            Due {
+                task_id: 1,
+                generation: 1,
+                due_at: 105,
+            },
+        )
+        .unwrap();
+        let mut run = host.run();
+        run["state"] = json!("completed");
+        let data = run["request"]["completion"]["payload"].clone();
+        host.jobs.insert(
+            2,
+            json!({"id":2,"revision":3,"key":"$run:1","event":"task_completed",
+            "state":state,"payload":{"run":run,"data":data}}),
+        );
+        host.runs.clear();
+        host.history.clear(); // A drop before recording history must also be repairable.
+        host.fail_update = Some(1);
+        assert!(!service::reconcile(&mut host).unwrap().ok);
+        assert!(
+            host.jobs.contains_key(&2),
+            "Keep a callback until its effects are durable"
+        );
+        assert_eq!(
+            host.tasks[&1]["value"]["state"]["pending"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
+        host.fail_update = None;
+        assert!(service::reconcile(&mut host).unwrap().ok);
+        assert!(!host.jobs.contains_key(&2));
+        assert_eq!(
+            host.tasks[&1]["value"]["state"]["last_result"]["state"],
+            "completed"
+        );
+        assert!(
+            host.tasks[&1]["value"]["state"]["pending"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        assert_eq!(
+            host.history["run:1"]["value"]["snapshot"]["status"],
+            "complete"
+        );
+        let revision = host.tasks[&1]["revision"].clone();
+        assert!(service::reconcile(&mut host).unwrap().ok);
+        assert_eq!(host.tasks[&1]["revision"], revision);
+    }
+}
+
+#[test]
+fn retained_callback_recovery_ignores_live_unreleased_and_other_task_jobs() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));
+    for (id, state, key, task) in [
+        (2, "pending", "$run:1", 1),
+        (3, "leased", "$run:1", 1),
+        (4, "waiting", "$run:1", 1),
+        (5, "failed", "ordinary-job", 1),
+        (6, "failed", "$run:1", 99),
+    ] {
+        host.jobs.insert(
+            id,
+            json!({"id":id,"revision":1,"key":key,"event":"task_completed",
+            "state":state,"payload":{"data":{"task_id":task}}}),
+        );
+    }
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert!((2..=6).all(|id| host.jobs.contains_key(&id)));
+}
+
+#[test]
 fn create_owns_origin_title_due_job_and_rolls_back_if_arm_fails() {
     let mut host = Fixture::new();
     let created = host.create(draft(Schedule::Once { at: 105 }, SessionTarget::Existing));

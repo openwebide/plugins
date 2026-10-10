@@ -790,6 +790,40 @@ fn reconcile_task(
         )?;
         return Ok(());
     }
+    // A released callback retains its terminal run snapshot after raw-run cleanup.
+    // Repair failed delivery through ordinary scoped APIs, then free its queue slot.
+    // Never race a pending/leased delivery or reinterpret an unreleased callback.
+    let task_id = old.id;
+    for job in jobs
+        .iter()
+        .filter(|job| {
+            job["event"] == "task_completed"
+                && matches!(
+                    job["state"].as_str(),
+                    Some("completed" | "failed" | "cancelled" | "expired")
+                )
+                && job["payload"]["data"]["task_id"].as_i64() == Some(task_id)
+                && job["key"]
+                    .as_str()
+                    .is_some_and(|key| key.starts_with("$run:"))
+        })
+        .take(2)
+    {
+        let input: Completed = serde_json::from_value(job["payload"].clone())
+            .map_err(|error| format!("Invalid retained completion: {error}"))?;
+        let run_id = input.run["id"]
+            .as_i64()
+            .ok_or("Invalid retained run identity")?;
+        if run_id <= 0 || job["key"].as_str() != Some(format!("$run:{run_id}").as_str()) {
+            return Err("Retained callback identity does not match its run".into());
+        }
+        completed(host, input)?;
+        old = task(host, old.id)?;
+        host.call(
+            "jobs",
+            json!({"action":"delete","id":job["id"],"revision":job["revision"]}),
+        )?;
+    }
     if !old.value.draft.enabled {
         return Ok(());
     }

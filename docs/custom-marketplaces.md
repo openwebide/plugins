@@ -408,7 +408,13 @@ updates and survives subsequent run-history deletion. Existing leased event
 delivery and disablement rules apply; use stable keys/revision checks because
 callbacks can execute again after a lost acknowledgement. A cancelled event stays
 cancelled when its run finishes. Deleted origin conversations do not grant new
-background authority. Executable Scheduling remains unfinished; plugins supply
+background authority. Released terminal callbacks retain their `{run, data}` payload
+when delivery fails or raw runs are deleted. A plugin can replay its result handling
+from that snapshot during reconciliation, then delete the terminal job after its
+effects are durable. Leave pending and leased callbacks to their delivery worker;
+check the reserved `$run:<id>` key against the retained run identity before replay.
+The Scheduling reference uses this bounded recovery path. Executable Scheduling
+remains unfinished; plugins supply
 timing, prompts, recurrence and result interpretation through these primitives.
 
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
