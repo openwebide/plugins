@@ -1,0 +1,9 @@
+{
+  "http": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_base64": "eyJIZWFkaW5nIjogIlJ1c3QgcmVmZXJlbmNlIiwgIkFic3RyYWN0VGV4dCI6ICJQbHVnaW4tb3duZWQgcHJvdmlkZXIgcmVzdWx0IiwgIkFic3RyYWN0VVJMIjogImh0dHBzOi8vZXhhbXBsZS5jb20vcnVzdCJ9"
+  }
+}

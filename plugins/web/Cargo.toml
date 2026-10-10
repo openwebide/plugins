@@ -1,0 +1,16 @@
+[package]
+name = "openwebide-web-plugin"
+version = "0.2.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "web_plugin"
+crate-type = ["cdylib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"
+http = "1"
+html5ever = "0.40"

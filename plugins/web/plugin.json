@@ -3,18 +3,63 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Web",
-  "description": "Search the web and fetch pages using the existing web tools.",
+  "description": "Search public sources and convert web pages to Markdown on the execution host.",
   "license": "MIT",
   "readme": "README.md",
   "compatibility": {
-    "pluginApi": 2
+    "pluginApi": 3
   },
   "contributions": {
     "skills": [],
-    "toolGroups": [
-      "web"
+    "tools": [
+      {
+        "name": "search_web",
+        "description": "Search the web for up-to-date documentation, API references, or error solutions.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Search query"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Number of results to return (default: 5, max: 10)"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "requires_approval": false
+      },
+      {
+        "name": "fetch_web_page",
+        "description": "Fetch a web page URL and convert its content to clean Markdown.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "Full HTTP or HTTPS URL to read"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "requires_approval": true
+      }
+    ]
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "web_plugin",
+    "sdkVersion": "0.1.0",
+    "capabilities": [
+      "http"
     ]
   }
 }
