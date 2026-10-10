@@ -424,6 +424,15 @@ reconciler records a terminal `task_runs` snapshot with no raw run and clears th
 journal only after that history write succeeds. Edits preserve unfinished journals;
 host transport errors remain retryable rather than being classified by error text.
 
+Retention is plugin policy too. Scheduling scans one `task_runs` page per recovery
+tick and removes at most three terminal entries through ordinary collection CRUD.
+It retains 128 recent completed entries in addition to each task's current result;
+active and legacy history are preserved. Its private recovery record stores the
+scan cursor and recent IDs, and cleanup refreshes each candidate's revision before
+deletion. A lost cursor write or a row deleted by the user can therefore be retried
+without losing additional history. Host storage limits still apply; terminal raw
+run and event-job cleanup remain under development.
+
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
 `complete` function returns a `CompletionResponse` containing `text`. The host

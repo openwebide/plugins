@@ -645,6 +645,102 @@ fn recovery_record(host: &mut impl Host, operation: Value) -> Result<Value, Stri
         json!({"collection":"recovery","operation":operation}),
     )
 }
+const RETAINED_HISTORY: usize = 128;
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+struct HistoryRetention {
+    #[serde(default)]
+    after: i64,
+    #[serde(default)]
+    recent: Vec<i64>,
+}
+fn retained_result(record: &Value, tasks: &[Task]) -> bool {
+    let value = &record["value"];
+    tasks
+        .iter()
+        .find(|task| Some(task.id) == value["task_id"].as_i64())
+        .and_then(|task| task.value.state.last_result.as_ref())
+        .is_some_and(|result| {
+            (value["run_id"].as_i64().is_some() && value["run_id"] == result["id"])
+                || (value["key"].as_str().is_some() && value["key"] == result["key"])
+        })
+}
+fn terminal_history(record: &Value) -> bool {
+    record["value"]["editable"] == true
+        && matches!(
+            record["value"]["snapshot"]["status"].as_str(),
+            Some("complete" | "failed" | "cancelled" | "expired" | "interrupted")
+        )
+}
+/// One page and at most three removals per tick; progress survives interrupted scans.
+fn retain_history(
+    host: &mut RecoveryHost<'_, impl Host>,
+    state: &mut HistoryRetention,
+    tasks: &[Task],
+) -> Result<(), String> {
+    if state.after < 0
+        || state.recent.len() > RETAINED_HISTORY
+        || state.recent.iter().any(|id| *id <= 0)
+        || state.recent.windows(2).any(|pair| pair[0] >= pair[1])
+    {
+        return Err("Invalid history retention cursor".into());
+    }
+    if host.remaining < 7 {
+        return Ok(());
+    }
+    let page = collection(
+        host,
+        "task_runs",
+        json!({"action":"list","after":state.after}),
+    )?;
+    let records = page["records"].as_array().ok_or("Invalid history page")?;
+    let mut removed = 0;
+    for record in records {
+        let id = record["id"]
+            .as_i64()
+            .filter(|id| *id > state.after)
+            .ok_or("Invalid history identity")?;
+        if terminal_history(record)
+            && !retained_result(record, tasks)
+            && !state.recent.contains(&id)
+        {
+            let mut recent = state.recent.clone();
+            recent.push(id);
+            recent.sort_unstable();
+            if recent.len() > RETAINED_HISTORY {
+                if removed == 3 {
+                    return Ok(());
+                }
+                let oldest = recent[0];
+                // Listing from the preceding ID distinguishes an externally deleted row
+                // without classifying SDK errors by their text. It also refreshes revisions.
+                let current =
+                    collection(host, "task_runs", json!({"action":"list","after":oldest-1}))?;
+                if let Some(old) = current["records"]
+                    .as_array()
+                    .ok_or("Invalid history page")?
+                    .first()
+                    && old["id"].as_i64() == Some(oldest)
+                    && terminal_history(old)
+                    && !retained_result(old, tasks)
+                {
+                    collection(
+                        host,
+                        "task_runs",
+                        json!({"action":"delete","id":oldest,"revision":old["revision"]}),
+                    )?;
+                }
+                recent.remove(0);
+                removed += 1;
+            }
+            state.recent = recent;
+        }
+        state.after = id;
+    }
+    if page["next"].is_null() {
+        state.after = 0;
+    }
+    Ok(())
+}
 pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
     let now = clock(host)?;
     let records = recovery_record(host, json!({"action":"list","after":0}))?;
@@ -661,9 +757,20 @@ pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
         host,
         remaining: 110,
     };
+    let mut history: HistoryRetention = previous
+        .as_ref()
+        .and_then(|record| record["value"].get("history"))
+        .map(|value| serde_json::from_value(value.clone()))
+        .transpose()
+        .map_err(|error| error.to_string())?
+        .unwrap_or_default();
+    let tasks = tasks(&mut host)?;
+    let mut errors = Vec::new();
+    if let Err(error) = retain_history(&mut host, &mut history, &tasks) {
+        errors.push(error);
+    }
     let runs = work(&mut host, "runs")?;
     let jobs = work(&mut host, "jobs")?;
-    let tasks = tasks(&mut host)?;
     // Visit every record fairly, independent of creation order or permanently failing records.
     let ordered = tasks
         .iter()
@@ -672,7 +779,6 @@ pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
     let mut repaired = 0;
     let mut attempted = 0;
     let mut cursor = after;
-    let mut errors = Vec::new();
     for old in ordered.take(8) {
         if host.remaining == 0 {
             break;
@@ -693,7 +799,7 @@ pub fn reconcile(host: &mut impl Host) -> Result<Outcome, String> {
             }
         }
     }
-    let value = json!({"after":cursor});
+    let value = json!({"after":cursor,"history":history});
     let operation = previous.map_or_else(||json!({"action":"create","value":value}),|record|json!({"action":"update","id":record["id"],"revision":record["revision"],"value":value}));
     // Reserve the cursor write outside the work budget (total remains below 128 host calls).
     recovery_record(host.host, operation)?;
@@ -947,12 +1053,13 @@ fn preflight_failed(
     detail: String,
 ) -> Result<Outcome, String> {
     let mut value = old.value.clone();
+    let key = format!("preflight:{}:{}:{}", old.id, input.generation, input.due_at);
     value.state.preflight = Some(PreflightFailure {
-        key: format!("preflight:{}:{}:{}", old.id, input.generation, input.due_at),
+        key: key.clone(),
         due_at: input.due_at,
         detail: detail.clone(),
     });
-    value.state.last_result = Some(json!({"state":"failed","detail":detail}));
+    value.state.last_result = Some(json!({"key":key,"state":"failed","detail":detail}));
     value.next_run = if value.monitor.is_some() {
         value.draft.enabled = false;
         None

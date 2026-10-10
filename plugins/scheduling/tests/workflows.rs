@@ -17,7 +17,9 @@ struct Fixture {
     fail_update: Option<i64>,
     fail_history: bool,
     history: BTreeMap<String, Value>,
+    history_id: i64,
     recovery: Option<Value>,
+    fail_recovery_write: bool,
 }
 impl Fixture {
     fn new() -> Self {
@@ -56,6 +58,9 @@ impl Host for Fixture {
             "records" => {
                 assert_eq!(input["collection"], "recovery");
                 let op = &input["operation"];
+                if op["action"] != "list" && self.fail_recovery_write {
+                    return Err("Recovery cursor write unavailable".into());
+                }
                 match op["action"].as_str().unwrap() {
                     "list" => (),
                     "create" => {
@@ -83,13 +88,56 @@ impl Host for Fixture {
                     ),
                     "conversations" => Ok(json!({"records":self.conversations,"next":null})),
                     "task_runs" => {
+                        if action == "list" {
+                            let after = operation["after"].as_i64().unwrap_or(0);
+                            let mut records: Vec<_> = self
+                                .history
+                                .values()
+                                .filter(|row| row["id"].as_i64().unwrap() > after)
+                                .cloned()
+                                .collect();
+                            records.sort_by_key(|row| row["id"].as_i64().unwrap());
+                            let next = (records.len() > 32).then(|| records[31]["id"].clone());
+                            records.truncate(32);
+                            return Ok(json!({"records":records,"next":next}));
+                        }
+                        if action == "delete" {
+                            let key = self
+                                .history
+                                .iter()
+                                .find(|(_, row)| row["id"] == operation["id"])
+                                .map(|(key, _)| key.clone())
+                                .ok_or("Missing history")?;
+                            let row = &self.history[&key];
+                            if row["revision"] != operation["revision"]
+                                || row["value"]["editable"] != true
+                                || !matches!(
+                                    row["value"]["snapshot"]["status"].as_str(),
+                                    Some(
+                                        "complete"
+                                            | "failed"
+                                            | "cancelled"
+                                            | "expired"
+                                            | "interrupted"
+                                    )
+                                )
+                            {
+                                return Err("History cannot be deleted".into());
+                            }
+                            self.history.remove(&key);
+                            return Ok(json!({"records":[],"next":null}));
+                        }
                         assert_eq!(action, "create");
                         if self.fail_history {
                             return Err("History write unavailable".into());
                         }
-                        let value = operation["value"].clone();
+                        let mut value = operation["value"].clone();
+                        value["editable"] = json!(true);
                         let key = value["key"].as_str().unwrap().to_owned();
-                        let index = self.history.len() + 1;
+                        if !self.history.contains_key(&key) {
+                            self.history_id += 1;
+                        }
+                        let index = self.history_id;
                         let record = self
                             .history
                             .entry(key)
@@ -589,6 +637,92 @@ fn retained_callback_recovery_ignores_live_unreleased_and_other_task_jobs() {
     }
     assert!(service::reconcile(&mut host).unwrap().ok);
     assert!((2..=6).all(|id| host.jobs.contains_key(&id)));
+}
+
+#[test]
+fn history_retention_keeps_latest_active_and_legacy_entries_and_survives_external_deletion() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 200 }, SessionTarget::Existing));
+    host.create(draft(Schedule::Once { at: 200 }, SessionTarget::Existing));
+    host.tasks.get_mut(&1).unwrap()["value"]["state"]["last_result"] = json!({"id":179});
+    host.tasks.get_mut(&2).unwrap()["value"]["state"]["last_result"] =
+        json!({"key":"preflight:2:1:100"});
+    for id in 1..=180 {
+        let key = if id == 180 {
+            "preflight:2:1:100".to_owned()
+        } else {
+            format!("run:{id}")
+        };
+        let status = match id {
+            1 => "queued",
+            2 => "running",
+            _ => "complete",
+        };
+        host.call(
+            "collections",
+            json!({"collection":"task_runs","operation":{"action":"create",
+            "value":{"key":key,"task_id":if id == 180 {2} else {1},"due_at":100,
+                "run_id":if id == 180 {None} else {Some(id)},"snapshot":{"status":status}}}}),
+        )
+        .unwrap();
+    }
+    host.history.get_mut("run:3").unwrap()["value"]["editable"] = json!(false);
+    for _ in 0..100 {
+        host.calls.clear();
+        assert!(service::reconcile(&mut host).unwrap().ok);
+        assert!(host.calls.len() <= 114);
+    }
+    assert_eq!(host.history.len(), 133);
+    assert!(host.history.contains_key("run:1"));
+    assert!(host.history.contains_key("run:2"));
+    assert!(host.history.contains_key("run:3"));
+    assert!(host.history.contains_key("run:179"));
+    assert!(host.history.contains_key("preflight:2:1:100"));
+    assert!(!host.history.contains_key("run:50"));
+    assert!(host.history.contains_key("run:51"));
+    // A deleted buffered row must not permanently stop retention on its stale ID.
+    host.history.remove("run:51");
+    host.call("collections", json!({"collection":"task_runs","operation":{"action":"create",
+        "value":{"key":"run:181","task_id":1,"due_at":100,"run_id":181,"snapshot":{"status":"failed"}}}})).unwrap();
+    for _ in 0..20 {
+        assert!(service::reconcile(&mut host).unwrap().ok);
+    }
+    assert_eq!(host.history.len(), 133);
+    assert!(host.history.contains_key("run:181"));
+    assert!(host.history.contains_key("run:52"));
+}
+
+#[test]
+fn history_retention_recovers_a_drop_after_deletion_before_cursor_save() {
+    let mut host = Fixture::new();
+    host.create(draft(Schedule::Once { at: 200 }, SessionTarget::Existing));
+    for id in 1..=130 {
+        host.call(
+            "collections",
+            json!({"collection":"task_runs","operation":{"action":"create",
+            "value":{"key":format!("run:{id}"),"task_id":1,"due_at":100,"run_id":id,
+                "snapshot":{"status":"complete"}}}}),
+        )
+        .unwrap();
+    }
+    host.recovery = Some(json!({"id":1,"revision":1,"value":{"after":0,
+        "history":{"after":128,"recent":(1..=128).collect::<Vec<_>>()}}}));
+    host.fail_recovery_write = true;
+    assert!(service::reconcile(&mut host).is_err());
+    assert_eq!(host.history.len(), 128);
+    assert_eq!(
+        host.recovery.as_ref().unwrap()["value"]["history"]["after"],
+        128
+    );
+    host.fail_recovery_write = false;
+    assert!(service::reconcile(&mut host).unwrap().ok);
+    assert_eq!(host.history.len(), 128);
+    assert!(host.history.contains_key("run:3"));
+    assert!(host.history.contains_key("run:130"));
+    assert_eq!(
+        host.recovery.as_ref().unwrap()["value"]["history"]["recent"][0],
+        3
+    );
 }
 
 #[test]
