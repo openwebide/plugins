@@ -14,6 +14,7 @@ struct Fixture {
     config: Value,
     conversations: Vec<Value>,
     fail_arm: bool,
+    history: BTreeMap<String, Value>,
 }
 impl Fixture {
     fn new() -> Self {
@@ -57,6 +58,17 @@ impl Host for Fixture {
                         json!({"records":[{"id":1,"revision":1,"value":self.config}],"next":null}),
                     ),
                     "conversations" => Ok(json!({"records":self.conversations,"next":null})),
+                    "task_runs" => {
+                        assert_eq!(action, "create");
+                        let value = operation["value"].clone();
+                        let key = value["key"].as_str().unwrap().to_owned();
+                        let index = self.history.len() + 1;
+                        let record = self
+                            .history
+                            .entry(key)
+                            .or_insert_with(|| json!({"id":index,"revision":1,"value":value}));
+                        Ok(json!({"records":[record],"next":null}))
+                    }
                     "tasks" => {
                         let id = operation["id"].as_i64().unwrap_or(0);
                         let mut selected = None;

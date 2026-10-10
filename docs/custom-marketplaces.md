@@ -223,7 +223,7 @@ The bridge prototype polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable
 keys and revision checks to make effects repeatable. The Scheduling policy
-migration, task-history integration and full deployment verification
+migration, UI mutation integration and full deployment verification
 remain in development. These foundations do not make the transitional Scheduling
 catalog release an executable plugin.
 
@@ -236,6 +236,37 @@ task and goal-worker records cannot be mutated. Unowned legacy tasks can be
 adopted only after their prior deliveries finish, which stops legacy dispatch.
 The host enforces schema and ownership, while source owns scheduling and monitor
 policy. Lists hold at most 32 records and 1 MiB, using ascending ID cursors.
+
+The `task_runs` collection binds a plugin-owned task to an SDK raw run:
+
+```json
+{
+  "action": "create",
+  "value": {
+    "key": "run:42",
+    "task_id": 12,
+    "due_at": 1791600000,
+    "run_id": 42
+  }
+}
+```
+
+The task and live run must belong to the same plugin, account and project scope.
+Bindings are immutable; the host projects live raw-run status into the existing
+app task history and retains a terminal snapshot before raw-run deletion.
+Repeating the same key, task, due time and run ID returns the existing binding.
+If the run has already been removed, creation requires a terminal `snapshot`
+with `status`, optional `detail`, `session_id`, `message_id` and `permission_id`.
+A snapshot can also record a preflight failure without a run ID. A run still
+present in another scope cannot be replaced with a supplied snapshot.
+
+Reads and ascending-cursor lists include retained legacy history as
+`editable: false`; its IDs stay unchanged. Treat all history IDs as opaque
+positive integers. New bindings return `editable: true`. Update is unavailable;
+delete requires the current revision and a terminal status. Each scope holds at
+most 1,000 new bindings, with the same 32-record/1 MiB paging contract as tasks.
+Source decides recurrence, monitor outcomes and retention policy. These history
+bindings do not dispatch work or call built-in Scheduling behavior.
 
 To prevent a stale event from submitting work after its record changes, a raw run
 `submit` may include `prerequisites`, for example:

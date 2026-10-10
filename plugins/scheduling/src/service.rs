@@ -508,6 +508,26 @@ pub struct Due {
     pub generation: u64,
     pub due_at: i64,
 }
+fn record_history(host: &mut impl Host, task: i64, due: i64, run: &Value) -> Result<(), String> {
+    let id = run["id"].as_i64().ok_or("Invalid history run")?;
+    let state = run["state"].as_str().ok_or("Invalid history state")?;
+    let status = match state {
+        "pending" => "queued",
+        "leased" => "claimed",
+        "completed" => "complete",
+        other => other,
+    };
+    collection(
+        host,
+        "task_runs",
+        json!({"action":"create","value":{
+            "key":format!("run:{id}"),"task_id":task,"due_at":due,"run_id":id,
+            "snapshot":{"status":status,"detail":run["detail"].as_str().unwrap_or(""),
+                "session_id":run["session_id"],"message_id":run["message_id"],"permission_id":run["permission_id"]}
+        }}),
+    )?;
+    Ok(())
+}
 /// Queue a raw prompt; record prerequisites close the read/edit/submit race.
 pub fn due(host: &mut impl Host, input: Due) -> Result<Outcome, String> {
     let Some(old) = tasks(host)?
@@ -555,6 +575,7 @@ pub fn due(host: &mut impl Host, input: Due) -> Result<Outcome, String> {
         "completion":{"event":"task_completed","payload":{"task_id":old.id,"generation":input.generation,"due_at":input.due_at}}}))?;
     let run = &response["runs"][0];
     let id = run["id"].as_i64().ok_or("No queued run returned")?;
+    record_history(host, old.id, input.due_at, run)?;
     let mut value = old.value.clone();
     if !value.state.pending.iter().any(|run| run.id == id) {
         value.state.pending.push(Pending {
@@ -585,15 +606,22 @@ pub fn completed(host: &mut impl Host, input: Completed) -> Result<Outcome, Stri
     else {
         return Ok(outcome(json!({"ignored":true}), "Deleted result ignored"));
     };
-    if !old.value.draft.enabled || old.value.state.generation != input.data.generation {
-        return Ok(outcome(json!({"ignored":true}), "Stale result ignored"));
-    }
     let expected_key = format!(
         "task:{}:{}:{}",
         old.id, input.data.generation, input.data.due_at
     );
     if input.run["key"].as_str() != Some(expected_key.as_str()) {
         return Err("Run completion key does not match occurrence".into());
+    }
+    let state = input.run["state"]
+        .as_str()
+        .ok_or("Invalid completion state")?;
+    if !matches!(state, "completed" | "failed" | "cancelled" | "interrupted") {
+        return Err("Completion run is not terminal".into());
+    }
+    record_history(host, old.id, input.data.due_at, &input.run)?;
+    if !old.value.draft.enabled || old.value.state.generation != input.data.generation {
+        return Ok(outcome(json!({"ignored":true}), "Stale result ignored"));
     }
     let run_id = input.run["id"].as_i64().ok_or("Invalid completion run")?;
     if old
@@ -611,12 +639,6 @@ pub fn completed(host: &mut impl Host, input: Completed) -> Result<Outcome, Stri
     {
         arm(host, &old)?;
         return Ok(outcome(json!({"ignored":true}), "Prior result ignored"));
-    }
-    let state = input.run["state"]
-        .as_str()
-        .ok_or("Invalid completion state")?;
-    if !matches!(state, "completed" | "failed" | "cancelled" | "interrupted") {
-        return Err("Completion run is not terminal".into());
     }
     let now = clock(host)?;
     let mut value = old.value.clone();

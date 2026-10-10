@@ -15,6 +15,9 @@ records are anchored to their owned conversation and expire within 24 hours.
 
 This migration is **not released in the live marketplace yet**. The catalog still
 pins the earlier API 2 platform switch. The source has native policy/workflow tests
-and component exports; production installation, crash recovery, task-history/UI
-integration, retention and default deployment remain in progress. Do not treat
+and an actual compiled-component contract against shared host storage in both
+project modes. Source creates SDK history bindings; the app projects live run
+progress and retains terminal snapshots after raw-run deletion. Production
+installation, crash recovery, UI mutation integration, retention and default
+deployment remain in progress. Do not treat
 this draft as a completed install/run/update lifecycle.
