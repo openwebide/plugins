@@ -208,7 +208,7 @@
         },
         "capabilities": {
           "type": "array",
-          "maxItems": 7,
+          "maxItems": 8,
           "uniqueItems": true,
           "items": {
             "enum": [
@@ -216,6 +216,7 @@
               "records",
               "collections",
               "jobs",
+              "runs",
               "workspace",
               "clock",
               "completion"

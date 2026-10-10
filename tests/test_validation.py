@@ -77,6 +77,14 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
+    def test_durable_run_capability_uses_the_public_executable_contract(self):
+        manifest = json.loads((ROOT / "examples/rust-plugin/plugin.json").read_text())
+        manifest["executable"]["capabilities"] = ["jobs", "runs"]
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["executable"]["capabilities"] = ["runs", "runs"]
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
     def test_event_only_rust_plugin_and_event_contract(self):
         import shutil
         package = self.root / "rust-events"

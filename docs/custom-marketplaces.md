@@ -220,6 +220,33 @@ keys and revision checks to make effects repeatable. Run submission/completion,
 workspace primitives and full deployment verification remain in development. These foundations do not make the transitional
 Scheduling catalog release an executable plugin.
 
+The prototype `runs` grant supports general durable prompt submissions:
+
+```rust
+let submitted: serde_json::Value = openwebide_plugin_sdk::runs(&serde_json::json!({
+    "action": "submit",
+    "key": "check:1",
+    "prompt": "Inspect the current state and report the result.",
+    "target": {"kind": "origin"}
+}))?;
+```
+
+Targets are `origin`, `session` with an owned conversation `id`, or `new` with a
+source-supplied `title`. The host enforces the grant's account/project scope and
+retains the origin of a background event without granting chat authority. An
+optional `model` is `{server_id, model}`; otherwise the originating execution's
+pinned primary is used where available. It does not change conversation settings.
+Repeat an identical submission key to receive its original run; a changed request
+with that key is a conflict. Operations `list` (optional `after`), `read` (`id`),
+`cancel` (`id`, `revision`) and terminal `delete` (`id`, `revision`) return
+`{runs, next_after}`. Prompts are limited to 32 KiB, history to 1,000 entries, and
+pages to 16 entries. Delete releases retained keys and quota. Plugin prompts use
+the ordinary durable conversation queue, with host-only delivery and atomic
+message insertion/consumption; users can remove them to cancel pending runs.
+Raw run dispatch and completion delivery are still being connected. These
+primitives are not a completed Scheduling implementation or a built-in scheduler
+proxy. Plugins supply timing, prompts, recurrence and result interpretation.
+
 The `completion` capability accepts a `CompletionRequest` with `system_prompt`,
 `prompt`, `profile` (`primary` or `fast`) and `max_output_tokens`. The SDK's
 `complete` function returns a `CompletionResponse` containing `text`. The host
