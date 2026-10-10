@@ -10,7 +10,8 @@ Plugins. They browse and install its releases through the Plugins interface.
 Plugin API 1 supports skills. API 2 also supports a fixed set of platform tool
 groups. Those tool groups select built-in behavior and are transitional; they do
 not let authors supply new executable handlers. WASM artifacts, custom handlers,
-MCP contributions and the Rust SDK are not implemented yet.
+MCP contributions remain future work. The Rust SDK and source compiler are in
+development; executable first-party releases are not listed yet.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative
@@ -136,6 +137,25 @@ The proposed SDK home is the Open WebIDE app's Rust workspace, published as a
 versioned crate with versioned component interface definitions. Plugins consume
 released interfaces without accessing app internals. A separate SDK repository
 is not required to use it from a custom marketplace.
+
+The prototype SDK is in `crates/plugin-sdk` in the app repository, with versioned
+WIT interfaces and an isolated authoring checker. Until a registry release is
+published, follow [the Rust example's checkout instructions](../examples/rust-plugin/README.md)
+to use it. Host compilation supplies its embedded SDK; installed plugins do not
+reach into the app's implementation crates.
+
+The public `http`, `clock` and private `records` primitives are available in the
+prototype. Private records are scoped by authenticated account, project and
+plugin source, with bounded pages and revision checks. The host attaches authority
+outside plugin code; plugins cannot supply account or project IDs. Source updates
+can retain those records, but a different marketplace source does not inherit
+another plugin's namespace. General shared collection, job and workspace
+primitives and full deployment verification remain in development.
+
+An update that adds runtime capabilities requires explicit review, even under
+Automatic updates and even for a compatible version. Compilation alone does not
+activate that update. The previous installed version remains active until the
+user approves the prepared version's additions.
 
 First-party executable plugins must use exactly the same public extension
 contract as community plugins and own their implementation. General host
