@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "Web",
   "description": "Search public sources and convert web pages to Markdown on the execution host.",
   "license": "MIT",

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "memory",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "Project Memory",
   "description": "Search and manage durable project memories.",
   "license": "MIT",

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "skill-authoring",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "Skill Authoring",
   "description": "Create, improve and manage reusable project skills.",
   "license": "MIT",

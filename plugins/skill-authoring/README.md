@@ -2,7 +2,7 @@
 
 Create, improve and manage reusable project skills.
 
-Version 0.2.0 is an unlisted Rust source implementation for the development SDK
+Version 0.2.1 is an unlisted Rust source implementation for the development SDK
 and plugin API 3. The marketplace retains the historical API 2 release until the
 full installation/run lifecycle and executable defaults are verified.
 

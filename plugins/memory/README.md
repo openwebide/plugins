@@ -2,7 +2,7 @@
 
 Search and manage durable project memories.
 
-Version 0.2.0 is an unlisted source implementation for the development Rust SDK
+Version 0.2.1 is an unlisted source implementation for the development Rust SDK
 and plugin API 3. The marketplace still lists the earlier API 2 release until
 run-planning and lifecycle integration are verified. This source depends only on
 the public SDK and Serde, with no application internals or built-in tool calls.

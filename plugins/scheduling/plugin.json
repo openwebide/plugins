@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "scheduling",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "Scheduling",
   "description": "Schedule prompts and monitor follow-up checks on the host.",
   "license": "MIT",
