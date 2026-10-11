@@ -8,8 +8,8 @@ handler is called. Requests and execution happen on the bridge host.
 Version 0.2.1 is an executable API 3 release in the official catalog.
 Installation requires the host source compiler and SDK 0.1.0; packaged hosts
 embed its validated component as a default. Production checks exercise source
-execution and sanitized page retrieval through both host transports. Official
-main integration and the remaining manual PWA checks are pending.
+execution and sanitized page retrieval through both host transports. The implementation is integrated into the app and marketplace main branches.
+Remaining manual PWA checks are tracked in the app roadmap.
 
 Exports `search_web` and `fetch_web_page`; declares only `http` capability.
 Search queries use DuckDuckGo, Stack Exchange, crates.io, GitHub and Wikipedia

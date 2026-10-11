@@ -5,7 +5,8 @@ Create, improve and manage reusable project skills.
 Version 0.2.1 is an executable API 3 release in the official catalog and the
 compiled default bundle. Production checks verify CRUD, resources, context,
 preserved update fields and catalog installation through both host transports.
-Official main integration and the remaining manual PWA checks are pending.
+The implementation is integrated into the app and marketplace main branches.
+Remaining manual PWA checks are tracked in the app roadmap.
 
 This plugin owns its six tool handlers: search and list pagination, instruction
 and resource paging, draft validation, preserving omitted fields when updating,

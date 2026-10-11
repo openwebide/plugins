@@ -25,7 +25,8 @@ titles skip model requests, and project opt-out prevents naming requests.
 Production checks verify fresh defaults, CRUD/context, configured automatic
 naming, project opt-out and uninstall persistence through both hosts. Browser
 contracts cover editing, SDK chat dispatch, context, conflicts and disabling.
-Official main integration and the remaining manual PWA checks are pending.
+The implementation is integrated into the app and marketplace main branches.
+Remaining manual PWA checks are tracked in the app roadmap.
 
 See [Rust source authoring](../../docs/custom-marketplaces.md#rust-source-plugins-in-development) for host prerequisites,
 SDK checkout and isolated compilation checks. With the development SDK checkout:
