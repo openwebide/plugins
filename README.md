@@ -50,8 +50,7 @@ The database records user-wide installations and verified contribution snapshots
 Existing and future projects inherit them; Disable saves a project opt-out.
 Updates preserve opt-outs and keep active runs on their pinned content. Notify
 is the default update policy, with individual updates and Update All in the app.
-Automatic compatible updates and Off are per-plugin preferences. On current app
-development builds, server and paired hosts check catalogs with browser clients
+Automatic compatible updates and Off are per-plugin preferences. From Open WebIDE 1.0.0-alpha.6, server and paired hosts check catalogs with browser clients
 closed, sharing persisted check leases, retry state and cached results. Clients
 restore update notices on reconnect; automatic installation still requires an
 open client. Alpha 1.0.0-alpha.5 predates these unattended checks. The app bundles
