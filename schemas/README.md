@@ -1,14 +1,16 @@
 # Authoring schemas
 
 These schemas validate the current authoring format with JSON Schema 2020-12.
-Plugin API 1 supports skills; API 2 adds the supported platform tool groups.
+Plugin API 1 supports skills; API 3 adds executable Rust tools, context hooks
+and events. API 2 tool groups are historical and cannot activate on current hosts.
 Compatibility refers to the plugin API, not the application version.
 
 ## Package manifest
 
 `plugin.json` requires `schemaVersion`, `publisher`, `name`, `version`,
 `displayName`, `description`, `license`, `compatibility` and `contributions`.
-`readme` and an editor `$schema` association are optional.
+`readme`, a structured `icon` and an editor `$schema` association are optional.
+See the [authoring guide](../docs/authoring.md) for examples.
 
 Publisher/name values use lowercase letters, digits and single hyphens, up to
 64 characters. Versions use SemVer, including prerelease/build identifiers.
@@ -27,10 +29,21 @@ skill resource limits (16 resources, 128 KiB total, and bounded individual
 resources, accounting for base64 size for binary content). Text resources use a
 conservative 32 KiB byte limit. Validation never executes a skill or its scripts.
 
-API 2 adds `toolGroups`, a unique array of `web`, `memory`, `scheduling` and
-`skill-authoring`. A manifest must contribute at least one skill or tool group;
-tool-only plugins use `skills: []`. These select shared platform service handlers,
-without changing permissions or executing browser code.
+API 3 requires `executable`: `manifest: "Cargo.toml"`, a Rust `library` name,
+`sdkVersion: "0.1.0"`, and unique `capabilities`. The manifest declares
+`contributions.tools` with name, description, object `parameters` schema and
+`requires_approval`; these must exactly match `Plugin::tools()`, including order.
+`contributions.events` must likewise match `Plugin::events()`. Always include
+`skills`, using `[]` when absent. A plugin must contribute skills, tools or events.
+Context hooks are implemented through `Plugin::context`, not a manifest field.
+Optional `contributions.background` names a declared event and an
+`intervalSeconds` from 60 to 86400; it requires the `jobs` capability.
+
+Supported grants are `http`, `clock`, `completion`, `records`, `collections`,
+`jobs` and `runs`. `workspace` is reserved and has no implemented host adapter.
+See the [capability reference](../docs/custom-marketplaces.md#rust-source-plugins).
+API 2 `toolGroups` remains in the schema only for historical metadata; do not use
+it to author new plugins. API 3 cannot activate tool groups.
 
 Other contributions, arbitrary extra fields, configuration values and credentials
 are rejected. Add schemas for MCP, languages and UI only when their contracts are

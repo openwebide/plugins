@@ -1,8 +1,8 @@
 # Rust source plugin example
 
-Development example for the source-compilation runtime being implemented alongside
-this package. It is not listed in the marketplace or usable with released API 1/2
-hosts. The Rust crate owns the tool behavior; it contains no built-in feature proxy.
+Working API 3 source-compilation example for current Open WebIDE alpha hosts.
+It is deliberately unlisted in the official marketplace; API 1/2 hosts cannot
+execute it. The Rust crate owns the tool behavior; it contains no built-in feature proxy.
 
 The host supplies the pinned SDK, builds with Cargo.lock in isolation, verifies
 that exported tool definitions match plugin.json, and executes the resulting WASM
@@ -37,3 +37,6 @@ Publish the source commit before adding its immutable commit and directory to
 marketplace.json. See [custom marketplace setup](../../docs/custom-marketplaces.md)
 for the catalog format and publisher CI. Users install the source; their host
 provides the SDK and compiler, validates exports and grants, and caches the WASM.
+
+For export validation, fixture execution, contribution rules and troubleshooting,
+see the [authoring guide](../../docs/authoring.md).

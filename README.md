@@ -14,6 +14,14 @@ The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
 Language services and editor/UI contribution contracts remain on the roadmap.
 
+## Author a plugin
+
+Start with the [authoring guide](docs/authoring.md): copy a working example,
+validate its manifest, test Rust behavior, and publish an immutable release.
+See [custom marketplaces](docs/custom-marketplaces.md) for hosting your own
+catalog and the [public SDK](https://github.com/openwebide/openwebide/tree/main/crates/plugin-sdk)
+for the host contract.
+
 ## Repository layout
 
 - `marketplace.json`: the first-party catalog with immutable package releases.
@@ -29,10 +37,9 @@ Language services and editor/UI contribution contracts remain on the roadmap.
 
 ## Package model
 
-A plugin is one versioned package containing any combination of skills, MCP
-servers/tools, language support, declarative panels, editor annotations and
-editor hooks. Contributions share installation, configuration and lifecycle
-contracts; they are not separate package types.
+A plugin is one versioned package combining the supported skills, Rust tools,
+context hooks and events. MCP servers, language support, declarative panels and
+editor contributions are planned extensions of that same package format.
 
 Packages install and execute on bridge hosts: the paired native host for local
 projects, or the server/container host for remote projects. Browser and phone
@@ -59,9 +66,7 @@ only their immutable commit and package directory; they cannot override the
 repository. A standalone package can publish a marketplace file in its own repo.
 
 Catalogs can track branches, while installed releases resolve to immutable
-commits. File associations allow Open WebIDE to suggest language packages without
-sending source files or project paths to catalog hosts. Suggestions do not
-implicitly install or enable packages.
+commits. File associations and language-plugin suggestions remain planned.
 
 ## Reference packages
 
@@ -73,9 +78,8 @@ implicitly install or enable packages.
 | [Scheduling](plugins/scheduling/README.md) | Scheduled prompts and monitoring tools |
 | [Skill Authoring](plugins/skill-authoring/README.md) | Authoring/evaluation skill and skill management tools |
 
-Tool groups are transitional feature switches using existing shared platform
-handlers and normal approvals, not completed migrations of executable behavior.
-Future first-party executable plugins must own their implementation and use the
-same public SDK and host interfaces as community plugins. File editing, shell execution, git and task coordination remain core.
+Historical API 2 tool groups are retired feature switches. Current executable
+plugins own their implementation and use the same public SDK and host interfaces
+as community plugins. File editing, shell execution, git and task coordination remain core.
 User-created skills remain independent project data. The marketplace does not
 choose which plugins should be installed on fresh accounts.

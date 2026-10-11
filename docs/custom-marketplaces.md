@@ -5,6 +5,9 @@ It can use any public Git provider; it does not need registration with Open WebI
 Users add the repository URL, optional Git ref, and catalog path in Settings →
 Plugins. They browse and install its releases through the Plugins interface.
 
+Start with the [authoring guide](authoring.md) for a runnable Rust example and
+a contribution checklist. This page also serves as the capability reference.
+
 ## Supported today
 
 Plugin API 1 supports skills. API 3 accepts Rust source with public SDK tool
@@ -135,7 +138,7 @@ Notify; publishing a release does not replace that pinned installation silently.
 
 ## Rust source plugins
 
-The executable prototype lets authors implement behavior in Rust using a
+The executable runtime lets authors implement behavior in Rust using a
 public, versioned SDK and host interfaces. A marketplace release pins the source
 commit and directory containing plugin.json, Cargo.toml, Cargo.lock and Rust
 source. The execution host compiles that source into a WASM component on install,
@@ -150,15 +153,15 @@ declares Cargo.toml, the library name, SDK version and capabilities; contributio
 declares the exported tools. See examples/rust-plugin for an unlisted authoring
 example. Publisher CI should compile and validate source builds before publishing.
 The host caches compiled output by source, SDK and toolchain; a failed build must
-preserve the working installation. Full installation/runtime support is still in
-development and the example is not an official marketplace release.
+preserve the working installation. The runtime ships in the alpha; the example is intentionally not an official
+marketplace release. Remaining lifecycle checks are tracked in the app roadmap.
 
 The SDK lives in the Open WebIDE app's Rust workspace with versioned component
 interface definitions; registry publication remains pending. Plugins consume
 released interfaces without accessing app internals. A separate SDK repository
 is not required to use it from a custom marketplace.
 
-The prototype SDK is in `crates/plugin-sdk` in the app repository, with versioned
+The public SDK is in `crates/plugin-sdk` in the app repository, with versioned
 WIT interfaces and an isolated authoring checker. Until a registry release is
 published, follow [the Rust example's checkout instructions](../examples/rust-plugin/README.md)
 to use it. Host compilation supplies its embedded SDK; installed plugins do not
@@ -172,12 +175,12 @@ still ships Rust source and Cargo.lock; its users' hosts compile it on installat
 Precompilation grants no extra capabilities, app imports or built-in fallbacks.
 
 The public `http`, `clock`, `completion` and private `records` primitives are available in the
-prototype. Private records are scoped by authenticated account, project and
+alpha. Private records are scoped by authenticated account, project and
 plugin source, with bounded pages and revision checks. The host attaches authority
 outside plugin code; plugins cannot supply account or project IDs. Source updates
 can retain those records, but a different marketplace source does not inherit
 another plugin's namespace. The separate `collections` grant enables general CRUD
-on documented app-visible project collections. The prototype's `memories`
+on documented app-visible project collections. The `memories`
 adapter preserves existing UI data; it enforces ownership, the user's opt-out,
 schema bounds and revision checks. Plugin code owns search, ranking, naming and
 formatting. See the [Memory source reference](../plugins/memory/README.md).
@@ -204,7 +207,7 @@ bootstrap and WebSocket upgrades. Plugins must use declared SDK capabilities for
 host operations. HTTP does not supply TCP tunnels or allow its marker to be
 converted into a hop-by-hop header.
 
-The prototype `jobs` capability supplies a durable one-shot event queue. Declare
+The `jobs` capability supplies a durable one-shot event queue. Declare
 `jobs` in the executable capabilities and the event name in `contributions.events`
 and `Plugin::events()`. Plugin source computes due times, recurrence and event
 behavior. The host supplies storage, immutable program snapshots and leases.
@@ -273,7 +276,7 @@ One-shot job deadlines may already be overdue when submitted; the host delivers
 them when available. User-facing future-date rules and catch-up behavior belong
 to plugin source.
 
-The bridge prototype polls for due events and delivers them through the shared
+The bridge polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable
 keys and revision checks to make effects repeatable. Scheduling owns recurrence and reconciliation in Rust, and app UI mutations
@@ -368,7 +371,7 @@ creating conversation's older model pin. Conversation `model_override` metadata
 uses the app's `{connection_id, model}` shape; raw run `model` uses
 `{server_id, model}`, so source must translate those fields.
 
-The prototype `runs` grant supports general durable prompt submissions:
+The `runs` grant supports general durable prompt submissions:
 
 ```rust
 let submitted: serde_json::Value = openwebide_plugin_sdk::runs(&serde_json::json!({
@@ -391,13 +394,13 @@ with that key is a conflict. Operations `list` (optional `after`), `read` (`id`)
 pages to 16 entries. Delete releases retained keys and quota. Plugin prompts use
 the ordinary durable conversation queue, with host-only delivery and atomic
 message insertion/consumption; users can remove them to cancel pending runs.
-The app prototype supplies internal host claims, renewable leases, status reports
+The app supplies internal host claims, renewable leases, status reports
 and busy-claim release. Reclaimed prompts receive fresh revisions and runner
 identities. Recovery requeues only unconsumed prompts; a stopped host after
 consumption produces `interrupted` without replay. Local workspace execution
 requires a user-authorized host folder binding. These are daemon primitives;
 plugin code cannot supply lease authority or choose another execution host.
-The bridge prototype dispatches raw submissions through the shared agent runner
+The bridge dispatches raw submissions through the shared agent runner
 on server and paired hosts. Busy conversations release unconsumed claims; status
 reporting retries transient failures while leases stay alive. Lease loss or
 shutdown cancels owned preparation/execution. Reports retain bounded raw output,
@@ -486,7 +489,7 @@ further browser lifecycle checks remain on the app roadmap.
 The source checker accepts `--context` in place of a tool name to exercise the
 hook with a JSON input such as `{"budget_bytes":512}` and capability fixtures.
 
-The prototype compiler uses the native macOS sandbox or bubblewrap for native
+The isolated compiler uses the native macOS sandbox or bubblewrap for native
 Linux users. Root containers use the app's packaged compiler launcher, which
 drops privileges and requires fully enforced Landlock ABI 3. The default Docker
 security profile is sufficient. Dependencies are retrieved in an isolated fetch
