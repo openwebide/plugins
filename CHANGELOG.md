@@ -2,27 +2,11 @@
 
 ## [Unreleased]
 
-- Explain how custom marketplaces ship SDK Rust source while app distribution builds compile and embed the selected official defaults using the same public contract and capability rules.
-
-- Add a source-owned enable/disable tool to the unlisted Scheduling Rust plugin, preserving titles and checking revisions and elapsed one-time schedules. Accept UI conversation context for monitor cancellation and reject mismatched conversations.
-
-- Document raw run claim recovery, stale-delivery guards and local host folder authorization in the SDK prototype.
-
-- Add the prototype runs capability to the public manifest schema and document durable submissions, conversation scope and queue guards; host dispatch and completion remain in progress.
-
-- Document automatic durable event delivery, lease-loss cancellation and at-least-once effects in the SDK prototype.
-
-- Document the SDK HTTP boundary: public and LAN services remain accessible, while Open WebIDE host control operations require their declared SDK capabilities.
-
-- Document the prototype SDK's durable job queue, version pinning, idempotency, leases, bounds and cleanup. Automatic background delivery and the executable Scheduling migration remain in progress.
-
-- Add the public completion capability to the unlisted Memory Rust source. The plugin owns naming prompts, fast/primary fallback, title validation and content-derived fallback; manual titles and project opt-out skip model calls.
-
-- Add an unlisted API 3 Rust Skill Authoring source implementation that owns its six tool handlers, validation, resource paging, update preservation, authoring workflow and read-only context catalog through the public SDK. Full deployment and executable default migration remain in progress.
-
-- Document custom marketplace setup, immutable publishing and validation; distinguish
-  the supported format from the planned Rust SDK/WASM artifact flow and require
-  first-party executable plugins to own their behavior through the public contract.
+- Publish executable API 3 releases of Web, Project Memory, Scheduling and Skill Authoring at 0.2.1, plus PR Review 0.1.2, with immutable source pins and individual structured JSON icons.
+- Move first-party behavior into Rust using the public SDK, with the same capabilities and approval rules as community plugins. Distribution builds compile and embed the selected official defaults.
+- Document custom marketplaces, Rust source compilation on install, immutable publishing and validation against the pinned public Git SDK.
+- Add capability-gated HTTP, scoped records/shared collections, clocks, model completion, durable jobs and raw prompt runs. Preserve source pins, authenticated scope, bounded execution and recoverable delivery.
+- Implement Memory naming/context, Skill Authoring tools/resources/context and Scheduling recurrence, monitors, failure journals, history retention and reconciliation in plugin source. App UI actions share the public SDK path in both project modes.
 
 - Publish the four API 2 plugins and PR Review 0.1.1 with immutable source pins in the Open WebIDE marketplace.
 

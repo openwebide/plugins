@@ -5,7 +5,7 @@ redirect handling, Stack Overflow question retrieval, HTML sanitization and
 Markdown formatting. The SDK supplies general HTTP transport; no built-in Web
 handler is called. Requests and execution happen on the bridge host.
 
-Version 0.2.1 is an executable API 3 release in the candidate catalog.
+Version 0.2.1 is an executable API 3 release in the official catalog.
 Installation requires the host source compiler and SDK 0.1.0; packaged hosts
 embed its validated component as a default. Production checks exercise source
 execution and sanitized page retrieval through both host transports. Official

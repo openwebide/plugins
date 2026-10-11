@@ -26,7 +26,7 @@ visits at most eight records per tick with a bounded host-call budget and a
 private persistent cursor; failing records do not starve later ones. A work-budget
 interruption preserves partial progress and resumes that record on the next tick.
 
-Version 0.2.1 is listed in the candidate catalog and included in the compiled
+Version 0.2.1 is listed in the official catalog and included in the compiled
 default bundle. Official main integration remains pending. The source has native policy/workflow tests
 and an actual compiled-component contract against shared host storage in both
 project modes. Source creates SDK history bindings; the app projects live run

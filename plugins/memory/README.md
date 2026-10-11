@@ -2,7 +2,7 @@
 
 Search and manage durable project memories.
 
-Version 0.2.1 is an executable API 3 release in the candidate catalog and the
+Version 0.2.1 is an executable API 3 release in the official catalog and the
 compiled default bundle. It depends only on the public SDK and Serde, with no
 application internals or built-in tool calls.
 

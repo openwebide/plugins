@@ -12,8 +12,8 @@ handlers, context hooks and durable events. Hosts compile source on installation
 catalog artifact URLs are not used. Updated hosts retain historical API 2
 platform tool-group receipts for migration but require executable updates before
 activation. MCP, language and UI contributions remain future work. Executable
-first-party releases are in the candidate catalog and compiled default bundle;
-official main integration and the remaining manual PWA checks are pending.
+first-party releases are in the official catalog and compiled default bundle.
+Further device and lifecycle checks are tracked in the app roadmap.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative
@@ -133,7 +133,7 @@ executes plugin code on a phone or in the browser. Installs are enabled across
 projects by default, with per-project opt-outs. Update notifications default to
 Notify; publishing a release does not replace that pinned installation silently.
 
-## Rust source plugins (in development)
+## Rust source plugins
 
 The executable prototype lets authors implement behavior in Rust using a
 public, versioned SDK and host interfaces. A marketplace release pins the source
@@ -276,10 +276,9 @@ to plugin source.
 The bridge prototype polls for due events and delivers them through the shared
 plugin executor, renewing leases during compilation and execution. Losing a lease
 cancels the active actor. Delivery is at least once, so plugin code must use stable
-keys and revision checks to make effects repeatable. The Scheduling policy
-migration, UI mutation integration and full deployment verification
-remain in development. These foundations do not make the transitional Scheduling
-catalog release an executable plugin.
+keys and revision checks to make effects repeatable. Scheduling owns recurrence and reconciliation in Rust, and app UI mutations
+use the same SDK actions as agent tools. The official executable release replaces
+the historical tool-group switch.
 
 The `tasks` collection offers scoped CRUD on existing task and monitor records,
 preserving IDs and history. Values include `draft`, `next_run`, plugin-owned JSON
@@ -431,8 +430,7 @@ when delivery fails or raw runs are deleted. A plugin can replay its result hand
 from that snapshot during reconciliation, then delete the terminal job after its
 effects are durable. Leave pending and leased callbacks to their delivery worker;
 check the reserved `$run:<id>` key against the retained run identity before replay.
-The Scheduling reference uses this bounded recovery path. Executable Scheduling
-remains unfinished; plugins supply
+The Scheduling reference uses this bounded recovery path. Plugins supply
 timing, prompts, recurrence and result interpretation through these primitives.
 
 Scheduling also owns failures detected before prompt submission, such as a missing
@@ -474,8 +472,7 @@ payload limit. The host checks manifest/export agreement and invokes handlers
 with the same capability rules and isolated WASM runtime as tools. Event-only
 plugins can use `skills: []` and omit `tools`. The source checker accepts `--event`
 with `{"name":"job_due","payload":{}}` to exercise a declared handler. Durable
-job registration and delivery are still under development; declaring an event
-does not subscribe it to a working scheduler yet.
+job registration and host delivery use the declared events and capability grants.
 
 The public `Plugin::context(ContextInput)` hook returns a `ContextContribution`:
 optional prompt text and a list of the plugin's own tools to disable. The default
@@ -484,7 +481,8 @@ most 8 KiB). The runtime permits only clock calls and list/read operations on
 private records, shared collections or durable jobs; mutations are denied before reaching the
 host. Plugins cannot disable another plugin's tools. This hook is supported in
 shared local and remote run planning before model tool selection, including when
-model tools are disabled. Full deployment verification remains in development.
+model tools are disabled. Both host transports have deployed verification;
+further browser lifecycle checks remain on the app roadmap.
 The source checker accepts `--context` in place of a tool name to exercise the
 hook with a JSON input such as `{"budget_bytes":512}` and capability fixtures.
 
@@ -525,4 +523,4 @@ of `[x, y]` pairs. A rectangle’s `rx` is optional. Coordinates are bounded to
 properties and element types are rejected. Paths accept only SVG drawing commands
 and numeric characters. Icons need no runtime capability or download: the app
 creates the markup from typed metadata, with sizing and colors controlled by its
-design system. The first-party candidate releases each provide a distinct drawing.
+design system. The first-party releases each provide a distinct drawing.

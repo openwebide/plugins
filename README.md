@@ -10,8 +10,8 @@ default, with saved per-project opt-outs. Plugin API 1 supports skills; API 3
 supports Rust source handlers, context hooks and events through the public SDK.
 Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historical
 API 2 tool-group releases require an update before activation on current hosts.
-The executable releases are listed on the implementation branch; integration
-into official main and the remaining manual PWA checks are still pending.
+The official catalog publishes executable releases and structured JSON icons.
+Further device and lifecycle checks are tracked in the app roadmap.
 Language services and editor/UI contribution contracts remain on the roadmap.
 
 ## Repository layout

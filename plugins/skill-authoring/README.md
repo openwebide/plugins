@@ -2,7 +2,7 @@
 
 Create, improve and manage reusable project skills.
 
-Version 0.2.1 is an executable API 3 release in the candidate catalog and the
+Version 0.2.1 is an executable API 3 release in the official catalog and the
 compiled default bundle. Production checks verify CRUD, resources, context,
 preserved update fields and catalog installation through both host transports.
 Official main integration and the remaining manual PWA checks are pending.
