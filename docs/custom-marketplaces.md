@@ -135,6 +135,10 @@ paired native bridge; remote projects use the server bridge. Installation never
 executes plugin code on a phone or in the browser. Installs are enabled across
 projects by default, with per-project opt-outs. Update notifications default to
 Notify; publishing a release does not replace that pinned installation silently.
+Current app development builds check catalogs on bridge hosts even with browsers
+closed and persist results for reconnecting clients. Off installations do not
+request checks; Automatic still activates compatible releases in an open client,
+with additional-capability review. Alpha 1.0.0-alpha.5 predates host-side checks.
 
 ## Rust source plugins
 
