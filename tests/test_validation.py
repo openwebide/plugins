@@ -25,6 +25,10 @@ class ValidationTests(unittest.TestCase):
         self.skill.parent.mkdir(parents=True)
         self.skill.write_text("---\nname: review-changes\ndescription: Review changes.\n---\n\nRead the diff.\n")
         self.manifest = json.loads((ROOT / "plugins/pr-review/plugin.json").read_text())
+        # Keep the generic skill fixture independent of first-party executable upgrades.
+        self.manifest["compatibility"]["pluginApi"] = 1
+        self.manifest.pop("executable", None)
+        self.manifest["contributions"].pop("panels", None)
         self.manifest.pop("readme")
         self.save_manifest()
         self.catalog = {"schemaVersion": 1, "name": "Test", "plugins": []}
@@ -127,7 +131,7 @@ class ValidationTests(unittest.TestCase):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
     def test_unknown_contributions_and_api_are_rejected(self):
-        for field in ("mcpServers", "languages", "panels", "hooks"):
+        for field in ("mcpServers", "languages", "hooks"):
             with self.subTest(field=field):
                 value = copy.deepcopy(self.manifest)
                 value["contributions"][field] = []
@@ -311,6 +315,66 @@ class ValidationTests(unittest.TestCase):
         self.assertIn("missing package file", result.stderr)
         self.assertNotIn("Traceback", result.stderr)
 
+    def test_panel_schema_rejects_browser_markup_and_unknown_blocks(self):
+        document = {"schema_version": 1, "revision": 1, "blocks": [
+            {"type": "group", "title": None, "blocks": [
+                {"type": "text", "text": "Safe plain text"},
+                {"type": "code", "text": "fn main() {}", "language": "rust"}
+            ]}
+        ]}
+        schema = self.checks["Plugin panel UI"]
+        validate.check_schema(document, schema, "panel")
+        for block in [{"type": "html", "html": "<script>"},
+                      {"type": "text", "text": "Text", "html": "<script>"}]:
+            document["blocks"][0]["blocks"] = [block]
+            with self.assertRaises(validate.Invalid):
+                validate.check_schema(document, schema, "panel")
+
+    def test_panel_only_executable_requires_api_four_and_unique_ids(self):
+        example = json.loads((ROOT / "examples/rust-plugin/plugin.json").read_text())
+        example.pop("readme", None)
+        example["contributions"] = {"skills": [], "panels": [{
+            "id": "reviews", "title": "Reviews", "icon": "git_pull_request", "view": "render",
+            "actions": [{"id": "publish", "handler": "publish", "title": "Publish", "requires_approval": True}]
+        }]}
+        for filename in ["Cargo.toml", "Cargo.lock"]:
+            (self.package / filename).write_text((ROOT / "examples/rust-plugin" / filename).read_text())
+        example["compatibility"]["pluginApi"] = 3
+        self.manifest = example
+        self.save_manifest()
+        with self.assertRaises(validate.Invalid):
+            validate.validate_package(self.package, self.checks)
+        example["compatibility"]["pluginApi"] = 4
+        self.save_manifest()
+        validate.validate_package(self.package, self.checks)
+        panels = example["contributions"]["panels"]
+        panels.append(copy.deepcopy(panels[0]))
+        self.save_manifest()
+        with self.assertRaisesRegex(validate.Invalid, "duplicate panel id"):
+            validate.validate_package(self.package, self.checks)
+        panels.pop()
+        panels[0]["actions"].append(copy.deepcopy(panels[0]["actions"][0]))
+        self.save_manifest()
+        with self.assertRaisesRegex(validate.Invalid, "duplicate panel action id"):
+            validate.validate_package(self.package, self.checks)
+
+
+    def test_catalog_panel_category_matches_executable_contributions(self):
+        import shutil
+        shutil.copytree(ROOT / "plugins/pr-review", self.package, dirs_exist_ok=True)
+        self.manifest = json.loads((self.package / "plugin.json").read_text())
+        listing = self.listing()
+        listing["releases"][0]["version"] = self.manifest["version"]
+        listing["icon"] = self.manifest["icon"]
+        listing["categories"] = ["skills", "panels"]
+        self.catalog["plugins"] = [listing]
+        path = self.root / "marketplace.json"
+        path.write_text(json.dumps(self.catalog))
+        self.assertEqual(validate.validate_repository(self.root), (1, 1))
+        listing["categories"] = ["skills"]
+        path.write_text(json.dumps(self.catalog))
+        with self.assertRaisesRegex(validate.Invalid, "catalog categories differ"):
+            validate.validate_repository(self.root)
 
     def test_structured_icons_validate_for_manifests_and_catalogs(self):
         self.catalog["plugins"] = [self.listing()]

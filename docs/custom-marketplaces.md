@@ -11,16 +11,18 @@ a contribution checklist. This page also serves as the capability reference.
 ## Supported today
 
 Plugin API 1 supports skills. API 3 accepts Rust source with public SDK tool
-handlers, context hooks and durable events. Hosts compile source on installation;
+handlers, context hooks and durable events. API 4 adds declarative panels with
+plugin-owned views and actions. Hosts compile source on installation;
 catalog artifact URLs are not used. Updated hosts retain historical API 2
 platform tool-group receipts for migration but require executable updates before
-activation. MCP, language and UI contributions remain future work. Executable
+activation. MCP, language services and editor contributions remain future work. Executable
 first-party releases are in the official catalog and compiled default bundle.
 Further device and lifecycle checks are tracked in the app roadmap.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative
-paths. Use `plugins/pr-review` as a working package example, changing its publisher,
+paths. Use a `skills/<name>/SKILL.md` contribution for a skills-only package, or
+`examples/rust-plugin` / `plugins/pr-review` for executable behavior. Change the publisher,
 name, display metadata, skill instructions and version to describe your plugin.
 Keep your license and attribution accurate. The package layout is:
 

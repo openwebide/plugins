@@ -202,6 +202,13 @@ def validate_package(root, checks=None):
             raise Invalid("background event must be declared")
         if "jobs" not in manifest.get("executable", {}).get("capabilities", []):
             raise Invalid("background event requires executable jobs capability")
+    panels = manifest["contributions"].get("panels", [])
+    if len({panel["id"] for panel in panels}) != len(panels):
+        raise Invalid("duplicate panel id")
+    for panel in panels:
+        actions = panel.get("actions", [])
+        if len({action["id"] for action in actions}) != len(actions):
+            raise Invalid("duplicate panel action id")
     if "readme" in manifest:
         package_path(root, manifest["readme"])
     return manifest
@@ -257,7 +264,9 @@ def validate_repository(root):
                 categories.append("skills")
             if manifest["contributions"].get("toolGroups") or manifest["contributions"].get("tools"):
                 categories.append("tools")
-            if sorted(listing["categories"]) != categories:
+            if manifest["contributions"].get("panels"):
+                categories.append("panels")
+            if sorted(listing["categories"]) != sorted(categories):
                 raise Invalid(f"catalog categories differ from local contributions: {manifest['name']}")
     return len(packages), len(catalog["plugins"])
 

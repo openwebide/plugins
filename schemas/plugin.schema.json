@@ -47,7 +47,8 @@
           "enum": [
             1,
             2,
-            3
+            3,
+            4
           ]
         }
       },
@@ -163,6 +164,13 @@
             "intervalSeconds"
           ],
           "additionalProperties": false
+        },
+        "panels": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/panel.schema.json#/$defs/definition"
+          }
         }
       },
       "required": [
@@ -208,6 +216,16 @@
           },
           "required": [
             "events"
+          ]
+        },
+        {
+          "properties": {
+            "panels": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "panels"
           ]
         }
       ]
@@ -303,7 +321,10 @@
           "compatibility": {
             "properties": {
               "pluginApi": {
-                "const": 3
+                "enum": [
+                  3,
+                  4
+                ]
               }
             }
           }
@@ -337,6 +358,36 @@
               },
               "events": {
                 "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "properties": {
+              "panels": {
+                "minItems": 1
+              }
+            },
+            "required": [
+              "panels"
+            ]
+          }
+        },
+        "required": [
+          "contributions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 4
               }
             }
           }

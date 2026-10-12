@@ -12,7 +12,7 @@ Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historic
 API 2 tool-group releases require an update before activation on current hosts.
 The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
-Language services and editor/UI contribution contracts remain on the roadmap.
+Language services, editor hooks and annotations remain on the roadmap.
 
 ## Author a plugin
 
@@ -38,7 +38,7 @@ for the host contract.
 ## Package model
 
 A plugin is one versioned package combining the supported skills, Rust tools,
-context hooks and events. MCP servers, language support, declarative panels and
+context hooks, events and declarative panels. MCP servers, language support and
 editor contributions are planned extensions of that same package format.
 
 Packages install and execute on bridge hosts: the paired native host for local
@@ -85,3 +85,7 @@ plugins own their implementation and use the same public SDK and host interfaces
 as community plugins. File editing, shell execution, git and task coordination remain core.
 User-created skills remain independent project data. The marketplace does not
 choose which plugins should be installed on fresh accounts.
+
+## Declarative UI panels
+
+API 4 adds [host-executed panels](docs/panels.md) through the public Rust SDK. PR Review 0.2.0 is the executable reference implementation, with normal capability grants and approval before publishing. Its native/WASI, real bridge and desktop/phone UI contracts cover both project modes.

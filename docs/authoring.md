@@ -1,22 +1,24 @@
 # Author a plugin
 
-Current alpha hosts support API 1 skills and API 3 Rust tools, read-only context
+Current nightly hosts support API 1 skills and API 3 Rust tools, read-only context
 hooks and durable events. Start with a skill for instructions/resources, or Rust
 for executable behavior. A plugin can combine them. MCP servers, language
-services, editor hooks and declarative panels are not authorable yet.
+services and editor hooks remain future work. API 4 adds declarative panels with
+plugin-owned views/actions; see the [panel guide](panels.md).
 
 ## Start from a working example
 
 Clone this repository and run commands from its root. For Rust, copy
-`examples/rust-plugin` into `plugins/my-plugin`; for skills only, copy
-`plugins/pr-review`. Keep the files inside that directory, including the license
+`examples/rust-plugin` into `plugins/my-plugin`; for skills only, begin with a `skills/<name>/SKILL.md` contribution.
+`plugins/pr-review` is the executable panel reference. Keep the files inside that directory, including the license
 and any skill resources. Do not copy host implementation crates.
 
 For Rust, edit `plugin.json`, `Cargo.toml` and `src/lib.rs` together:
 
 - Choose your publisher/name identity and SemVer version, display metadata and
   license. A publisher namespace is not a verified identity.
-- Set `compatibility.pluginApi` to `3`. Keep `schemaVersion` at `1`.
+- Set `compatibility.pluginApi` to `3` for tools/context/events or `4` for panels.
+  Keep `schemaVersion` at `1`; the UI document schema is independently versioned.
 - Keep `executable.manifest` as `Cargo.toml`; match `executable.library` to the
   Cargo `[lib].name` and keep `crate-type = ["cdylib"]`.
 - Keep SDK `=0.1.0` in Cargo and `sdkVersion: "0.1.0"` in the manifest. The SDK
@@ -130,3 +132,7 @@ SDK mismatches require a compatible host/SDK, not access to app internals; lockf
 errors require regeneration before publishing; unsupported contributions require
 waiting for their contracts. A failed preparation leaves the installed version
 intact. API 2 tool-group switches are historical, not an executable alternative.
+
+## Declarative panels
+
+API 4 adds host view/action handlers and versioned UI documents. See [panel authoring](panels.md) and the [PR Review Rust reference](../plugins/pr-review/src/lib.rs). Panels use the same compiler, installation lifecycle and capability grants as other executable contributions.

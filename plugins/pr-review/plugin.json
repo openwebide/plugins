@@ -3,18 +3,53 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "pr-review",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "PR Review",
-  "description": "Review working-tree changes, branches and pull requests using existing agent tools.",
+  "description": "Review changes with agent skills and inspect and publish GitHub pull-request reviews in a host-owned panel.",
   "license": "MIT",
   "readme": "README.md",
   "compatibility": {
-    "pluginApi": 1
+    "pluginApi": 4
   },
   "contributions": {
     "skills": [
       {
         "path": "skills/review-changes/SKILL.md"
+      }
+    ],
+    "panels": [
+      {
+        "id": "pull-requests",
+        "title": "Pull requests",
+        "icon": "git_pull_request",
+        "view": "render",
+        "refresh_seconds": 60,
+        "actions": [
+          {
+            "id": "configure",
+            "handler": "configure",
+            "title": "Save configuration",
+            "requires_approval": false
+          },
+          {
+            "id": "open",
+            "handler": "open",
+            "title": "Open pull request",
+            "requires_approval": false
+          },
+          {
+            "id": "list",
+            "handler": "list",
+            "title": "Show pull requests",
+            "requires_approval": false
+          },
+          {
+            "id": "publish",
+            "handler": "publish",
+            "title": "Publish review",
+            "requires_approval": true
+          }
+        ]
       }
     ]
   },
@@ -42,6 +77,15 @@
         "type": "path",
         "d": "M6 7v10m12 0v-5a5 5 0 0 0-5-5h-1m3-3-3 3 3 3"
       }
+    ]
+  },
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "pr_review",
+    "sdkVersion": "0.1.0",
+    "capabilities": [
+      "http",
+      "records"
     ]
   }
 }

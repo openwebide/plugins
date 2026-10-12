@@ -46,7 +46,8 @@
             "items": {
               "enum": [
                 "skills",
-                "tools"
+                "tools",
+                "panels"
               ]
             }
           },
