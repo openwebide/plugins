@@ -6,11 +6,19 @@
       "publisher": "openwebide",
       "name": "pr-review",
       "displayName": "PR Review",
-      "description": "Review working-tree changes, branches and pull requests using existing agent tools.",
+      "description": "Review changes with agent skills and inspect and publish GitHub pull-request reviews in a host-owned panel.",
       "categories": [
-        "skills"
+        "skills",
+        "panels"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "e517f4c0dff6182a26ca7283832021a148a9f82e",
+            "path": "plugins/pr-review"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
