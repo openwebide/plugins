@@ -4,7 +4,9 @@ A host-only language component for Rust, Python, JavaScript/JSX, TypeScript/TSX,
 Java, C#, PHP, JSON/JSONC, HTML, CSS/SCSS, Markdown, INI/EditorConfig, XML,
 Shell, TOML, YAML, SQL, C, C++ and Go. Embedded languages use the same public
 source-bound result contract. Comment, pairing and indentation behavior is
-manifest data interpreted by the core editor.
+manifest data interpreted by the core editor. A plain-text contribution supplies
+generic region folding for otherwise unrecognized files; specific language
+matches take precedence over its catch-all pattern.
 
 The component uses the public syntax toolkit, retains bounded incremental parser
 state, and has no host grants, filesystem access or browser code. Installation,

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Preserve region folding for unrecognized files through the ordinary Languages package’s plain-text contribution.
+
+- Add explicit uniform comment rules to the Languages and Notes 0.1.1 source packages, preserving immediate line-comment commands for single-strategy documents. Embedded HTML and Markdown retain context-dependent rules. Update the language schema and authoring guidance; catalog publication still awaits the app migration.
+
 - Define API 5 language declarations and offline validation, with an independent Notes language component example. The Languages reference package and app editor migration are in development; no language catalog release is published yet.
 
 - Publish executable API 3 releases of Web, Project Memory, Scheduling and Skill Authoring at 0.2.1, plus PR Review 0.1.2, with immutable source pins and individual structured JSON icons.

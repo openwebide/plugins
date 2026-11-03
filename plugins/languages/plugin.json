@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "languages",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "Languages",
   "description": "Syntax, folding, structure and editing rules for programming, markup and configuration files.",
   "license": "MIT",
@@ -25,6 +25,7 @@
           "rs"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -135,6 +136,7 @@
           "py"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "#",
           "brackets": [
             {
@@ -256,6 +258,7 @@
           "cjs"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -408,6 +411,7 @@
           "jsx"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -562,6 +566,7 @@
           "cts"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -714,6 +719,7 @@
           "tsx"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -866,6 +872,7 @@
           "java"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -989,6 +996,7 @@
           "cs"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -1113,6 +1121,7 @@
           "phtml"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -1361,6 +1370,7 @@
           "scss"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "blockComment": {
             "open": "/*",
             "close": "*/",
@@ -1504,6 +1514,7 @@
           "properties"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "#"
         },
         "features": {
@@ -1545,6 +1556,7 @@
           "pubxml"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "blockComment": {
             "open": "<!--",
             "close": "-->"
@@ -1565,6 +1577,7 @@
           "zsh"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "#",
           "autoClosingPairs": [
             {
@@ -1634,6 +1647,7 @@
           "toml"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "#",
           "autoClosingPairs": [
             {
@@ -1695,6 +1709,7 @@
           "yml"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "#",
           "autoClosingPairs": [
             {
@@ -1747,6 +1762,7 @@
           "sql"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "--",
           "blockComment": {
             "open": "/*",
@@ -1805,6 +1821,7 @@
           "h"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -1931,6 +1948,7 @@
           "hpp"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -2054,6 +2072,7 @@
           "go"
         ],
         "configuration": {
+          "uniformLineComments": true,
           "lineComment": "//",
           "blockComment": {
             "open": "/*",
@@ -2206,10 +2225,11 @@
         "id": "plain",
         "name": "Plain text",
         "extensions": [],
+        "filenamePatterns": ["*"],
         "configuration": {},
         "features": {
           "syntax": false,
-          "folding": false,
+          "folding": true,
           "structure": false
         }
       }

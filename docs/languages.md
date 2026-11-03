@@ -29,6 +29,14 @@ when the language permits nesting. The core editor interprets this data; a
 configuration-only package needs no executable. Syntax, folding and structure
 features require an executable component.
 
+Set `configuration.uniformLineComments: true` only when the declared line marker
+or block-comment fallback applies throughout the document. This allows explicit
+line-comment commands before analysis, including files above the analysis limit.
+The default is false: structural providers wait for source-bound context before
+choosing comment rules. Embedded scopes must preserve a uniform declaration's
+comment strategy; contradictory results are rejected. Keep the SDK pin current
+when using this API 5 field; older SDK snapshots do not accept it.
+
 Implement `Plugin::languages()` and `Plugin::language(input)`, then use
 `openwebide_plugin_sdk::export!`. Exported definitions must exactly match the
 manifest, including order. The SDK reserves `@openwebide/languages` for metadata

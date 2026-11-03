@@ -88,3 +88,60 @@ impl Plugin for Languages {
     }
 }
 openwebide_plugin_sdk::export!(Languages);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unknown_documents_keep_plain_source_and_generic_region_folds() {
+        let mut syntax = engine();
+        for (source, digest) in [
+            (
+                "#region group\n文😀\n#endregion\nafter\n",
+                "db56e74c48a5122dee888210cb465a87a71a48adb3c3527a5807b50c609715b3",
+            ),
+            (
+                "#region group\r\n文😀\r\n#endregion\r\nafter\r\n",
+                "c2d8ef9e8b382fa2f6635e3388e1e8f21985eddb07128d39d552cd6981310fa1",
+            ),
+        ] {
+            let output = syntax
+                .handle(LanguageInput::Analyze(AnalysisRequest {
+                    version: VERSION,
+                    document: "unrecognized".into(),
+                    request: 1,
+                    revision: 1,
+                    language: "plain".into(),
+                    path: "unknown.custom-extension".into(),
+                    source_digest: digest.into(),
+                    source: SourceChange::Full {
+                        text: source.into(),
+                    },
+                    tab_width: 4,
+                }))
+                .unwrap();
+            let LanguageOutput::Analyzed(response) = output else {
+                panic!("analysis required")
+            };
+            assert!(matches!(response.status, AnalysisStatus::Ready { .. }));
+            let analysis = response.analysis.unwrap();
+            assert!(analysis.folds.contains(&FoldRange {
+                start_line: 0,
+                end_line: 2
+            }));
+            if let Some(rows) = analysis.highlights {
+                for (line, spans) in source.split('\n').zip(rows) {
+                    assert_eq!(spans.last().map_or(0, |span| span.end), line.len());
+                    assert!(spans.iter().all(|span| span.kind == TokenKind::Plain));
+                }
+            }
+            syntax
+                .handle(LanguageInput::Close {
+                    version: VERSION,
+                    document: "unrecognized".into(),
+                })
+                .unwrap();
+        }
+    }
+}

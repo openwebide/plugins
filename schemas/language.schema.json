@@ -206,6 +206,11 @@
     "configuration": {
       "type": "object",
       "properties": {
+        "uniformLineComments": {
+          "type": "boolean",
+          "default": false,
+          "description": "The declared line marker or block-comment fallback applies throughout the document, including before analysis."
+        },
         "lineComment": {
           "anyOf": [
             {
@@ -270,7 +275,45 @@
         }
       },
       "required": [],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "uniformLineComments"
+            ],
+            "properties": {
+              "uniformLineComments": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "lineComment"
+                ],
+                "properties": {
+                  "lineComment": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "blockComment"
+                ],
+                "properties": {
+                  "blockComment": {
+                    "type": "object"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
     },
     "snippet": {
       "type": "object",

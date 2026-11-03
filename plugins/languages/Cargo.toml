@@ -1,6 +1,6 @@
 [package]
 name = "openwebide-languages-plugin"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 
@@ -12,4 +12,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 openwebide-plugin-sdk = "=0.1.0"
-openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "c54a68944379764585328f72f408828b5d679fad" }
+openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "6537ec1dd2faf6239afa40585e70512044016824" }

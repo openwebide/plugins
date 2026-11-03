@@ -275,7 +275,7 @@ dependencies = [
 [[package]]
 name = "ec4rs"
 version = "1.2.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=c54a68944379764585328f72f408828b5d679fad#c54a68944379764585328f72f408828b5d679fad"
+source = "git+https://github.com/openwebide/openwebide.git?rev=6537ec1dd2faf6239afa40585e70512044016824#6537ec1dd2faf6239afa40585e70512044016824"
 
 [[package]]
 name = "equivalent"
@@ -711,7 +711,7 @@ dependencies = [
 [[package]]
 name = "openwebide-core"
 version = "1.0.0-nightly"
-source = "git+https://github.com/openwebide/openwebide.git?rev=c54a68944379764585328f72f408828b5d679fad#c54a68944379764585328f72f408828b5d679fad"
+source = "git+https://github.com/openwebide/openwebide.git?rev=6537ec1dd2faf6239afa40585e70512044016824#6537ec1dd2faf6239afa40585e70512044016824"
 dependencies = [
  "base64",
  "chrono",
@@ -744,7 +744,7 @@ dependencies = [
 [[package]]
 name = "openwebide-language-grammars"
 version = "0.1.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=c54a68944379764585328f72f408828b5d679fad#c54a68944379764585328f72f408828b5d679fad"
+source = "git+https://github.com/openwebide/openwebide.git?rev=6537ec1dd2faf6239afa40585e70512044016824#6537ec1dd2faf6239afa40585e70512044016824"
 dependencies = [
  "html5ever",
  "openwebide-plugin-sdk",
@@ -773,7 +773,7 @@ dependencies = [
 [[package]]
 name = "openwebide-language-syntax"
 version = "0.1.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=c54a68944379764585328f72f408828b5d679fad#c54a68944379764585328f72f408828b5d679fad"
+source = "git+https://github.com/openwebide/openwebide.git?rev=6537ec1dd2faf6239afa40585e70512044016824#6537ec1dd2faf6239afa40585e70512044016824"
 dependencies = [
  "openwebide-core",
  "openwebide-plugin-sdk",
@@ -781,7 +781,7 @@ dependencies = [
 
 [[package]]
 name = "openwebide-languages-plugin"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "openwebide-language-syntax",
  "openwebide-plugin-sdk",
@@ -1394,7 +1394,7 @@ dependencies = [
 [[package]]
 name = "tree-sitter-rust"
 version = "0.24.2"
-source = "git+https://github.com/openwebide/openwebide.git?rev=c54a68944379764585328f72f408828b5d679fad#c54a68944379764585328f72f408828b5d679fad"
+source = "git+https://github.com/openwebide/openwebide.git?rev=6537ec1dd2faf6239afa40585e70512044016824#6537ec1dd2faf6239afa40585e70512044016824"
 dependencies = [
  "cc",
  "tree-sitter-language",

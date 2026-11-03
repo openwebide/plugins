@@ -89,6 +89,21 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(validate.Invalid):
                 validate.check_schema(language, self.checks["Language"], "language")
 
+    def test_uniform_line_comments_require_a_line_marker_or_block_fallback(self):
+        language = {"id": "notes", "name": "Notes"}
+        for configuration in [
+            {"uniformLineComments": True, "lineComment": "#"},
+            {"uniformLineComments": True, "blockComment": {"open": "<!--", "close": "-->"}},
+            {"uniformLineComments": False},
+        ]:
+            validate.check_schema({**language, "configuration": configuration}, self.checks["Language"], "language")
+        for configuration in [
+            {"uniformLineComments": True},
+            {"uniformLineComments": True, "lineComment": None, "blockComment": None},
+        ]:
+            with self.subTest(configuration=configuration), self.assertRaises(validate.Invalid):
+                validate.check_schema({**language, "configuration": configuration}, self.checks["Language"], "language")
+
     def test_executable_contract_rejects_unsupported_sdk_capabilities_and_duplicate_tools(self):
         import shutil
         package = self.root / "rust-plugin"
