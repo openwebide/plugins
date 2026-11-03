@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: openwebide/openwebide
-          ref: e3b2ee595fca5711644e18e45c4834ea31718636
+          ref: c54a68944379764585328f72f408828b5d679fad
           path: .host-sdk
           persist-credentials: false
       - name: Install the host's pinned Rust toolchain
@@ -42,4 +42,8 @@ jobs:
       - name: Test and compile executable plugin sources
         env:
           CARGO_TARGET_DIR: ${{ github.workspace }}/target
-        run: python3 scripts/validate_rust.py --sdk .host-sdk/crates/plugin-sdk
+        run: |
+          sdk_path=$(python3 .host-sdk/tools/install_wasi_sdk.py "$RUNNER_TEMP/wasi-sdk")
+          export WASI_SDK_PATH="$sdk_path"
+          export WASI_SYSROOT="$sdk_path/share/wasi-sysroot"
+          python3 scripts/validate_rust.py --sdk .host-sdk/crates/plugin-sdk

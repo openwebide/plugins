@@ -47,7 +47,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (5, 5))
+        self.assertEqual(validate.validate_repository(ROOT), (6, 5))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_rust_source_example_and_required_lockfile(self):
@@ -58,6 +58,36 @@ class ValidationTests(unittest.TestCase):
         (package / "Cargo.lock").unlink()
         with self.assertRaises(validate.Invalid):
             validate.validate_package(package, self.checks)
+
+    def test_language_contributions_use_api_five_and_require_components_for_analysis(self):
+        manifest = copy.deepcopy(self.manifest)
+        manifest["compatibility"]["pluginApi"] = 5
+        manifest["contributions"] = {"skills": [], "languages": [{
+            "id": "notes", "name": "Notes", "extensions": ["notes"],
+            "filenamePatterns": [".notes.*"], "configuration": {"lineComment": "#"},
+        }]}
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 4
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 5
+        manifest["contributions"]["languages"][0]["features"] = {"syntax": True}
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["executable"] = {"manifest": "Cargo.toml", "library": "notes_plugin",
+                                  "sdkVersion": "0.1.0", "capabilities": []}
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
+    def test_language_metadata_rejects_client_code_paths_and_unbounded_fields(self):
+        original = {"id": "notes", "name": "Notes", "extensions": ["notes"]}
+        validate.check_schema(original, self.checks["Language"], "language")
+        for field, value in [("script", "execute on client"), ("extensions", ["../notes"]),
+                             ("filenames", ["../file.notes"]), ("firstLine", "x" * 1025),
+                             ("configuration", {"lineComment": "#\n"})]:
+            language = copy.deepcopy(original)
+            language[field] = value
+            with self.subTest(field=field), self.assertRaises(validate.Invalid):
+                validate.check_schema(language, self.checks["Language"], "language")
 
     def test_executable_contract_rejects_unsupported_sdk_capabilities_and_duplicate_tools(self):
         import shutil
@@ -131,7 +161,7 @@ class ValidationTests(unittest.TestCase):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
     def test_unknown_contributions_and_api_are_rejected(self):
-        for field in ("mcpServers", "languages", "hooks"):
+        for field in ("mcpServers", "languageScripts", "hooks"):
             with self.subTest(field=field):
                 value = copy.deepcopy(self.manifest)
                 value["contributions"][field] = []

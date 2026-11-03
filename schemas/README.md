@@ -45,9 +45,19 @@ See the [capability reference](../docs/custom-marketplaces.md#rust-source-plugin
 API 2 `toolGroups` remains in the schema only for historical metadata; do not use
 it to author new plugins. API 3 cannot activate tool groups.
 
+API 4 adds declarative panels through the public SDK; see the
+[panel guide](../docs/panels.md). API 5 adds `contributions.languages`, validated
+by [language.schema.json](language.schema.json). Each definition has an arbitrary
+string `id` and display `name`, optional file recognition, declarative editing
+configuration and declared features. Executable syntax, folding or structure
+requires a Rust component whose `Plugin::languages()` matches the manifest.
+Configuration-only language packages can omit the executable. See the
+[language guide](../docs/languages.md) for contracts and the current migration
+status. LSP, diagnostics, snippets and formatting fields are extension points;
+declaring them does not implement their execution or install a server.
+
 Other contributions, arbitrary extra fields, configuration values and credentials
-are rejected. Add schemas for MCP, languages and UI only when their contracts are
-implemented. Package dependencies and runtime provisioning are also deferred.
+are rejected. Package dependencies and runtime provisioning are deferred.
 
 ## Catalog
 
@@ -64,7 +74,7 @@ SHA-1 and SHA-256 commit IDs are accepted. Marketplace repository URLs and
 credentials are app configuration, not catalog fields. No forge release API is
 required.
 
-The `skills` and `tools` categories describe implemented contributions. Duplicate identities/releases
+The `skills`, `tools`, `panels` and `languages` categories describe contributions. Duplicate identities/releases
 are rejected. For a listed version matching a local package, display metadata
 and categories must match that package. Historical packages may be absent from the current checkout.
 

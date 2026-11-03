@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Define API 5 language declarations and offline validation, with an independent Notes language component example. The Languages reference package and app editor migration are in development; no language catalog release is published yet.
+
 - Publish executable API 3 releases of Web, Project Memory, Scheduling and Skill Authoring at 0.2.1, plus PR Review 0.1.2, with immutable source pins and individual structured JSON icons.
 - Move first-party behavior into Rust using the public SDK, with the same capabilities and approval rules as community plugins. Distribution builds compile and embed the selected official defaults.
 - Document custom marketplaces, Rust source compilation on install, immutable publishing and validation against the pinned public Git SDK.

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "example",
+  "name": "notes-language",
+  "version": "0.1.0",
+  "displayName": "Notes language",
+  "description": "An independent host language provider for note/task blocks, quoted text and comments.",
+  "license": "MIT",
+  "readme": "README.md",
+  "compatibility": {"pluginApi": 5},
+  "executable": {"manifest": "Cargo.toml", "library": "notes_plugin", "sdkVersion": "0.1.0", "capabilities": []},
+  "contributions": {
+    "skills": [],
+    "languages": [{
+      "id": "notes",
+      "name": "Notes",
+      "aliases": ["notes"],
+      "extensions": ["notes"],
+      "configuration": {
+        "lineComment": "#",
+        "brackets": [{"open": "{", "close": "}"}],
+        "autoClosingPairs": [{"open": "{", "close": "}", "notIn": ["String", "LineComment"]}],
+        "surroundingPairs": [{"open": "{", "close": "}"}, {"open": "\"", "close": "\""}],
+        "indentation": {"increase": "\\{\\s*$", "decrease": "^\\s*\\}"}
+      },
+      "features": {"syntax": true, "folding": true, "structure": true}
+    }]
+  }
+}

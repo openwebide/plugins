@@ -47,7 +47,8 @@
               "enum": [
                 "skills",
                 "tools",
-                "panels"
+                "panels",
+                "languages"
               ]
             }
           },

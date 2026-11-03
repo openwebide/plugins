@@ -209,6 +209,11 @@ def validate_package(root, checks=None):
         actions = panel.get("actions", [])
         if len({action["id"] for action in actions}) != len(actions):
             raise Invalid("duplicate panel action id")
+    languages = manifest["contributions"].get("languages", [])
+    if len({language["id"] for language in languages}) != len(languages):
+        raise Invalid("duplicate language id")
+    if len(json.dumps(languages, ensure_ascii=False).encode("utf-8")) > 256 * 1024:
+        raise Invalid("language metadata exceeds 256 KiB")
     if "readme" in manifest:
         package_path(root, manifest["readme"])
     return manifest
@@ -266,6 +271,8 @@ def validate_repository(root):
                 categories.append("tools")
             if manifest["contributions"].get("panels"):
                 categories.append("panels")
+            if manifest["contributions"].get("languages"):
+                categories.append("languages")
             if sorted(listing["categories"]) != sorted(categories):
                 raise Invalid(f"catalog categories differ from local contributions: {manifest['name']}")
     return len(packages), len(catalog["plugins"])

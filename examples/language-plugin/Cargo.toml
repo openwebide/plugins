@@ -1,0 +1,13 @@
+[package]
+name = "example-language-plugin"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "notes_plugin"
+crate-type = ["cdylib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"

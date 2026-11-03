@@ -1,0 +1,502 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/language.schema.json",
+  "title": "Language",
+  "$ref": "#/$defs/definition",
+  "$defs": {
+    "characterPair": {
+      "type": "object",
+      "properties": {
+        "open": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "pattern": "^[^\\s\\x00-\\x1f\\x7f]$"
+        },
+        "close": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "pattern": "^[^\\s\\x00-\\x1f\\x7f]$"
+        }
+      },
+      "required": [
+        "open",
+        "close"
+      ],
+      "additionalProperties": false
+    },
+    "commentPair": {
+      "type": "object",
+      "properties": {
+        "open": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "not": {
+            "pattern": "[\\x00-\\x1f\\x7f]"
+          }
+        },
+        "close": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "not": {
+            "pattern": "[\\x00-\\x1f\\x7f]"
+          }
+        },
+        "nested": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "open",
+        "close"
+      ],
+      "additionalProperties": false
+    },
+    "autoClosingPair": {
+      "type": "object",
+      "properties": {
+        "open": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "pattern": "^[^\\s\\x00-\\x1f\\x7f]$"
+        },
+        "close": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "pattern": "^[^\\s\\x00-\\x1f\\x7f]$"
+        },
+        "notIn": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {
+            "enum": [
+              "String",
+              "Template",
+              "Text",
+              "LineComment",
+              "BlockComment",
+              "Regex"
+            ]
+          }
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        }
+      },
+      "required": [
+        "open",
+        "close"
+      ],
+      "additionalProperties": false
+    },
+    "enterRule": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "action": {
+          "enum": [
+            "indent",
+            "outdent",
+            "indent_outdent",
+            "keep"
+          ]
+        }
+      },
+      "required": [
+        "before",
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "indentation": {
+      "type": "object",
+      "properties": {
+        "increase": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "decrease": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "indentNextLine": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "onEnter": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/enterRule"
+          }
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "lineComment": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+              "not": {
+                "pattern": "[\\x00-\\x1f\\x7f]"
+              }
+            }
+          ]
+        },
+        "blockComment": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/commentPair"
+            }
+          ]
+        },
+        "brackets": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/characterPair"
+          }
+        },
+        "autoClosingPairs": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/autoClosingPair"
+          }
+        },
+        "surroundingPairs": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/characterPair"
+          }
+        },
+        "indentation": {
+          "$ref": "#/$defs/indentation"
+        },
+        "wordPattern": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "snippet": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "prefix": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "body": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 16384
+        }
+      },
+      "required": [
+        "name",
+        "prefix",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "handler": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "server": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "args": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4096
+          }
+        },
+        "rootMarkers": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[^/\\\\\\x00-\\x1f\\x7f]+$"
+          }
+        },
+        "initializationOptions": {},
+        "settings": {}
+      },
+      "required": [
+        "command"
+      ],
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "syntax": {
+          "type": "boolean"
+        },
+        "folding": {
+          "type": "boolean"
+        },
+        "structure": {
+          "type": "boolean"
+        },
+        "snippets": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/snippet"
+          }
+        },
+        "formatting": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/handler"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/handler"
+          }
+        },
+        "languageServer": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/server"
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "definition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "not": {
+            "pattern": "\\s"
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S",
+          "not": {
+            "pattern": "[\\x00-\\x1f\\x7f]"
+          }
+        },
+        "aliases": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_-][A-Za-z0-9_.-]*$",
+            "not": {
+              "pattern": "\\s"
+            }
+          }
+        },
+        "filenames": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[^/\\\\\\x00-\\x1f\\x7f]+$",
+            "not": {
+              "pattern": "[\\x00-\\x1f\\x7f]"
+            }
+          }
+        },
+        "filenamePatterns": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[^/\\\\\\x00-\\x1f\\x7f]+$",
+            "not": {
+              "pattern": "[\\x00-\\x1f\\x7f]"
+            }
+          }
+        },
+        "firstLine": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "configuration": {
+          "$ref": "#/$defs/configuration"
+        },
+        "features": {
+          "$ref": "#/$defs/features"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

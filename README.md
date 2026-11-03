@@ -12,7 +12,9 @@ Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historic
 API 2 tool-group releases require an update before activation on current hosts.
 The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
-Language services, editor hooks and annotations remain on the roadmap.
+API 5 language contracts and reference components are in development; the app's
+production editor migration remains on the roadmap. Editor hooks and annotations
+are also planned.
 
 ## Author a plugin
 
@@ -38,8 +40,9 @@ for the host contract.
 ## Package model
 
 A plugin is one versioned package combining the supported skills, Rust tools,
-context hooks, events and declarative panels. MCP servers, language support and
-editor contributions are planned extensions of that same package format.
+context hooks, events and declarative panels. The API 5 language schema extends
+that same package format; its reference sources are not catalog releases yet.
+MCP servers and further editor contributions remain planned.
 
 Packages install and execute on bridge hosts: the paired native host for local
 projects, or the server/container host for remote projects. Browser and phone
@@ -89,3 +92,13 @@ choose which plugins should be installed on fresh accounts.
 ## Declarative UI panels
 
 API 4 adds [host-executed panels](docs/panels.md) through the public Rust SDK. PR Review 0.2.0 is the executable reference implementation, with normal capability grants and approval before publishing. Its native/WASI, real bridge and desktop/phone UI contracts cover both project modes.
+
+## Language components
+
+The [language guide](docs/languages.md) describes the API 5 declarations, host
+source synchronization and source-bound analysis results. The
+[Notes example](examples/language-plugin/README.md) implements a custom language
+with only the public SDK; the [Languages source](plugins/languages/README.md)
+uses the optional public syntax toolkit. Neither is a language catalog release.
+The production editor migration and default package lifecycle checks remain
+required before shipping this capability.

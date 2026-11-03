@@ -2,9 +2,11 @@
 
 Current nightly hosts support API 1 skills and API 3 Rust tools, read-only context
 hooks and durable events. Start with a skill for instructions/resources, or Rust
-for executable behavior. A plugin can combine them. MCP servers, language
-services and editor hooks remain future work. API 4 adds declarative panels with
+for executable behavior. A plugin can combine them. MCP servers and editor hooks
+remain future work. API 4 adds declarative panels with
 plugin-owned views/actions; see the [panel guide](panels.md).
+API 5 language contracts and reference components are in development; see the
+[language guide](languages.md). The app's editor migration is not yet complete.
 
 ## Start from a working example
 
@@ -82,7 +84,7 @@ CARGO_TARGET_DIR="$PWD/target" cargo run --locked \
 
 Replace `../plugins/examples/rust-plugin` with the actual path to your package.
 With no trailing tool/arguments/fixture file, the checker only compiles and
-validates exported tools/events. For context use `--context '{"budget_bytes":512}'`;
+validates exported tools, events and declared panel/language metadata. For context use `--context '{"budget_bytes":512}'`;
 for an event use `--event '{"name":"job_due","payload":{}}'` in place of the
 tool/arguments pair, retaining the fixture file. The event must be declared.
 Fixture files map capability names to canned JSON responses; they never access

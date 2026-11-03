@@ -48,7 +48,8 @@
             1,
             2,
             3,
-            4
+            4,
+            5
           ]
         }
       },
@@ -171,6 +172,13 @@
           "items": {
             "$ref": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/panel.schema.json#/$defs/definition"
           }
+        },
+        "languages": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/language.schema.json#/$defs/definition"
+          }
         }
       },
       "required": [
@@ -226,6 +234,16 @@
           },
           "required": [
             "panels"
+          ]
+        },
+        {
+          "properties": {
+            "languages": {
+              "minItems": 1
+            }
+          },
+          "required": [
+            "languages"
           ]
         }
       ]
@@ -345,19 +363,96 @@
         }
       },
       "else": {
-        "not": {
-          "required": [
-            "executable"
+        "if": {
+          "properties": {
+            "compatibility": {
+              "properties": {
+                "pluginApi": {
+                  "const": 5
+                }
+              }
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "contributions": {
+              "properties": {
+                "languages": {
+                  "minItems": 1
+                },
+                "toolGroups": {
+                  "maxItems": 0
+                }
+              },
+              "required": [
+                "languages"
+              ]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "not": {
+                  "required": [
+                    "executable"
+                  ]
+                }
+              },
+              "then": {
+                "properties": {
+                  "contributions": {
+                    "properties": {
+                      "tools": {
+                        "maxItems": 0
+                      },
+                      "events": {
+                        "maxItems": 0
+                      },
+                      "panels": {
+                        "maxItems": 0
+                      },
+                      "languages": {
+                        "items": {
+                          "properties": {
+                            "features": {
+                              "properties": {
+                                "syntax": {
+                                  "const": false
+                                },
+                                "folding": {
+                                  "const": false
+                                },
+                                "structure": {
+                                  "const": false
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           ]
         },
-        "properties": {
-          "contributions": {
-            "properties": {
-              "tools": {
-                "maxItems": 0
-              },
-              "events": {
-                "maxItems": 0
+        "else": {
+          "not": {
+            "required": [
+              "executable"
+            ]
+          },
+          "properties": {
+            "contributions": {
+              "properties": {
+                "tools": {
+                  "maxItems": 0
+                },
+                "events": {
+                  "maxItems": 0
+                }
               }
             }
           }
@@ -387,7 +482,37 @@
           "compatibility": {
             "properties": {
               "pluginApi": {
-                "const": 4
+                "enum": [
+                  4,
+                  5
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "properties": {
+              "languages": {
+                "minItems": 1
+              }
+            },
+            "required": [
+              "languages"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 5
               }
             }
           }
