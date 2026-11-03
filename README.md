@@ -4,7 +4,7 @@ Official Open WebIDE plugin marketplace and reference implementations for agent
 tools, language support, and editor extensions.
 
 The catalog publishes immutable first-party releases for PR Review, Web, Project
-Memory, Scheduling, Skill Authoring and Languages. The Open WebIDE app installs validated
+Memory, Scheduling and Skill Authoring. The Open WebIDE app installs validated
 snapshots on bridge hosts and enables them across existing/new projects by
 default, with saved per-project opt-outs. Plugin API 1 supports skills; API 3
 supports Rust source handlers, context hooks and events through the public SDK.
@@ -12,9 +12,10 @@ Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historic
 API 2 tool-group releases require an update before activation on current hosts.
 The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
-API 5 adds host language components and declarative editing rules. Language
-features require an app build with API 5 editor integration; earlier SDK-only
-builds need an app update. Editor hooks and annotations remain planned.
+API 5 language contracts are available. The editor migration and independent
+language-family packages are in progress. Group languages by the intended LSP’s
+coverage, with shared dialects in one package. Editor hooks and annotations remain
+planned.
 
 ## Author a plugin
 
@@ -42,8 +43,8 @@ for the host contract.
 
 A plugin is one versioned package combining the supported skills, Rust tools,
 context hooks, events and declarative panels. The API 5 language schema extends
-that same package format. Languages is in the official catalog; Notes has a
-separate example catalog.
+that same package format. Language-family packages are being prepared; Notes has
+a separate example catalog.
 MCP servers and further editor contributions remain planned.
 
 Packages install and execute on bridge hosts: the paired native host for local
@@ -59,8 +60,7 @@ Automatic compatible updates and Off are per-plugin preferences. From Open WebID
 closed, sharing persisted check leases, retry state and cached results. Clients
 restore update notices on reconnect; automatic installation still requires an
 open client. Alpha 1.0.0-alpha.5 predates these unattended checks. The app bundles
-a pinned default subset: Web, Project Memory, Scheduling, Skill Authoring and
-Languages on builds with API 5 editor integration.
+a pinned default subset: Web, Project Memory, Scheduling and Skill Authoring.
 
 ## Marketplace model
 
@@ -85,7 +85,6 @@ commits. Suggestions for unsupported files remain planned.
 | [Project Memory](plugins/memory/README.md) | Project memory tools and context |
 | [Scheduling](plugins/scheduling/README.md) | Scheduled prompts and monitoring tools |
 | [Skill Authoring](plugins/skill-authoring/README.md) | Authoring/evaluation skill and skill management tools |
-| [Languages](plugins/languages/README.md) | Host syntax, folding, structure and declared editing rules |
 
 Historical API 2 tool groups are retired feature switches. Current executable
 plugins own their implementation and use the same public SDK and host interfaces
@@ -105,7 +104,8 @@ source synchronization and source-bound analysis results. The
 with only the public SDK; the [Languages source](plugins/languages/README.md)
 uses the optional public syntax toolkit. The separate
 [example catalog](examples/language-marketplace.json) lists immutable Notes
-releases for hosts with API 5 editor integration. The official catalog lists
-Languages. Both packages use the same installation, enablement, update and
-removal contracts on server and paired hosts; older app builds need editor
-integration before these components can supply editor features.
+releases for hosts with API 5 editor integration. The aggregate Languages source
+is an unlisted prototype being replaced by independent packages, grouped by
+intended LSP coverage. Each family will own recognition, syntax and editing rules;
+embedded regions resolve through installed providers. LSP execution is a following
+app goal.

@@ -1,11 +1,16 @@
 # Language contributions
 
 API 5 adds language declarations and a versioned host analysis protocol to the
-existing package format. Languages is the first-party package in the official
-catalog; Notes is an independent SDK-only example in its own catalog. Both need
-an app build with API 5 editor integration. Earlier SDK-only builds provide the
-contracts without the editor features; update those apps before using language
-components.
+existing package format. The SDK-only Notes example has its own catalog. The
+editor migration and default language-family packages are in progress; the
+aggregate Languages prototype is unlisted.
+
+Use one package per intended LSP's language coverage. Related dialects served by
+one server belong together, such as JavaScript/TypeScript/JSX/TSX or C/C++.
+Packages own recognition, syntax, folding and editing rules now; LSP execution
+is a following app goal. Shared parsers belong in public libraries, while
+embedded regions resolve through installed providers. API 5 editor integration
+is required; earlier SDK-only builds need an update.
 
 ## Start with a component
 

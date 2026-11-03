@@ -12,12 +12,12 @@ The component uses the public syntax toolkit, retains bounded incremental parser
 state, and has no host grants, filesystem access or browser code. Installation,
 disablement, updates and failures follow the same lifecycle as other packages.
 
-The official marketplace lists immutable releases of this package. Hosts need
-API 5 editor integration; earlier SDK-only app builds need an update before the
-component can supply editor features. The app bundles a pinned release on those
-hosts, using the same installation and project enablement rules as community
-packages.
+This aggregate prototype is unlisted and is being replaced by independent
+language-family packages, grouped by the intended language server's coverage.
+Related dialects share a package; unrelated families have independent installation,
+provider selection, enablement and versioning. Embedded regions must resolve
+through installed providers. LSP execution belongs to the following app goal.
 
-Cargo pins the syntax toolkit to an immutable app source commit. Build with the
-matching API 5 host SDK patch and pinned WASI SDK; the syntax toolkit is not a
-crates.io dependency.
+Cargo pins the syntax toolkit to an immutable app source commit. This source is
+retained for protocol/reference history; do not publish it as the default language
+package. See the language guide for the current packaging contract.

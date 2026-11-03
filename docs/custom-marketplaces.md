@@ -20,8 +20,9 @@ editing rules; see the [language guide](languages.md) for editor integration
 requirements. LSP services, MCP and other editor contributions remain future
 work.
 
-Executable first-party tools, panels and Languages releases are in the official
-catalog. The app selects its compiled default subset separately. Further device and lifecycle checks are tracked in the
+Executable first-party tools and panels are in the official catalog. Independent
+language-family packages are in development; the aggregate prototype is unlisted.
+The app selects its compiled default subset separately. Further device and lifecycle checks are tracked in the
 app roadmap.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
