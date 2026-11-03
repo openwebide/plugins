@@ -2,9 +2,10 @@
 
 This repository contains the official marketplace and first-party reference
 plugins. API 1 skills, API 3 Rust tools/context/events and API 4 declarative panels
-have host implementations. API 5 language contracts and reference components are
-in development; the app's editor migration is incomplete. Do not add placeholder
-releases or present future capabilities as implemented.
+have host implementations. API 5 adds host language components and declared
+editing rules, requiring an app build with editor integration. Earlier SDK-only
+builds need an update. Do not add placeholder releases or present future
+capabilities as implemented.
 
 - Keep one package format with typed contributions. Packages may combine skills,
   Rust tools, context hooks, events and declarative panels. Language contributions

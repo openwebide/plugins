@@ -4,7 +4,7 @@ Official Open WebIDE plugin marketplace and reference implementations for agent
 tools, language support, and editor extensions.
 
 The catalog publishes immutable first-party releases for PR Review, Web, Project
-Memory, Scheduling and Skill Authoring. The Open WebIDE app installs validated
+Memory, Scheduling, Skill Authoring and Languages. The Open WebIDE app installs validated
 snapshots on bridge hosts and enables them across existing/new projects by
 default, with saved per-project opt-outs. Plugin API 1 supports skills; API 3
 supports Rust source handlers, context hooks and events through the public SDK.
@@ -12,9 +12,9 @@ Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historic
 API 2 tool-group releases require an update before activation on current hosts.
 The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
-API 5 language contracts and reference components are in development; the app's
-production editor migration remains on the roadmap. Editor hooks and annotations
-are also planned.
+API 5 adds host language components and declarative editing rules. Language
+features require an app build with API 5 editor integration; earlier SDK-only
+builds need an app update. Editor hooks and annotations remain planned.
 
 ## Author a plugin
 
@@ -42,8 +42,8 @@ for the host contract.
 
 A plugin is one versioned package combining the supported skills, Rust tools,
 context hooks, events and declarative panels. The API 5 language schema extends
-that same package format; Notes has a separate example catalog, while Languages
-is not yet listed in the official catalog.
+that same package format. Languages is in the official catalog; Notes has a
+separate example catalog.
 MCP servers and further editor contributions remain planned.
 
 Packages install and execute on bridge hosts: the paired native host for local
@@ -59,7 +59,8 @@ Automatic compatible updates and Off are per-plugin preferences. From Open WebID
 closed, sharing persisted check leases, retry state and cached results. Clients
 restore update notices on reconnect; automatic installation still requires an
 open client. Alpha 1.0.0-alpha.5 predates these unattended checks. The app bundles
-a pinned default subset: Web, Project Memory, Scheduling and Skill Authoring.
+a pinned default subset: Web, Project Memory, Scheduling, Skill Authoring and
+Languages on builds with API 5 editor integration.
 
 ## Marketplace model
 
@@ -73,7 +74,7 @@ only their immutable commit and package directory; they cannot override the
 repository. A standalone package can publish a marketplace file in its own repo.
 
 Catalogs can track branches, while installed releases resolve to immutable
-commits. File associations and language-plugin suggestions remain planned.
+commits. Suggestions for unsupported files remain planned.
 
 ## Reference packages
 
@@ -84,6 +85,7 @@ commits. File associations and language-plugin suggestions remain planned.
 | [Project Memory](plugins/memory/README.md) | Project memory tools and context |
 | [Scheduling](plugins/scheduling/README.md) | Scheduled prompts and monitoring tools |
 | [Skill Authoring](plugins/skill-authoring/README.md) | Authoring/evaluation skill and skill management tools |
+| [Languages](plugins/languages/README.md) | Host syntax, folding, structure and declared editing rules |
 
 Historical API 2 tool groups are retired feature switches. Current executable
 plugins own their implementation and use the same public SDK and host interfaces
@@ -103,6 +105,7 @@ source synchronization and source-bound analysis results. The
 with only the public SDK; the [Languages source](plugins/languages/README.md)
 uses the optional public syntax toolkit. The separate
 [example catalog](examples/language-marketplace.json) lists immutable Notes
-releases for hosts with API 5 editor integration; Languages is not yet listed.
-The production editor migration and default package lifecycle checks remain
-required before shipping this capability.
+releases for hosts with API 5 editor integration. The official catalog lists
+Languages. Both packages use the same installation, enablement, update and
+removal contracts on server and paired hosts; older app builds need editor
+integration before these components can supply editor features.

@@ -15,13 +15,13 @@ handlers, context hooks and durable events. API 4 adds declarative panels with
 plugin-owned views and actions. Hosts compile source on installation;
 catalog artifact URLs are not used. Updated hosts retain historical API 2
 platform tool-group receipts for migration but require executable updates before
-activation. API 5 language declarations, host analysis and reference components
-are in development; see the [language guide](languages.md). The editor migration
-and language-package lifecycle verification are still in progress. LSP services,
-MCP and other editor contributions remain future work.
+activation. API 5 adds language declarations, host analysis and declarative
+editing rules; see the [language guide](languages.md) for editor integration
+requirements. LSP services, MCP and other editor contributions remain future
+work.
 
-Executable first-party tool and panel releases are in the official catalog and
-compiled default bundle. Further device and lifecycle checks are tracked in the
+Executable first-party tools, panels and Languages releases are in the official
+catalog. The app selects its compiled default subset separately. Further device and lifecycle checks are tracked in the
 app roadmap.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
@@ -537,4 +537,5 @@ of `[x, y]` pairs. A rectangle’s `rx` is optional. Coordinates are bounded to
 properties and element types are rejected. Paths accept only SVG drawing commands
 and numeric characters. Icons need no runtime capability or download: the app
 creates the markup from typed metadata, with sizing and colors controlled by its
-design system. The first-party releases each provide a distinct drawing.
+design system. The tool and panel references provide distinct drawings;
+Languages uses the default puzzle icon, as its immutable release manifest declares.

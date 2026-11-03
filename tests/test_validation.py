@@ -47,7 +47,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (6, 5))
+        self.assertEqual(validate.validate_repository(ROOT), (6, 6))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_rust_source_example_and_required_lockfile(self):
@@ -449,10 +449,15 @@ class ValidationTests(unittest.TestCase):
 
     def test_first_party_drawings_use_the_same_metadata_in_each_listing(self):
         catalog = validate.read_json(ROOT / "marketplace.json")
+        self.assertEqual(
+            {listing["name"] for listing in catalog["plugins"] if "icon" in listing},
+            {"pr-review", "web", "memory", "scheduling", "skill-authoring"},
+        )
         for listing in catalog["plugins"]:
             manifest = validate.read_json(ROOT / "plugins" / listing["name"] / "plugin.json")
-            self.assertEqual(listing["icon"], manifest["icon"])
-            validate.validate_icon(manifest["icon"])
+            self.assertEqual(listing.get("icon"), manifest.get("icon"))
+            if "icon" in manifest:
+                validate.validate_icon(manifest["icon"])
 
 
 if __name__ == "__main__":

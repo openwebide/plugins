@@ -1,10 +1,11 @@
 # Language contributions
 
 API 5 adds language declarations and a versioned host analysis protocol to the
-existing package format. The reference components and public host implementation
-are in development. The app's production editor migration is incomplete, and the
-official catalog does not yet publish a language package. Do not use this guide
-as evidence that an older deployed host supports language services.
+existing package format. Languages is the first-party package in the official
+catalog; Notes is an independent SDK-only example in its own catalog. Both need
+an app build with API 5 editor integration. Earlier SDK-only builds provide the
+contracts without the editor features; update those apps before using language
+components.
 
 ## Start with a component
 

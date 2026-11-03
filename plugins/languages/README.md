@@ -12,8 +12,12 @@ The component uses the public syntax toolkit, retains bounded incremental parser
 state, and has no host grants, filesystem access or browser code. Installation,
 disablement, updates and failures follow the same lifecycle as other packages.
 
-Development is in progress. Cargo pins the syntax toolkit to an immutable app
-source commit. Build with the matching API 5 host SDK patch and pinned WASI SDK;
-the syntax toolkit is not a crates.io dependency. The app's editor integration,
-default activation and lifecycle verification must finish before this package is
-listed or bundled. This source is not a catalog release.
+The official marketplace lists immutable releases of this package. Hosts need
+API 5 editor integration; earlier SDK-only app builds need an update before the
+component can supply editor features. The app bundles a pinned release on those
+hosts, using the same installation and project enablement rules as community
+packages.
+
+Cargo pins the syntax toolkit to an immutable app source commit. Build with the
+matching API 5 host SDK patch and pinned WASI SDK; the syntax toolkit is not a
+crates.io dependency.
