@@ -27,6 +27,7 @@ for the host contract.
 ## Repository layout
 
 - `marketplace.json`: the first-party catalog with immutable package releases.
+- `examples/language-marketplace.json`: a separate catalog for the independent Notes language example.
 - Optional structured JSON icons in manifests and listings use a shared drawing schema; see [Plugin icons](docs/custom-marketplaces.md#plugin-icons).
 - `plugins/`: first-party packages, each in its own directory.
 - `schemas/`: package and catalog schemas plus format documentation.
@@ -41,7 +42,8 @@ for the host contract.
 
 A plugin is one versioned package combining the supported skills, Rust tools,
 context hooks, events and declarative panels. The API 5 language schema extends
-that same package format; its reference sources are not catalog releases yet.
+that same package format; Notes has a separate example catalog, while Languages
+is not yet listed in the official catalog.
 MCP servers and further editor contributions remain planned.
 
 Packages install and execute on bridge hosts: the paired native host for local
@@ -99,6 +101,8 @@ The [language guide](docs/languages.md) describes the API 5 declarations, host
 source synchronization and source-bound analysis results. The
 [Notes example](examples/language-plugin/README.md) implements a custom language
 with only the public SDK; the [Languages source](plugins/languages/README.md)
-uses the optional public syntax toolkit. Neither is a language catalog release.
+uses the optional public syntax toolkit. The separate
+[example catalog](examples/language-marketplace.json) lists immutable Notes
+releases for hosts with API 5 editor integration; Languages is not yet listed.
 The production editor migration and default package lifecycle checks remain
 required before shipping this capability.

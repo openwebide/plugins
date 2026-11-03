@@ -21,4 +21,7 @@ incremental parsing.
 Build and test against the public SDK checkout with `scripts/validate_rust.py`.
 Install it through a custom marketplace or a pinned Git source, using the same
 language lifecycle as bundled packages. No browser scripts or app-specific
-provider identity is involved. This example is not a catalog release.
+provider identity is involved. The separate
+[example catalog](../language-marketplace.json) lists immutable Notes releases;
+the official marketplace does not list this example. API 5 editor integration is
+required; see the [language guide](../../docs/languages.md).

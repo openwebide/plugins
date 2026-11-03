@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "Language example marketplace",
+  "plugins": [
+    {
+      "publisher": "example",
+      "name": "notes-language",
+      "displayName": "Notes language",
+      "description": "An independent host language provider for note/task blocks, quoted text and comments.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "231b9039373048b267c027bf83c98c730527b650",
+            "path": "examples/language-plugin"
+          }
+        },
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "88ec5ab1e563219d5d9f2045d4216f400842f64b",
+            "path": "examples/language-plugin"
+          }
+        }
+      ]
+    }
+  ]
+}

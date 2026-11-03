@@ -15,9 +15,14 @@ handlers, context hooks and durable events. API 4 adds declarative panels with
 plugin-owned views and actions. Hosts compile source on installation;
 catalog artifact URLs are not used. Updated hosts retain historical API 2
 platform tool-group receipts for migration but require executable updates before
-activation. MCP, language services and editor contributions remain future work. Executable
-first-party releases are in the official catalog and compiled default bundle.
-Further device and lifecycle checks are tracked in the app roadmap.
+activation. API 5 language declarations, host analysis and reference components
+are in development; see the [language guide](languages.md). The editor migration
+and language-package lifecycle verification are still in progress. LSP services,
+MCP and other editor contributions remain future work.
+
+Executable first-party tool and panel releases are in the official catalog and
+compiled default bundle. Further device and lifecycle checks are tracked in the
+app roadmap.
 
 Start with a skills-only plugin. Copy this repository's schemas, validator,
 requirements and validation workflow into your repository, keeping their relative

@@ -15,6 +15,13 @@ Rust `executable`, and a `contributions.languages` array. Include
 `contributions.skills: []` if the package has no skills. A package may combine
 language declarations with tools, panels and skills.
 
+The [example marketplace](../examples/language-marketplace.json) lists immutable
+Notes releases separately from the official catalog. On a host with API 5 editor
+integration, add this repository with catalog path
+`examples/language-marketplace.json` in Settings → Plugins, then install Notes
+language from Plugins. Keep the default `marketplace.json` source as well. This
+example does not make API 5 available on an older deployed app.
+
 Each language definition has a string `id` and display `name`. IDs do not come
 from an app-owned language enumeration. Recognition supports extension names
 without a leading dot, exact filenames, bounded filename patterns and an optional
@@ -28,6 +35,10 @@ regions and constrain surrounding text. Block comments use `nested: true` only
 when the language permits nesting. The core editor interprets this data; a
 configuration-only package needs no executable. Syntax, folding and structure
 features require an executable component.
+
+`surroundingPairs` describe explicit selection wrapping and do not require parsed
+regions. Context exclusions in `autoClosingPairs.notIn` apply to automatic
+insertion at an empty caret, where unknown protected regions remain unavailable.
 
 Set `configuration.uniformLineComments: true` only when the declared line marker
 or block-comment fallback applies throughout the document. This allows explicit

@@ -281,10 +281,15 @@ def validate_repository(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--package", type=Path, help="Validate a standalone package directory")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--package", type=Path, help="Validate a standalone package directory")
+    selection.add_argument("--catalog", type=Path, help="Validate a standalone marketplace catalog")
     args = parser.parse_args()
     try:
-        if args.package:
+        if args.catalog:
+            catalog = validate_catalog(read_json(args.catalog))
+            print(f"Valid catalog: {len(catalog['plugins'])} listings")
+        elif args.package:
             manifest = validate_package(args.package)
             print(f"Valid package: {manifest['publisher']}/{manifest['name']} {manifest['version']}")
         else:
