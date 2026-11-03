@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "ini",
+  "version": "0.1.0",
+  "displayName": "INI and EditorConfig",
+  "description": "Syntax, folding, source structure and editing rules for INI and EditorConfig.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_ini",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "ini",
+        "name": "INI / EditorConfig",
+        "extensions": [
+          "ini",
+          "cfg",
+          "properties"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#"
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        },
+        "filenames": [
+          ".editorconfig",
+          ".npmrc",
+          ".yarnrc",
+          ".pypirc",
+          "pip.conf",
+          ".gitconfig",
+          ".gitmodules",
+          ".env"
+        ],
+        "filenamePatterns": [
+          ".env.*"
+        ]
+      }
+    ]
+  }
+}

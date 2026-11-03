@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "plain-text",
+  "version": "0.1.0",
+  "displayName": "Plain text",
+  "description": "Generic region folding for otherwise unrecognized text files.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_plain_text",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "plain",
+        "name": "Plain text",
+        "extensions": [],
+        "filenamePatterns": [
+          "*"
+        ],
+        "configuration": {},
+        "features": {
+          "syntax": false,
+          "folding": true,
+          "structure": false
+        }
+      }
+    ]
+  }
+}

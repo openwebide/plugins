@@ -1,0 +1,165 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "go",
+  "version": "0.1.0",
+  "displayName": "Go",
+  "description": "Syntax, folding, source structure and editing rules for Go.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_go",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "go",
+        "name": "Go",
+        "extensions": [
+          "go"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

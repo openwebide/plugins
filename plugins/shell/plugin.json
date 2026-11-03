@@ -1,0 +1,97 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "shell",
+  "version": "0.1.0",
+  "displayName": "Shell",
+  "description": "Syntax, folding, source structure and editing rules for Shell.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_shell",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "shell",
+        "name": "Shell",
+        "extensions": [
+          "sh",
+          "bash",
+          "zsh"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "autoClosingPairs": [
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ]
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        },
+        "firstLine": "^#!.*(?:/|\\s)(?:sh|bash|zsh)\\b"
+      }
+    ]
+  }
+}

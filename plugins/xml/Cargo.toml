@@ -1,0 +1,15 @@
+[package]
+name = "openwebide-language-xml"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "language_xml"
+crate-type = ["cdylib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"
+openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "1bbf4ac8e2db2fc1688ccfe9a525ffcc802f5f39", default-features = false, features = ["xml"] }

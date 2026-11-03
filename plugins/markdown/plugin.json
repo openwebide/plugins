@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "markdown",
+  "version": "0.1.0",
+  "displayName": "Markdown",
+  "description": "Syntax, folding, source structure and editing rules for Markdown.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_markdown",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "markdown",
+        "name": "Markdown",
+        "extensions": [
+          "md",
+          "markdown"
+        ],
+        "configuration": {
+          "blockComment": {
+            "open": "<!--",
+            "close": "-->"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      },
+      {
+        "id": "markdown-inline",
+        "name": "Markdown inline",
+        "extensions": [],
+        "configuration": {
+          "blockComment": {
+            "open": "<!--",
+            "close": "-->"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "xml",
+  "version": "0.1.0",
+  "displayName": "XML",
+  "description": "Syntax, folding, source structure and editing rules for XML.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_xml",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "xml",
+        "name": "XML",
+        "extensions": [
+          "xml",
+          "svg",
+          "csproj",
+          "fsproj",
+          "vbproj",
+          "props",
+          "targets",
+          "config",
+          "resx",
+          "slnx",
+          "nuspec",
+          "ruleset",
+          "runsettings",
+          "pubxml"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "blockComment": {
+            "open": "<!--",
+            "close": "-->"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

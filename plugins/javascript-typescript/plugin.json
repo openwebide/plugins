@@ -1,0 +1,641 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "javascript-typescript",
+  "version": "0.1.0",
+  "displayName": "JavaScript and TypeScript",
+  "description": "Syntax, folding, source structure and editing rules for JavaScript and TypeScript.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_javascript_typescript",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "javascript",
+        "name": "JavaScript",
+        "extensions": [
+          "js",
+          "mjs",
+          "cjs"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^\\\\])(?:\\\\\\\\)*\\$\\z",
+              "after": ".*"
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      },
+      {
+        "id": "jsx",
+        "name": "JavaScript JSX",
+        "extensions": [
+          "jsx"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^\\\\])(?:\\\\\\\\)*\\$\\z",
+              "after": ".*"
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      },
+      {
+        "id": "typescript",
+        "name": "TypeScript",
+        "extensions": [
+          "ts",
+          "mts",
+          "cts"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^\\\\])(?:\\\\\\\\)*\\$\\z",
+              "after": ".*"
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      },
+      {
+        "id": "tsx",
+        "name": "TypeScript TSX",
+        "extensions": [
+          "tsx"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "`",
+              "close": "`",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^\\\\])(?:\\\\\\\\)*\\$\\z",
+              "after": ".*"
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            },
+            {
+              "open": "`",
+              "close": "`"
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

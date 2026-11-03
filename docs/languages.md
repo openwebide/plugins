@@ -59,11 +59,22 @@ Implement `Plugin::languages()` and `Plugin::language(input)`, then use
 manifest, including order. The SDK reserves `@openwebide/languages` for metadata
 and `@openwebide/language` for requests; these are not agent tools.
 
-The [Languages reference source](../plugins/languages/README.md) uses the optional
-public syntax toolkit for its engines. A custom lexer or other engine can use
-the SDK directly, as Notes does. Grammar and parser code belongs inside the host
-component. Browser clients receive metadata and validated results and do not
-execute plugin code.
+The independent [Rust](../plugins/rust/README.md),
+[JavaScript/TypeScript](../plugins/javascript-typescript/README.md),
+[C/C++](../plugins/c-cpp/README.md) and [Markdown](../plugins/markdown/README.md)
+sources use the optional public syntax toolkit. Set `default-features = false`
+and select the package's family feature, then use `LanguageSyntax::new_delegated`.
+The compatibility `all` default is for legacy consumers. A custom lexer or other
+engine can use the SDK directly, as Notes does. Grammar and parser code belongs
+inside the host component. Browser clients receive metadata and validated results
+and do not execute plugin code.
+
+First-party packages preserve the existing 24 language IDs in 19 independently
+installable families. `javascript-typescript` owns JS/JSX/TS/TSX; `c-cpp` owns C/C++;
+`markdown` owns block/inline Markdown. JSON/JSONC, CSS/SCSS and INI/EditorConfig
+keep their related formats together. Plain text's optional component supplies
+region folding; core text editing remains available without it. The old aggregate
+source is retained unlisted for historical compatibility.
 
 ## Document synchronization and results
 
@@ -86,8 +97,13 @@ Results contain data, not source transformations or executable UI:
 - Folds, embedded scopes, protected regions, selections and bracket partners use
   complete-source UTF-8 byte offsets. Do not split a scalar or invent offsets
   outside the supplied source. Bracket partners must be reciprocal.
-- Embedded scopes identify their contributed language, allowing the core editor
-  to choose its declared rules for comments, pairs and indentation.
+- Embedded scopes identify a language ID or alias. The shared document service
+  resolves the selected installed provider, including account/project preferences.
+  Missing, disabled, ambiguous or failed providers leave the body plain. Child
+  tokens, folds and structural positions are translated into the outer source;
+  nested delegation uses a shared source/work budget and depth limit. Removed
+  bodies release their host document sessions. HTML and Markdown do not bundle
+  other families' parsers; Markdown fences can name custom language providers.
 
 The public SDK caps analyzed source at 2 MiB, result JSON at 32 MiB and analysis
 records at 100,000. Package declarations have separate bounds, including at most

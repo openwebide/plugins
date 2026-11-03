@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "sql",
+  "version": "0.1.0",
+  "displayName": "SQL",
+  "description": "Syntax, folding, source structure and editing rules for SQL.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_sql",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "sql",
+        "name": "SQL",
+        "extensions": [
+          "sql"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "--",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "autoClosingPairs": [
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ]
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

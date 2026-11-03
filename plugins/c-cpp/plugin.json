@@ -1,0 +1,277 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "c-cpp",
+  "version": "0.1.0",
+  "displayName": "C and C++",
+  "description": "Syntax, folding, source structure and editing rules for C and C++.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_c_cpp",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "c",
+        "name": "C",
+        "extensions": [
+          "c",
+          "h"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      },
+      {
+        "id": "cpp",
+        "name": "C++",
+        "extensions": [
+          "cpp",
+          "cc",
+          "cxx",
+          "hpp"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "//",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "json",
+  "version": "0.1.0",
+  "displayName": "JSON and JSONC",
+  "description": "Syntax, folding, source structure and editing rules for JSON and JSONC.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_json",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "json",
+        "name": "JSON / JSONC",
+        "extensions": [
+          "json",
+          "jsonc"
+        ],
+        "configuration": {
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        },
+        "filenames": [
+          "composer.lock",
+          "Pipfile.lock"
+        ]
+      }
+    ]
+  }
+}

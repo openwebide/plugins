@@ -101,11 +101,13 @@ API 4 adds [host-executed panels](docs/panels.md) through the public Rust SDK. P
 The [language guide](docs/languages.md) describes the API 5 declarations, host
 source synchronization and source-bound analysis results. The
 [Notes example](examples/language-plugin/README.md) implements a custom language
-with only the public SDK; the [Languages source](plugins/languages/README.md)
-uses the optional public syntax toolkit. The separate
+with only the public SDK. Independent [Rust](plugins/rust/README.md),
+[JavaScript/TypeScript](plugins/javascript-typescript/README.md) and
+[Markdown](plugins/markdown/README.md) packages use the optional public syntax
+toolkit with only their own family features. The separate
 [example catalog](examples/language-marketplace.json) lists immutable Notes
 releases for hosts with API 5 editor integration. The aggregate Languages source
 is an unlisted prototype being replaced by independent packages, grouped by
-intended LSP coverage. Each family will own recognition, syntax and editing rules;
+intended LSP coverage. Each family owns recognition, syntax and editing rules;
 embedded regions resolve through installed providers. LSP execution is a following
 app goal.

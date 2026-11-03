@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "toml",
+  "version": "0.1.0",
+  "displayName": "TOML",
+  "description": "Syntax, folding, source structure and editing rules for TOML.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 5
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_toml",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "toml",
+        "name": "TOML",
+        "extensions": [
+          "toml"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "autoClosingPairs": [
+            {
+              "open": "'",
+              "close": "'",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ],
+              "before": "(?:^|[^[:alnum:]_&<])\\z"
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "'",
+              "close": "'"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ]
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true
+        },
+        "filenames": [
+          "Cargo.lock",
+          "poetry.lock",
+          "pdm.lock",
+          "uv.lock",
+          "Pipfile",
+          "rust-toolchain"
+        ]
+      }
+    ]
+  }
+}
