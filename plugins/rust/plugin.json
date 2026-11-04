@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "rust",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Rust",
   "description": "Syntax, folding, source structure and editing rules for Rust.",
   "license": "MIT",
@@ -131,6 +131,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

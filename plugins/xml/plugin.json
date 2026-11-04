@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "xml",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "XML",
   "description": "Syntax, folding, source structure and editing rules for XML.",
   "license": "MIT",
@@ -52,6 +52,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

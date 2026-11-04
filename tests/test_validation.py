@@ -187,6 +187,29 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(validate.Invalid):
             validate.validate_package(self.package, self.checks)
 
+    def test_executable_context_declaration_preserves_legacy_and_accepts_boolean_opt_out(self):
+        manifest = json.loads((ROOT / "plugins/rust/plugin.json").read_text())
+        for declaration in (None, True, False):
+            value = copy.deepcopy(manifest)
+            value["contributions"].pop("context", None)
+            if declaration is not None:
+                value["contributions"]["context"] = declaration
+            validate.check_schema(value, self.checks["Plugin"], "plugin")
+        for invalid in ("false", 0, [], {}):
+            value = copy.deepcopy(manifest)
+            value["contributions"]["context"] = invalid
+            with self.assertRaises(validate.Invalid):
+                validate.check_schema(value, self.checks["Plugin"], "plugin")
+        value = copy.deepcopy(self.manifest)
+        value["contributions"]["context"] = False
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(value, self.checks["Plugin"], "plugin")
+        families = [json.loads(path.read_text()) for path in (ROOT / "plugins").glob("*/plugin.json")
+                    if path.parent.name != "languages" and
+                    json.loads(path.read_text())["contributions"].get("languages")]
+        self.assertEqual(len(families), 19)
+        self.assertTrue(all(family["contributions"].get("context") is False for family in families))
+
     def test_platform_tool_groups_require_api_two_and_have_bounded_known_capabilities(self):
         value = copy.deepcopy(self.manifest)
         value["contributions"]["skills"] = []

@@ -1,5 +1,10 @@
 # Language contributions
 
+Language-only executable packages set `contributions.context: false` so chat
+startup does not compile an unused context hook. Packages that also contribute
+chat context can omit that field or set it to `true`; the same SDK hook and
+capability checks apply as for tool and panel packages.
+
 API 5 adds language declarations and a versioned host analysis protocol to the
 existing package format. The Notes example has its own catalog. The
 official catalog lists 19 independent language-family packages; the

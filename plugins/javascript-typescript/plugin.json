@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "javascript-typescript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "JavaScript and TypeScript",
   "description": "Syntax, folding, source structure and editing rules for JavaScript and TypeScript.",
   "license": "MIT",
@@ -636,6 +636,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

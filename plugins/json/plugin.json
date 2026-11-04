@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "json",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "JSON and JSONC",
   "description": "Syntax, folding, source structure and editing rules for JSON and JSONC.",
   "license": "MIT",
@@ -125,6 +125,7 @@
           "Pipfile.lock"
         ]
       }
-    ]
+    ],
+    "context": false
   }
 }

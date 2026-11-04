@@ -33,6 +33,10 @@ For Rust, edit `plugin.json`, `Cargo.toml` and `src/lib.rs` together:
   descriptions, schemas and approval flags. Event names must likewise match.
 - Declare only needed capabilities. Tools with side effects should request
   approval; declaring `false` cannot weaken the host's permission policy.
+- Set `contributions.context` to `false` when the executable has no chat-context
+  hook, avoiding unused compilation during chat startup. Omission preserves the
+  existing enabled behavior; `true` explicitly enables `Plugin::context`.
+  Language, panel and tool contributions can combine with that same hook.
 - Commit `Cargo.lock` with source. If dependencies change, regenerate it using
   the same SDK patch as the checker, then rerun locked validation.
 

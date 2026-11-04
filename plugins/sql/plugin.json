@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "sql",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "SQL",
   "description": "Syntax, folding, source structure and editing rules for SQL.",
   "license": "MIT",
@@ -78,6 +78,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

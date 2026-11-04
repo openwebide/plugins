@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "c-cpp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "C and C++",
   "description": "Syntax, folding, source structure and editing rules for C and C++.",
   "license": "MIT",
@@ -272,6 +272,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "php",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "PHP",
   "description": "Syntax, folding, source structure and editing rules for PHP.",
   "license": "MIT",
@@ -145,6 +145,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

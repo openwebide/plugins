@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "markdown",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "displayName": "Markdown",
   "description": "Syntax, folding, source structure and editing rules for Markdown.",
   "license": "MIT",
@@ -55,6 +55,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

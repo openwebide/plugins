@@ -34,8 +34,12 @@ API 3 requires `executable`: `manifest: "Cargo.toml"`, a Rust `library` name,
 `contributions.tools` with name, description, object `parameters` schema and
 `requires_approval`; these must exactly match `Plugin::tools()`, including order.
 `contributions.events` must likewise match `Plugin::events()`. Always include
-`skills`, using `[]` when absent. A plugin must contribute skills, tools or events.
-Context hooks are implemented through `Plugin::context`, not a manifest field.
+`skills`, using `[]` when absent. A plugin must contribute skills, tools, events,
+panels or languages.
+Context hooks are implemented through `Plugin::context`. Executable packages may
+set the optional boolean `contributions.context` to `false` to skip that hook.
+Omission preserves existing invocation; `true` explicitly enables it. This flag
+does not affect tools, panels or languages and requires an executable.
 Optional `contributions.background` names a declared event and an
 `intervalSeconds` from 60 to 86400; it requires the `jobs` capability.
 

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "plain-text",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Plain text",
   "description": "Generic region folding for otherwise unrecognized text files.",
   "license": "MIT",
@@ -34,6 +34,7 @@
           "structure": false
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

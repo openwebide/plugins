@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "html",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "HTML",
   "description": "Syntax, folding, source structure and editing rules for HTML.",
   "license": "MIT",
@@ -39,6 +39,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }

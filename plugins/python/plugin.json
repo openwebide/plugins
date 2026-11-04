@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "python",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Python",
   "description": "Syntax, folding, source structure and editing rules for Python.",
   "license": "MIT",
@@ -140,6 +140,7 @@
         },
         "firstLine": "^#!.*\\bpython[0-9.]*\\b"
       }
-    ]
+    ],
+    "context": false
   }
 }

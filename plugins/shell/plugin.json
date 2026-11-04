@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "shell",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Shell",
   "description": "Syntax, folding, source structure and editing rules for Shell.",
   "license": "MIT",
@@ -92,6 +92,7 @@
         },
         "firstLine": "^#!.*(?:/|\\s)(?:sh|bash|zsh)\\b"
       }
-    ]
+    ],
+    "context": false
   }
 }

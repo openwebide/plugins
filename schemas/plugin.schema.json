@@ -179,6 +179,10 @@
           "items": {
             "$ref": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/language.schema.json#/$defs/definition"
           }
+        },
+        "context": {
+          "type": "boolean",
+          "description": "Whether to invoke the executable read-only context hook. Omission preserves the existing enabled behavior; false skips the hook."
         }
       },
       "required": [
@@ -517,6 +521,22 @@
             }
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "context"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "executable"
+        ]
       }
     }
   ]

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "java",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Java",
   "description": "Syntax, folding, source structure and editing rules for Java.",
   "license": "MIT",
@@ -144,6 +144,7 @@
           "structure": true
         }
       }
-    ]
+    ],
+    "context": false
   }
 }
