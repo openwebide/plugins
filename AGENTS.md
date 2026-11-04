@@ -3,13 +3,15 @@
 This repository contains the official marketplace and first-party reference
 plugins. API 1 skills, API 3 Rust tools/context/events and API 4 declarative panels
 have host implementations. API 5 language components integrate editors and
-previews through the shared host services. Earlier SDK-only builds do not
+previews through the shared host services. API 6 opts in to native language
+servers; earlier API 5 server declarations remain inert metadata. Earlier SDK-only builds do not
 provide editor integration. Do not add placeholder releases or present future
 capabilities as implemented.
 
 - Keep one package format with typed contributions. Packages may combine skills,
   Rust tools, context hooks, events and declarative panels. Language contributions
-  use the versioned API 5 contract; MCP tools, annotations and editor hooks remain
+  use the versioned analysis contract; API 6 server-only packages do not need
+  component wrappers. MCP tools, annotations and editor hooks remain
   future contracts.
 - Install and execute plugin code only on bridge hosts. Browser/phone clients
   use core Open WebIDE renderers and shared bridge services, not plugin scripts,
@@ -37,4 +39,5 @@ capabilities as implemented.
   or C/C++); unrelated language families are independently installable, replaceable
   and removable. Shared parser implementation belongs in public libraries. Embedded
   regions use the installed language providers through the shared host service.
-  Keep LSP execution as the following app roadmap item.
+  Use API 6 for native server execution and preserve the ordinary review for
+  newly added native process access. Do not claim it works on earlier hosts.

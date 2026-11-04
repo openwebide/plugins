@@ -12,10 +12,29 @@ aggregate Languages prototype remains unlisted.
 
 Use one package per intended LSP's language coverage. Related dialects served by
 one server belong together, such as JavaScript/TypeScript/JSX/TSX or C/C++.
-Packages own recognition, syntax, folding and editing rules now; LSP execution
-is a following app goal. Shared parsers belong in public libraries, while
+Packages own recognition, syntax, folding and editing rules. API 6 additionally
+opts in to native LSP execution on supporting hosts. Shared parsers belong in public libraries, while
 embedded regions resolve through installed providers. API 5 editor integration
 is required; earlier SDK-only builds need an update.
+
+## Native language servers
+
+Use `compatibility.pluginApi: 6` to opt in to execution of a declared
+`features.languageServer`. API 5 declarations remain inert metadata. A server-only
+package needs no Rust executable; analysis features such as `syntax` still need
+their component. The [Rust package](../plugins/rust/README.md) is the first native
+server reference.
+
+Declare the command, argument array, root-marker filenames, initialization options
+and settings. The command executes directly on the selected project host, without
+shell interpolation. The host supplies the authenticated project root and keeps
+services scoped to the account, project, pinned provider and editing client.
+Browser clients never execute servers. The required server/toolchain must already
+be installed on that host; this declaration does not download a runtime.
+
+API 6 native execution adds `language_server` access to the existing installation
+review. Older syntax-only installations cannot acquire it through an automatic
+update without that review. Normal provider and formatter preferences still apply.
 
 ## Start with a component
 

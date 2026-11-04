@@ -14,7 +14,8 @@ The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
 API 5 provides host-backed editor support through independent
 language-family packages. Group languages by the intended LSP’s
-coverage, with shared dialects in one package. Editor hooks and annotations remain
+coverage, with shared dialects in one package. Rust 0.2.0 opts in to native
+`rust-analyzer` services on API 6 hosts. Editor hooks and annotations remain
 planned.
 
 ## Author a plugin

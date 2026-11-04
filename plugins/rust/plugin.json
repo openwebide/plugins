@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "rust",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "Rust",
-  "description": "Syntax, folding, source structure and editing rules for Rust.",
+  "description": "Rust syntax and code intelligence through rust-analyzer on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 6
   },
   "readme": "README.md",
   "executable": {
@@ -128,7 +128,26 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "rust-analyzer",
+            "rootMarkers": [
+              "Cargo.toml",
+              "rust-project.json"
+            ],
+            "initializationOptions": {
+              "files": {
+                "watcher": "server"
+              }
+            },
+            "settings": {
+              "rust-analyzer": {
+                "files": {
+                  "watcher": "server"
+                }
+              }
+            }
+          }
         }
       }
     ],

@@ -49,7 +49,8 @@
             2,
             3,
             4,
-            5
+            5,
+            6
           ]
         }
       },
@@ -372,7 +373,10 @@
             "compatibility": {
               "properties": {
                 "pluginApi": {
-                  "const": 5
+                  "enum": [
+                    5,
+                    6
+                  ]
                 }
               }
             }
@@ -488,7 +492,8 @@
               "pluginApi": {
                 "enum": [
                   4,
-                  5
+                  5,
+                  6
                 ]
               }
             }
@@ -516,7 +521,10 @@
           "compatibility": {
             "properties": {
               "pluginApi": {
-                "const": 5
+                "enum": [
+                  5,
+                  6
+                ]
               }
             }
           }

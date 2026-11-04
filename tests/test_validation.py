@@ -89,6 +89,23 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(validate.Invalid):
                 validate.check_schema(language, self.checks["Language"], "language")
 
+    def test_api_six_accepts_server_only_packages_without_component_wrappers(self):
+        manifest = copy.deepcopy(self.manifest)
+        manifest["compatibility"]["pluginApi"] = 6
+        manifest["contributions"] = {"skills": [], "languages": [{
+            "id": "notes", "name": "Notes", "extensions": ["notes"],
+            "features": {"languageServer": {
+                "command": "notes-lsp", "args": ["--stdio"], "rootMarkers": ["notes.json"],
+            }},
+        }]}
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["contributions"]["languages"][0]["features"]["syntax"] = True
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 7
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
     def test_uniform_line_comments_require_a_line_marker_or_block_fallback(self):
         language = {"id": "notes", "name": "Notes"}
         for configuration in [
