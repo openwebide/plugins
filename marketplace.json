@@ -238,6 +238,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/rust"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -255,6 +262,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/python"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -274,6 +288,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/javascript-typescript"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -291,6 +312,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/java"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -310,6 +338,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/csharp"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -327,6 +362,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/c-cpp"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -346,6 +388,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/php"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -363,6 +412,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/shell"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -382,6 +438,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/go"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -399,6 +462,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/html"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -418,6 +488,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/css"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -435,6 +512,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/json"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -454,6 +538,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/yaml"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -471,6 +562,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/toml"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -490,6 +588,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/ini"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -507,6 +612,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/xml"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
@@ -526,6 +638,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.3",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/markdown"
+          }
+        },
+        {
           "version": "0.1.2",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -544,6 +663,13 @@
       ],
       "releases": [
         {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/sql"
+          }
+        },
+        {
           "version": "0.1.1",
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
@@ -561,6 +687,13 @@
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "ad940bb96c6d656268b1b03df7a84e5478b31c4e",
+            "path": "plugins/plain-text"
+          }
+        },
         {
           "version": "0.1.1",
           "source": {
