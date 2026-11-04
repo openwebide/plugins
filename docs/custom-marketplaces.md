@@ -20,8 +20,8 @@ editing rules; see the [language guide](languages.md) for editor integration
 requirements. LSP services, MCP and other editor contributions remain future
 work.
 
-Executable first-party tools and panels are in the official catalog. Independent
-language-family packages are in development; the aggregate prototype is unlisted.
+Executable first-party tools, panels and independent language-family packages
+are in the official catalog. The aggregate language prototype remains unlisted.
 The app selects its compiled default subset separately. Further device and lifecycle checks are tracked in the
 app roadmap.
 
@@ -539,4 +539,4 @@ properties and element types are rejected. Paths accept only SVG drawing command
 and numeric characters. Icons need no runtime capability or download: the app
 creates the markup from typed metadata, with sizing and colors controlled by its
 design system. The tool and panel references provide distinct drawings;
-Languages uses the default puzzle icon, as its immutable release manifest declares.
+Language-family releases use the default puzzle icon when their manifests omit an icon.

@@ -2,8 +2,8 @@
 
 This repository contains the official marketplace and first-party reference
 plugins. API 1 skills, API 3 Rust tools/context/events and API 4 declarative panels
-have host implementations. API 5 language contracts exist; the editor and
-language-family package migration is in progress. Earlier SDK-only builds do not
+have host implementations. API 5 language components integrate editors and
+previews through the shared host services. Earlier SDK-only builds do not
 provide editor integration. Do not add placeholder releases or present future
 capabilities as implemented.
 

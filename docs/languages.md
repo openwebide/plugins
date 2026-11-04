@@ -1,9 +1,9 @@
 # Language contributions
 
 API 5 adds language declarations and a versioned host analysis protocol to the
-existing package format. The SDK-only Notes example has its own catalog. The
-editor migration and default language-family packages are in progress; the
-aggregate Languages prototype is unlisted.
+existing package format. The Notes example has its own catalog. The
+official catalog lists 19 independent language-family packages; the
+aggregate Languages prototype remains unlisted.
 
 Use one package per intended LSP's language coverage. Related dialects served by
 one server belong together, such as JavaScript/TypeScript/JSX/TSX or C/C++.
@@ -112,7 +112,8 @@ source coordinates before publication. A result from an old document revision,
 provider or ownership scope cannot update the current editor.
 
 Language components receive no ambient filesystem, network or process access.
-Notes and Languages require no host capability grants. Unavailable hosts,
+Notes and the first-party language families require no host capability grants.
+Unavailable hosts,
 disabled providers, malformed results and component failures must preserve plain
 editing and saving. Installation, enablement, updates and removal use the same
 package lifecycle as other executable plugins in both project modes.
@@ -129,8 +130,12 @@ headers for a WASI component.
 Test full/delta source, lost bases, Unicode, LF/CRLF, invalid inputs and bounded
 cache eviction. Verify the compiled component exports, not just native Rust
 functions. The host's `check_language` example exercises the real component
-protocol and parser-free result reconstruction. Complete paired/server lifecycle
+protocol and parser-free result reconstruction. Pass `--family-matrix` after the
+component and manifest paths to cover every declared family ID, including
+dialects, embedded delegation and Unicode/CRLF. Complete paired/server lifecycle
 and editor checks before publishing a catalog release.
+For custom IDs outside those first-party fixtures, pass a sample source file
+instead of `--family-matrix`.
 
 Formatting, diagnostics, snippets and language-server metadata are reserved
 extension points for subsequent editor/code-intelligence work. A declaration does

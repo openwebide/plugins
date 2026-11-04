@@ -4,16 +4,16 @@ Official Open WebIDE plugin marketplace and reference implementations for agent
 tools, language support, and editor extensions.
 
 The catalog publishes immutable first-party releases for PR Review, Web, Project
-Memory, Scheduling and Skill Authoring. The Open WebIDE app installs validated
-snapshots on bridge hosts and enables them across existing/new projects by
+Memory, Scheduling, Skill Authoring and 19 independent language families. The
+Open WebIDE app installs validated snapshots on bridge hosts and enables them across existing/new projects by
 default, with saved per-project opt-outs. Plugin API 1 supports skills; API 3
 supports Rust source handlers, context hooks and events through the public SDK.
 Web, Memory, Scheduling and Skill Authoring own their behavior in Rust. Historical
 API 2 tool-group releases require an update before activation on current hosts.
 The official catalog publishes executable releases and structured JSON icons.
 Further device and lifecycle checks are tracked in the app roadmap.
-API 5 language contracts are available. The editor migration and independent
-language-family packages are in progress. Group languages by the intended LSP’s
+API 5 provides host-backed editor support through independent
+language-family packages. Group languages by the intended LSP’s
 coverage, with shared dialects in one package. Editor hooks and annotations remain
 planned.
 
@@ -43,7 +43,7 @@ for the host contract.
 
 A plugin is one versioned package combining the supported skills, Rust tools,
 context hooks, events and declarative panels. The API 5 language schema extends
-that same package format. Language-family packages are being prepared; Notes has
+that same package format. Language families use ordinary executable releases; Notes has
 a separate example catalog.
 MCP servers and further editor contributions remain planned.
 
@@ -60,7 +60,8 @@ Automatic compatible updates and Off are per-plugin preferences. From Open WebID
 closed, sharing persisted check leases, retry state and cached results. Clients
 restore update notices on reconnect; automatic installation still requires an
 open client. Alpha 1.0.0-alpha.5 predates these unattended checks. The app bundles
-a pinned default subset: Web, Project Memory, Scheduling and Skill Authoring.
+a pinned default subset: Web, Project Memory, Scheduling, Skill Authoring and
+the 19 language families on hosts with API 5 editor integration.
 
 ## Marketplace model
 
@@ -107,7 +108,7 @@ with only the public SDK. Independent [Rust](plugins/rust/README.md),
 toolkit with only their own family features. The separate
 [example catalog](examples/language-marketplace.json) lists immutable Notes
 releases for hosts with API 5 editor integration. The aggregate Languages source
-is an unlisted prototype being replaced by independent packages, grouped by
+is an unlisted historical prototype, replaced by independent packages grouped by
 intended LSP coverage. Each family owns recognition, syntax and editing rules;
 embedded regions resolve through installed providers. LSP execution is a following
 app goal.

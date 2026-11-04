@@ -227,6 +227,348 @@
           }
         ]
       }
+    },
+    {
+      "publisher": "openwebide",
+      "name": "rust",
+      "displayName": "Rust",
+      "description": "Syntax, folding, source structure and editing rules for Rust.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/rust"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "python",
+      "displayName": "Python",
+      "description": "Syntax, folding, source structure and editing rules for Python.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/python"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "javascript-typescript",
+      "displayName": "JavaScript and TypeScript",
+      "description": "Syntax, folding, source structure and editing rules for JavaScript and TypeScript.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/javascript-typescript"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "java",
+      "displayName": "Java",
+      "description": "Syntax, folding, source structure and editing rules for Java.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/java"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "csharp",
+      "displayName": "C#",
+      "description": "Syntax, folding, source structure and editing rules for C#.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/csharp"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "c-cpp",
+      "displayName": "C and C++",
+      "description": "Syntax, folding, source structure and editing rules for C and C++.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/c-cpp"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "php",
+      "displayName": "PHP",
+      "description": "Syntax, folding, source structure and editing rules for PHP.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/php"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "shell",
+      "displayName": "Shell",
+      "description": "Syntax, folding, source structure and editing rules for Shell.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/shell"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "go",
+      "displayName": "Go",
+      "description": "Syntax, folding, source structure and editing rules for Go.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/go"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "html",
+      "displayName": "HTML",
+      "description": "Syntax, folding, source structure and editing rules for HTML.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/html"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "css",
+      "displayName": "CSS and SCSS",
+      "description": "Syntax, folding, source structure and editing rules for CSS and SCSS.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/css"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "json",
+      "displayName": "JSON and JSONC",
+      "description": "Syntax, folding, source structure and editing rules for JSON and JSONC.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/json"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "yaml",
+      "displayName": "YAML",
+      "description": "Syntax, folding, source structure and editing rules for YAML.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/yaml"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "toml",
+      "displayName": "TOML",
+      "description": "Syntax, folding, source structure and editing rules for TOML.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/toml"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "ini",
+      "displayName": "INI and EditorConfig",
+      "description": "Syntax, folding, source structure and editing rules for INI and EditorConfig.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/ini"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "xml",
+      "displayName": "XML",
+      "description": "Syntax, folding, source structure and editing rules for XML.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/xml"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "markdown",
+      "displayName": "Markdown",
+      "description": "Syntax, folding, source structure and editing rules for Markdown.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.2",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/markdown"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "sql",
+      "displayName": "SQL",
+      "description": "Syntax, folding, source structure and editing rules for SQL.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/sql"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "plain-text",
+      "displayName": "Plain text",
+      "description": "Generic region folding for otherwise unrecognized text files.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.1",
+          "source": {
+            "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
+            "path": "plugins/plain-text"
+          }
+        }
+      ]
     }
   ]
 }

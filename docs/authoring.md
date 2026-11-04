@@ -5,8 +5,9 @@ hooks and durable events. Start with a skill for instructions/resources, or Rust
 for executable behavior. A plugin can combine them. MCP servers and editor hooks
 remain future work. API 4 adds declarative panels with
 plugin-owned views/actions; see the [panel guide](panels.md).
-API 5 language contracts and reference components are in development; see the
-[language guide](languages.md). The app's editor migration is not yet complete.
+API 5 adds host-backed language support through the same package lifecycle; see
+the [language guide](languages.md). Earlier SDK-only app builds need an update
+for editor integration.
 
 ## Start from a working example
 
