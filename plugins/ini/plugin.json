@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "ini",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "INI and EditorConfig",
   "description": "Syntax, folding, source structure and editing rules for INI and EditorConfig.",
   "license": "MIT",

@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "toml",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "TOML",
   "description": "Syntax, folding, source structure and editing rules for TOML.",
   "license": "MIT",

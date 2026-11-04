@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "csharp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "C#",
   "description": "Syntax, folding, source structure and editing rules for C#.",
   "license": "MIT",
