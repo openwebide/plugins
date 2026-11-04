@@ -2,11 +2,9 @@
 
 ## [Unreleased]
 
-- Preserve region folding for unrecognized files through the ordinary Languages package’s plain-text contribution.
-
-- Add explicit uniform comment rules to the Languages and Notes 0.1.1 source packages, preserving immediate line-comment commands for single-strategy documents. Embedded HTML and Markdown retain context-dependent rules. Update the language schema and authoring guidance; catalog publication still awaits the app migration.
-
-- Define API 5 language declarations and offline validation, with an independent Notes language component example. The Languages reference package and app editor migration are in development; no language catalog release is published yet.
+- Publish Rust 0.2.0 with native rust-analyzer through the public API 6 language-server contract. It supplies diagnostics, completion, navigation, formatting and refactoring in local and remote projects; native process access requires the ordinary capability review. Older API 5 hosts do not execute server declarations.
+- Publish independently installable language families grouped by intended language-server coverage, with related dialects in the same package. Keep shared parser implementation in public libraries and preserve plain-text region folding and language-specific comment rules.
+- Define and validate API 5 language analysis and API 6 native server declarations for first-party and custom marketplaces.
 
 - Publish executable API 3 releases of Web, Project Memory, Scheduling and Skill Authoring at 0.2.1, plus PR Review 0.1.2, with immutable source pins and individual structured JSON icons.
 - Move first-party behavior into Rust using the public SDK, with the same capabilities and approval rules as community plugins. Distribution builds compile and embed the selected official defaults.

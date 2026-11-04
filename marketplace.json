@@ -232,11 +232,18 @@
       "publisher": "openwebide",
       "name": "rust",
       "displayName": "Rust",
-      "description": "Syntax, folding, source structure and editing rules for Rust.",
+      "description": "Rust syntax and code intelligence through rust-analyzer on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "27dd0936cf5f9e043090455fe348c368c6149009",
+            "path": "plugins/rust"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
