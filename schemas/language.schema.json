@@ -400,6 +400,14 @@
             "pattern": "[\\x00-\\x1f\\x7f]"
           },
           "description": "API 7: LSP document language ID, when different from the contribution ID; does not select a separate server."
+        },
+        "virtualDocuments": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/virtualDocument"
+          },
+          "description": "API 8: resolve server-returned virtual navigation URIs to read-only text through declared server requests."
         }
       },
       "required": [
@@ -548,6 +556,56 @@
       "required": [
         "id",
         "name"
+      ],
+      "additionalProperties": false
+    },
+    "virtualDocument": {
+      "type": "object",
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9+.-]*$",
+          "not": {
+            "anyOf": [
+              {
+                "const": "file"
+              },
+              {
+                "pattern": "[\\x00-\\x1f\\x7f-\\x9f]"
+              }
+            ]
+          }
+        },
+        "method": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^(?!(?:workspace|textDocument|notebookDocument|window|client|telemetry)/)[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+$",
+          "not": {
+            "pattern": "[\\x00-\\x1f\\x7f-\\x9f]"
+          }
+        },
+        "parameters": {
+          "enum": [
+            "text_document",
+            "uri"
+          ],
+          "default": "text_document"
+        },
+        "textPointer": {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "^(?:/(?:[^~\\x00-\\x1f\\x7f-\\x9f]|~[01])*)?$",
+          "default": "",
+          "not": {
+            "pattern": "[\\x00-\\x1f\\x7f-\\x9f]"
+          }
+        }
+      },
+      "required": [
+        "scheme",
+        "method"
       ],
       "additionalProperties": false
     }

@@ -17,8 +17,9 @@ language-family packages. Group languages by the intended LSP’s
 coverage, with shared dialects in one package. Rust 0.2.0 opts in to native
 `rust-analyzer` services on API 6 hosts. JavaScript/TypeScript 0.2.0 uses
 `typescript-language-server` for JS, JSX, TS and TSX on API 7 hosts, preserving
-their language IDs while sharing one service. Editor hooks and annotations remain
-planned.
+their language IDs while sharing one service. C# 0.2.0 uses `csharp-ls` and
+.NET 10 on API 8 hosts, including read-only framework definitions through public
+virtual-document declarations. Editor hooks and annotations remain planned.
 
 ## Author a plugin
 

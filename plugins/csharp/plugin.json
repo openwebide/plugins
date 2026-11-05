@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "csharp",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "C#",
-  "description": "Syntax, folding, source structure and editing rules for C#.",
+  "description": "C# syntax and code intelligence through csharp-ls on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 8
   },
   "readme": "README.md",
   "executable": {
@@ -141,7 +141,23 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "csharp-ls",
+            "settings": {
+              "csharp": {
+                "useMetadataUris": true
+              }
+            },
+            "virtualDocuments": [
+              {
+                "scheme": "csharp",
+                "method": "csharp/metadata",
+                "parameters": "text_document",
+                "textPointer": "/source"
+              }
+            ]
+          }
         }
       }
     ],

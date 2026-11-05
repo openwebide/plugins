@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Validate API 8 virtual-document declarations for first-party and community language servers, including typed request parameters, JSON text pointers and unique URI schemes.
+
+- Add C# 0.2.0 with csharp-ls through the public API 8 native language-server contract, including declared read-only framework definitions and preserving the C# parser and language ID. Host tooling uses .NET 10 and csharp-ls 0.28.0; new solutions use `.slnx`. Newly added native process access uses the ordinary capability review.
+
 - Add JavaScript/TypeScript 0.2.0 with native typescript-language-server declarations for JS, JSX, TS and TSX. API 7 maps the existing language IDs to their LSP document IDs while sharing one installed service; newly added native process access uses the ordinary capability review.
 - Validate API 7 document language IDs and document shared-service configuration and standard versionless diagnostics for first-party and custom packages.
 

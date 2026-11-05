@@ -102,7 +102,7 @@ class ValidationTests(unittest.TestCase):
         manifest["contributions"]["languages"][0]["features"]["syntax"] = True
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
-        manifest["compatibility"]["pluginApi"] = 8
+        manifest["compatibility"]["pluginApi"] = 9
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
@@ -122,6 +122,43 @@ class ValidationTests(unittest.TestCase):
             manifest["contributions"]["languages"][0]["features"]["languageServer"]["languageId"] = value
             with self.subTest(value=value), self.assertRaises(validate.Invalid):
                 validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
+    def test_virtual_documents_require_api_eight_and_read_only_declarations(self):
+        manifest = copy.deepcopy(self.manifest)
+        declaration = {"scheme": "notes", "method": "notes/source", "textPointer": "/body~1text/~0value"}
+        manifest["contributions"] = {"skills": [], "languages": [{
+            "id": "notes", "name": "Notes", "features": {"languageServer": {
+                "command": "notes-server", "languageId": "notes", "virtualDocuments": [declaration],
+            }},
+        }]}
+        for api in [5, 6, 7]:
+            manifest["compatibility"]["pluginApi"] = api
+            with self.subTest(api=api), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 8
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        server = manifest["contributions"]["languages"][0]["features"]["languageServer"]
+        for field, values in {
+            "scheme": ["", "file", "Notes", "notes:", "1notes", "x" * 65],
+            "method": ["", "shutdown", "workspace/executeCommand", "workspace/applyEdit", "textDocument/rename", "$/source", "notes//source", "notes/source\n", "x/" * 65],
+            "parameters": ["command", {}, None],
+            "textPointer": ["source", "/~", "/~2", "/source\n", "/" + "x" * 256],
+        }.items():
+            for value in values:
+                invalid = copy.deepcopy(declaration)
+                invalid[field] = value
+                server["virtualDocuments"] = [invalid]
+                with self.subTest(field=field, value=value), self.assertRaises(validate.Invalid):
+                    validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        server["virtualDocuments"] = [declaration, {**declaration, "method": "notes/other"}]
+        (self.package / "plugin.json").write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(validate.Invalid, "duplicate virtual document"):
+            validate.validate_package(self.package, self.checks)
+        server["virtualDocuments"] = [{**declaration, "textPointer": "/" + "😀" * 64}]
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        (self.package / "plugin.json").write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(validate.Invalid, "256 UTF-8 bytes"):
+            validate.validate_package(self.package, self.checks)
 
     def test_uniform_line_comments_require_a_line_marker_or_block_fallback(self):
         language = {"id": "notes", "name": "Notes"}

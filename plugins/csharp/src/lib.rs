@@ -24,3 +24,33 @@ impl Plugin for LanguagePackage {
     }
 }
 openwebide_plugin_sdk::export!(LanguagePackage);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn public_metadata_keeps_csharp_identity_and_native_project_discovery() {
+        let definitions = LanguagePackage::languages();
+        assert_eq!(definitions.len(), 1);
+        let definition = &definitions[0];
+        assert_eq!(definition.id, "csharp");
+        assert_eq!(definition.extensions, ["cs"]);
+        let server = definition.features.language_server.as_ref().unwrap();
+        assert_eq!(server.command, "csharp-ls");
+        // The server selects the solution from the authorized project root,
+        // including .slnx and projects whose names are not known to the host.
+        assert!(server.root_markers.is_empty());
+        assert_eq!(server.settings["csharp"]["useMetadataUris"], true);
+        assert_eq!(
+            server.virtual_documents,
+            [VirtualDocument {
+                scheme: "csharp".into(),
+                method: "csharp/metadata".into(),
+                parameters: VirtualDocumentParameters::TextDocument,
+                text_pointer: "/source".into(),
+            }]
+        );
+        let _ = engine();
+    }
+}

@@ -39,13 +39,27 @@ update without that review. Normal provider and formatter preferences still appl
 API 7 adds optional `features.languageServer.languageId` for the LSP document
 language ID. Keep the contribution's stable `id` for preferences and authority;
 for example, `jsx` maps to `javascriptreact` and `tsx` to `typescriptreact`.
-A mapped ID requires API 7. Related languages share a service only within the
+A mapped ID requires API 7 or newer. Related languages share a service only within the
 same installed package and identical command, arguments, root markers, options
-and settings. The host synchronizes each open dialect with its own declaration
+settings and virtual document declarations. The host synchronizes each open dialect with its own declaration
 and source. Different providers, projects and editing clients remain isolated.
 See the [JavaScript/TypeScript package](../plugins/javascript-typescript/README.md)
 for a four-dialect reference. It lets TypeScript own nested configured projects
 within the authorized project root rather than splitting services at every config.
+
+API 8 adds optional `features.languageServer.virtualDocuments` for server-returned
+virtual definition URIs. Declare a unique URI `scheme`, custom request `method`,
+`parameters` (`text_document` or `uri`) and `textPointer` (RFC 6901; empty for a
+root string). The C# package declares `csharp/metadata` with `text_document`
+parameters and `/source` extraction. A community package can declare a different
+scheme, method and response shape without changes to the host.
+
+The host issues only these requests to the same installed server. Clients receive
+opaque resource IDs, scoped to the originating source snapshot, document, editing
+client, project and service. They cannot supply arbitrary URIs. Undeclared schemes,
+standard document/workspace mutation methods, duplicate schemes and oversized
+content are rejected. Virtual sources remain read-only and cannot receive workspace
+edits. Closing, source changes and service revocation invalidate old resources.
 
 Servers can publish diagnostics without a document version, as permitted by LSP.
 The host associates those notifications with the currently open snapshot;

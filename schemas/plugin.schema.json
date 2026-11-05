@@ -51,7 +51,8 @@
             4,
             5,
             6,
-            7
+            7,
+            8
           ]
         }
       },
@@ -377,7 +378,8 @@
                   "enum": [
                     5,
                     6,
-                    7
+                    7,
+                    8
                   ]
                 }
               }
@@ -496,7 +498,8 @@
                   4,
                   5,
                   6,
-                  7
+                  7,
+                  8
                 ]
               }
             }
@@ -527,7 +530,8 @@
                 "enum": [
                   5,
                   6,
-                  7
+                  7,
+                  8
                 ]
               }
             }
@@ -590,7 +594,62 @@
           "compatibility": {
             "properties": {
               "pluginApi": {
-                "const": 7
+                "enum": [
+                  7,
+                  8
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "languages"
+            ],
+            "properties": {
+              "languages": {
+                "contains": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "required": [
+                        "languageServer"
+                      ],
+                      "properties": {
+                        "languageServer": {
+                          "type": "object",
+                          "required": [
+                            "virtualDocuments"
+                          ],
+                          "properties": {
+                            "virtualDocuments": {
+                              "type": "array",
+                              "minItems": 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 8
               }
             }
           }

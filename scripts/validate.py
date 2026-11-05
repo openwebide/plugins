@@ -214,6 +214,12 @@ def validate_package(root, checks=None):
         raise Invalid("duplicate language id")
     if len(json.dumps(languages, ensure_ascii=False).encode("utf-8")) > 256 * 1024:
         raise Invalid("language metadata exceeds 256 KiB")
+    for language in languages:
+        documents = language.get("features", {}).get("languageServer", {}).get("virtualDocuments", [])
+        if len({document["scheme"] for document in documents}) != len(documents):
+            raise Invalid("duplicate virtual document URI scheme")
+        if any(len(document.get("textPointer", "").encode("utf-8")) > 256 for document in documents):
+            raise Invalid("virtual document text pointer exceeds 256 UTF-8 bytes")
     if "readme" in manifest:
         package_path(root, manifest["readme"])
     return manifest
