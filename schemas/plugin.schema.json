@@ -50,7 +50,8 @@
             3,
             4,
             5,
-            6
+            6,
+            7
           ]
         }
       },
@@ -375,7 +376,8 @@
                 "pluginApi": {
                   "enum": [
                     5,
-                    6
+                    6,
+                    7
                   ]
                 }
               }
@@ -493,7 +495,8 @@
                 "enum": [
                   4,
                   5,
-                  6
+                  6,
+                  7
                 ]
               }
             }
@@ -523,7 +526,8 @@
               "pluginApi": {
                 "enum": [
                   5,
-                  6
+                  6,
+                  7
                 ]
               }
             }
@@ -545,6 +549,52 @@
         "required": [
           "executable"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "languages"
+            ],
+            "properties": {
+              "languages": {
+                "contains": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "required": [
+                        "languageServer"
+                      ],
+                      "properties": {
+                        "languageServer": {
+                          "type": "object",
+                          "required": [
+                            "languageId"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 7
+              }
+            }
+          }
+        }
       }
     }
   ]

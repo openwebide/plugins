@@ -102,9 +102,26 @@ class ValidationTests(unittest.TestCase):
         manifest["contributions"]["languages"][0]["features"]["syntax"] = True
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
-        manifest["compatibility"]["pluginApi"] = 7
+        manifest["compatibility"]["pluginApi"] = 8
         with self.assertRaises(validate.Invalid):
             validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
+    def test_document_language_mapping_requires_api_seven(self):
+        manifest = copy.deepcopy(self.manifest)
+        manifest["contributions"] = {"skills": [], "languages": [{
+            "id": "jsx", "name": "JSX", "extensions": ["jsx"],
+            "features": {"languageServer": {"command": "community-server", "languageId": "javascriptreact"}},
+        }]}
+        for api in [5, 6]:
+            manifest["compatibility"]["pluginApi"] = api
+            with self.subTest(api=api), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 7
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        for value in ["", "javascript react", "javascript\nreact", "x" * 65]:
+            manifest["contributions"]["languages"][0]["features"]["languageServer"]["languageId"] = value
+            with self.subTest(value=value), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
 
     def test_uniform_line_comments_require_a_line_marker_or_block_fallback(self):
         language = {"id": "notes", "name": "Notes"}

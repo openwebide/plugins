@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Add JavaScript/TypeScript 0.2.0 with native typescript-language-server declarations for JS, JSX, TS and TSX. API 7 maps the existing language IDs to their LSP document IDs while sharing one installed service; newly added native process access uses the ordinary capability review.
+- Validate API 7 document language IDs and document shared-service configuration and standard versionless diagnostics for first-party and custom packages.
+
 - Publish Rust 0.2.0 with native rust-analyzer through the public API 6 language-server contract. It supplies diagnostics, completion, navigation, formatting and refactoring in local and remote projects; native process access requires the ordinary capability review. Older API 5 hosts do not execute server declarations.
 - Publish independently installable language families grouped by intended language-server coverage, with related dialects in the same package. Keep shared parser implementation in public libraries and preserve plain-text region folding and language-specific comment rules.
 - Define and validate API 5 language analysis and API 6 native server declarations for first-party and custom marketplaces.

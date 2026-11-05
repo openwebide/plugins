@@ -57,8 +57,10 @@ configuration and declared features. Executable syntax, folding or structure
 requires a Rust component whose `Plugin::languages()` matches the manifest.
 Configuration-only language packages can omit the executable. See the
 [language guide](../docs/languages.md) for contracts and the current migration
-status. LSP, diagnostics, snippets and formatting fields are extension points;
-declaring them does not implement their execution or install a server.
+status. API 6 enables native language-server execution on supporting hosts;
+API 7 adds optional `languageServer.languageId` mapping for shared dialects.
+That mapping requires API 7, while existing declarations keep their API 6 behavior.
+Snippets remain an extension point. Declarations do not install a server runtime.
 
 Other contributions, arbitrary extra fields, configuration values and credentials
 are rejected. Package dependencies and runtime provisioning are deferred.

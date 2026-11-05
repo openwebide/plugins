@@ -275,7 +275,7 @@ dependencies = [
 [[package]]
 name = "ec4rs"
 version = "1.2.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=443c68fe3e38a7b14d6b7665a9ca734dbcdf2984#443c68fe3e38a7b14d6b7665a9ca734dbcdf2984"
+source = "git+https://github.com/openwebide/openwebide.git?rev=546e4e7a454a43d4ac2c2824563d09136b98f4be#546e4e7a454a43d4ac2c2824563d09136b98f4be"
 
 [[package]]
 name = "equivalent"
@@ -711,7 +711,7 @@ dependencies = [
 [[package]]
 name = "openwebide-core"
 version = "1.0.0-nightly"
-source = "git+https://github.com/openwebide/openwebide.git?rev=443c68fe3e38a7b14d6b7665a9ca734dbcdf2984#443c68fe3e38a7b14d6b7665a9ca734dbcdf2984"
+source = "git+https://github.com/openwebide/openwebide.git?rev=546e4e7a454a43d4ac2c2824563d09136b98f4be#546e4e7a454a43d4ac2c2824563d09136b98f4be"
 dependencies = [
  "base64",
  "chrono",
@@ -744,7 +744,7 @@ dependencies = [
 [[package]]
 name = "openwebide-language-grammars"
 version = "0.1.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=443c68fe3e38a7b14d6b7665a9ca734dbcdf2984#443c68fe3e38a7b14d6b7665a9ca734dbcdf2984"
+source = "git+https://github.com/openwebide/openwebide.git?rev=546e4e7a454a43d4ac2c2824563d09136b98f4be#546e4e7a454a43d4ac2c2824563d09136b98f4be"
 dependencies = [
  "openwebide-plugin-sdk",
  "tree-sitter",
@@ -754,7 +754,7 @@ dependencies = [
 
 [[package]]
 name = "openwebide-language-javascript-typescript"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "openwebide-language-syntax",
  "openwebide-plugin-sdk",
@@ -763,7 +763,7 @@ dependencies = [
 [[package]]
 name = "openwebide-language-syntax"
 version = "0.1.0"
-source = "git+https://github.com/openwebide/openwebide.git?rev=443c68fe3e38a7b14d6b7665a9ca734dbcdf2984#443c68fe3e38a7b14d6b7665a9ca734dbcdf2984"
+source = "git+https://github.com/openwebide/openwebide.git?rev=546e4e7a454a43d4ac2c2824563d09136b98f4be#546e4e7a454a43d4ac2c2824563d09136b98f4be"
 dependencies = [
  "openwebide-core",
  "openwebide-plugin-sdk",

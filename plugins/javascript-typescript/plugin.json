@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "javascript-typescript",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "JavaScript and TypeScript",
-  "description": "Syntax, folding, source structure and editing rules for JavaScript and TypeScript.",
+  "description": "JavaScript, TypeScript, JSX and TSX syntax and code intelligence through typescript-language-server on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 7
   },
   "readme": "README.md",
   "executable": {
@@ -172,7 +172,24 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "typescript-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "initializationOptions": {
+              "disableAutomaticTypingAcquisition": true,
+              "tsserver": {
+                "useSyntaxServer": "never"
+              }
+            },
+            "settings": {
+              "typescript": {},
+              "javascript": {}
+            },
+            "languageId": "javascript"
+          }
         }
       },
       {
@@ -325,7 +342,24 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "typescript-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "initializationOptions": {
+              "disableAutomaticTypingAcquisition": true,
+              "tsserver": {
+                "useSyntaxServer": "never"
+              }
+            },
+            "settings": {
+              "typescript": {},
+              "javascript": {}
+            },
+            "languageId": "javascriptreact"
+          }
         }
       },
       {
@@ -480,7 +514,24 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "typescript-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "initializationOptions": {
+              "disableAutomaticTypingAcquisition": true,
+              "tsserver": {
+                "useSyntaxServer": "never"
+              }
+            },
+            "settings": {
+              "typescript": {},
+              "javascript": {}
+            },
+            "languageId": "typescript"
+          }
         }
       },
       {
@@ -633,7 +684,24 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "typescript-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "initializationOptions": {
+              "disableAutomaticTypingAcquisition": true,
+              "tsserver": {
+                "useSyntaxServer": "never"
+              }
+            },
+            "settings": {
+              "typescript": {},
+              "javascript": {}
+            },
+            "languageId": "typescriptreact"
+          }
         }
       }
     ],

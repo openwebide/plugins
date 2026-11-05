@@ -32,3 +32,35 @@ impl Plugin for LanguagePackage {
     }
 }
 openwebide_plugin_sdk::export!(LanguagePackage);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn public_metadata_preserves_language_ids_and_shares_one_server_configuration() {
+        let definitions = LanguagePackage::languages();
+        let expected = [
+            ("javascript", "javascript"),
+            ("jsx", "javascriptreact"),
+            ("typescript", "typescript"),
+            ("tsx", "typescriptreact"),
+        ];
+        assert_eq!(definitions.len(), expected.len());
+        let configuration = definitions[0]
+            .features
+            .language_server
+            .as_ref()
+            .unwrap()
+            .shared_configuration();
+        for (definition, (id, wire)) in definitions.iter().zip(expected) {
+            assert_eq!(definition.id, id);
+            let server = definition.features.language_server.as_ref().unwrap();
+            assert_eq!(server.language_id.as_deref(), Some(wire));
+            assert_eq!(server.shared_configuration(), configuration);
+        }
+        // Construct the actual parser component too: metadata and syntax must
+        // agree under the same public SDK, not only pass offline JSON checks.
+        let _ = engine();
+    }
+}

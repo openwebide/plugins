@@ -36,6 +36,22 @@ API 6 native execution adds `language_server` access to the existing installatio
 review. Older syntax-only installations cannot acquire it through an automatic
 update without that review. Normal provider and formatter preferences still apply.
 
+API 7 adds optional `features.languageServer.languageId` for the LSP document
+language ID. Keep the contribution's stable `id` for preferences and authority;
+for example, `jsx` maps to `javascriptreact` and `tsx` to `typescriptreact`.
+A mapped ID requires API 7. Related languages share a service only within the
+same installed package and identical command, arguments, root markers, options
+and settings. The host synchronizes each open dialect with its own declaration
+and source. Different providers, projects and editing clients remain isolated.
+See the [JavaScript/TypeScript package](../plugins/javascript-typescript/README.md)
+for a four-dialect reference. It lets TypeScript own nested configured projects
+within the authorized project root rather than splitting services at every config.
+
+Servers can publish diagnostics without a document version, as permitted by LSP.
+The host associates those notifications with the currently open snapshot;
+explicit versions must match exactly. Source changes clear retained diagnostics,
+and the editor checks source and client ownership before displaying a result.
+
 ## Start with a component
 
 Copy [the Notes example](../examples/language-plugin/README.md). It implements a

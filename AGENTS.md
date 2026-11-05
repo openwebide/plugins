@@ -4,7 +4,8 @@ This repository contains the official marketplace and first-party reference
 plugins. API 1 skills, API 3 Rust tools/context/events and API 4 declarative panels
 have host implementations. API 5 language components integrate editors and
 previews through the shared host services. API 6 opts in to native language
-servers; earlier API 5 server declarations remain inert metadata. Earlier SDK-only builds do not
+servers; API 7 adds per-document LSP language IDs for related dialects sharing
+a service. Earlier API 5 server declarations remain inert metadata. Earlier SDK-only builds do not
 provide editor integration. Do not add placeholder releases or present future
 capabilities as implemented.
 
