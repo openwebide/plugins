@@ -289,11 +289,18 @@
       "publisher": "openwebide",
       "name": "javascript-typescript",
       "displayName": "JavaScript and TypeScript",
-      "description": "Syntax, folding, source structure and editing rules for JavaScript and TypeScript.",
+      "description": "JavaScript, TypeScript, JSX and TSX syntax and code intelligence through typescript-language-server on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "4d7e7c656579485d69aea556368a8b290b08f8bf",
+            "path": "plugins/javascript-typescript"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
