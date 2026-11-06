@@ -346,11 +346,18 @@
       "publisher": "openwebide",
       "name": "csharp",
       "displayName": "C#",
-      "description": "Syntax, folding, source structure and editing rules for C#.",
+      "description": "C# syntax and code intelligence through csharp-ls on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "53292ce1d6ca77295d397ee7516c4cb5d3f41947",
+            "path": "plugins/csharp"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
