@@ -264,11 +264,18 @@
       "publisher": "openwebide",
       "name": "python",
       "displayName": "Python",
-      "description": "Syntax, folding, source structure and editing rules for Python.",
+      "description": "Python syntax and code intelligence through Pyright on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "a2ee289204a7fc277158c9356f6679b91429ae2c",
+            "path": "plugins/python"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
