@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "python",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "Python",
-  "description": "Syntax, folding, source structure and editing rules for Python.",
+  "description": "Python syntax and code intelligence through Pyright on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 6
   },
   "readme": "README.md",
   "executable": {
@@ -24,7 +24,8 @@
         "id": "python",
         "name": "Python",
         "extensions": [
-          "py"
+          "py",
+          "pyi"
         ],
         "configuration": {
           "uniformLineComments": true,
@@ -136,7 +137,21 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "pyright-langserver",
+            "args": [
+              "--stdio"
+            ],
+            "settings": {
+              "python": {
+                "analysis": {
+                  "diagnosticMode": "openFilesOnly",
+                  "autoImportCompletions": true
+                }
+              }
+            }
+          }
         },
         "firstLine": "^#!.*\\bpython[0-9.]*\\b"
       }
