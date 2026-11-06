@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "go",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "Go",
-  "description": "Syntax, folding, source structure and editing rules for Go.",
+  "description": "Go syntax and code intelligence through gopls on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 6
   },
   "readme": "README.md",
   "executable": {
@@ -157,7 +157,13 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "gopls",
+            "args": [
+              "serve"
+            ]
+          }
         }
       }
     ],
