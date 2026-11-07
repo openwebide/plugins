@@ -460,11 +460,18 @@
       "publisher": "openwebide",
       "name": "go",
       "displayName": "Go",
-      "description": "Syntax, folding, source structure and editing rules for Go.",
+      "description": "Go syntax and code intelligence through gopls on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "e57c8369e8c1f79fbfb44b966ea39054ae8f769e",
+            "path": "plugins/go"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
