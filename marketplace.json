@@ -385,11 +385,18 @@
       "publisher": "openwebide",
       "name": "c-cpp",
       "displayName": "C and C++",
-      "description": "Syntax, folding, source structure and editing rules for C and C++.",
+      "description": "C and C++ syntax and code intelligence through clangd on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "ca80902823d84808e1c6aa2175e6fe3329776704",
+            "path": "plugins/c-cpp"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
