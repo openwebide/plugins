@@ -21,7 +21,8 @@ their language IDs while sharing one service. C# 0.2.0 uses `csharp-ls` and
 .NET 10 on API 8 hosts, including read-only framework definitions through public
 virtual-document declarations. Editor hooks and annotations remain planned.
 Python 0.2.0 uses Pyright and Go 0.2.0 uses gopls on API 6 hosts, with project
-configuration and dependencies resolved on the execution host.
+configuration and dependencies resolved on the execution host. C/C++ 0.2.0 uses
+clangd on API 7 hosts, sharing C/C++ buffers and project compilation flags.
 
 ## Author a plugin
 

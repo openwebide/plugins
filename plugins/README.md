@@ -16,4 +16,4 @@ Other planned contributions are listed below.
 Terraform and the bundled Git annotations package depend on the ongoing editor
 work and language/editor contribution APIs. Supported language families already
 use independent packages through the public language contract; Rust,
-JavaScript/TypeScript, C#, Python and Go declare native language servers.
+JavaScript/TypeScript, C#, Python, Go and C/C++ declare native language servers.

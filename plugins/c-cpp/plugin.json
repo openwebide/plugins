@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "c-cpp",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "C and C++",
-  "description": "Syntax, folding, source structure and editing rules for C and C++.",
+  "description": "C and C++ syntax and code intelligence through clangd on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 7
   },
   "readme": "README.md",
   "executable": {
@@ -142,7 +142,17 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "clangd",
+            "args": [
+              "--background-index",
+              "--use-dirty-headers",
+              "--pch-storage=memory",
+              "--log=error"
+            ],
+            "languageId": "c"
+          }
         }
       },
       {
@@ -269,7 +279,17 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "clangd",
+            "args": [
+              "--background-index",
+              "--use-dirty-headers",
+              "--pch-storage=memory",
+              "--log=error"
+            ],
+            "languageId": "cpp"
+          }
         }
       }
     ],
