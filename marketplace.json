@@ -499,11 +499,18 @@
       "publisher": "openwebide",
       "name": "html",
       "displayName": "HTML",
-      "description": "Syntax, folding, source structure and editing rules for HTML.",
+      "description": "HTML syntax and code intelligence through the HTML language server on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "b29aa4b6da3e29dc3ca3135ba7c5c3a8bc723f2e",
+            "path": "plugins/html"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
@@ -524,11 +531,18 @@
       "publisher": "openwebide",
       "name": "css",
       "displayName": "CSS and SCSS",
-      "description": "Syntax, folding, source structure and editing rules for CSS and SCSS.",
+      "description": "CSS and SCSS syntax and code intelligence through the CSS language server on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "b29aa4b6da3e29dc3ca3135ba7c5c3a8bc723f2e",
+            "path": "plugins/css"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
@@ -549,11 +563,18 @@
       "publisher": "openwebide",
       "name": "json",
       "displayName": "JSON and JSONC",
-      "description": "Syntax, folding, source structure and editing rules for JSON and JSONC.",
+      "description": "JSON and JSONC syntax, schema diagnostics and code intelligence through the JSON language server on the project execution host.",
       "categories": [
         "languages"
       ],
       "releases": [
+        {
+          "version": "0.2.0",
+          "source": {
+            "commit": "b29aa4b6da3e29dc3ca3135ba7c5c3a8bc723f2e",
+            "path": "plugins/json"
+          }
+        },
         {
           "version": "0.1.2",
           "source": {
