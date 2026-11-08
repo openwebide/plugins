@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "html",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "HTML",
-  "description": "Syntax, folding, source structure and editing rules for HTML.",
+  "description": "HTML syntax and code intelligence through the HTML language server on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 7
   },
   "readme": "README.md",
   "executable": {
@@ -36,7 +36,21 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "vscode-html-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "rootMarkers": [
+              "package.json",
+              ".git"
+            ],
+            "languageId": "html",
+            "initializationOptions": {
+              "provideFormatter": true
+            }
+          }
         }
       }
     ],

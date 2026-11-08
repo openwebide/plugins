@@ -743,7 +743,7 @@ dependencies = [
 
 [[package]]
 name = "openwebide-language-css"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "openwebide-language-syntax",
  "openwebide-plugin-sdk",

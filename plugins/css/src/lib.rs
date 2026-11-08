@@ -8,7 +8,13 @@ fn definitions() -> Vec<LanguageDefinition> {
     serde_json::from_value(manifest["contributions"]["languages"].clone()).unwrap()
 }
 fn engine() -> LanguageSyntax {
-    let grammars = BTreeMap::from([("css".into(), LanguageGrammar::standard(SyntaxLanguage::Css))]);
+    let grammars = BTreeMap::from([
+        ("css".into(), LanguageGrammar::standard(SyntaxLanguage::Css)),
+        (
+            "scss".into(),
+            LanguageGrammar::standard(SyntaxLanguage::Css),
+        ),
+    ]);
     LanguageSyntax::new_delegated(definitions(), grammars).unwrap()
 }
 thread_local! { static SYNTAX: RefCell<LanguageSyntax> = RefCell::new(engine()); }

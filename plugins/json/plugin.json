@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "json",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "displayName": "JSON and JSONC",
-  "description": "Syntax, folding, source structure and editing rules for JSON and JSONC.",
+  "description": "JSON and JSONC syntax, schema diagnostics and code intelligence through the JSON language server on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 5
+    "pluginApi": 7
   },
   "readme": "README.md",
   "executable": {
@@ -22,10 +22,9 @@
     "languages": [
       {
         "id": "json",
-        "name": "JSON / JSONC",
+        "name": "JSON",
         "extensions": [
-          "json",
-          "jsonc"
+          "json"
         ],
         "configuration": {
           "brackets": [
@@ -118,12 +117,167 @@
         "features": {
           "syntax": true,
           "folding": true,
-          "structure": true
+          "structure": true,
+          "languageServer": {
+            "command": "vscode-json-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "rootMarkers": [
+              "package.json",
+              ".git"
+            ],
+            "languageId": "json",
+            "initializationOptions": {
+              "provideFormatter": true
+            },
+            "settings": {
+              "json": {
+                "validate": {
+                  "enable": true
+                },
+                "format": {
+                  "enable": true
+                }
+              }
+            }
+          }
         },
         "filenames": [
           "composer.lock",
           "Pipfile.lock"
         ]
+      },
+      {
+        "id": "jsonc",
+        "name": "JSON with Comments",
+        "extensions": [
+          "jsonc"
+        ],
+        "configuration": {
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          },
+          "lineComment": "//",
+          "uniformLineComments": true,
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "vscode-json-language-server",
+            "args": [
+              "--stdio"
+            ],
+            "rootMarkers": [
+              "package.json",
+              ".git"
+            ],
+            "languageId": "jsonc",
+            "initializationOptions": {
+              "provideFormatter": true
+            },
+            "settings": {
+              "json": {
+                "validate": {
+                  "enable": true
+                },
+                "format": {
+                  "enable": true
+                }
+              }
+            }
+          }
+        }
       }
     ],
     "context": false
