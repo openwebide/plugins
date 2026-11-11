@@ -1,0 +1,21 @@
+[package]
+name = "openwebide-language-terraform"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "language_terraform"
+crate-type = ["cdylib"]
+
+[workspace]
+
+[dependencies]
+openwebide-plugin-sdk = "=0.1.0"
+openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "41f02adb590a03dad9addf9acff0badb1e584937", default-features = false }
+openwebide-language-grammars = { git = "https://github.com/openwebide/openwebide.git", rev = "41f02adb590a03dad9addf9acff0badb1e584937", default-features = false }
+tree-sitter = "=0.27.0"
+tree-sitter-hcl = "=1.1.0"
+
+[dev-dependencies]
+openwebide-core = { git = "https://github.com/openwebide/openwebide.git", rev = "41f02adb590a03dad9addf9acff0badb1e584937", default-features = false }

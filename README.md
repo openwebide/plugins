@@ -119,4 +119,8 @@ is an unlisted historical prototype, replaced by independent packages grouped by
 intended LSP coverage. Each family owns recognition, syntax and editing rules;
 embedded regions resolve through installed providers. Native language servers use
 the public API 6 contract, with API 7 document language IDs for related dialects
-and API 8 declarations for read-only virtual documents.
+and API 8 declarations for read-only virtual documents. API 9 adds independent
+diagnostics providers alongside the selected primary service and optional bounded
+configuration/dependency inputs checked at native request boundaries. Optional
+API 9 cache declarations bind server-supported paths to native derived-data
+directories outside projects, using the same lifecycle as community packages.

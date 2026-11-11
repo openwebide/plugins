@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: openwebide/openwebide
-          ref: 66743a7550df8110d05790920e316fe19b5cbd4d
+          ref: 41f02adb590a03dad9addf9acff0badb1e584937
           path: .host-sdk
           persist-credentials: false
       - name: Install the host's pinned Rust toolchain

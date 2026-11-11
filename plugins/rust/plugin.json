@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "rust",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "displayName": "Rust",
   "description": "Rust syntax and code intelligence through rust-analyzer on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 6
+    "pluginApi": 9
   },
   "readme": "README.md",
   "executable": {
@@ -146,6 +146,29 @@
                   "watcher": "server"
                 }
               }
+            },
+            "cache": {
+              "versionArgs": [
+                "--version"
+              ],
+              "environment": {
+                "CARGO_TARGET_DIR": "${cache}/cargo"
+              }
+            },
+            "projectInputs": {
+              "files": [
+                "**/Cargo.toml",
+                "**/Cargo.lock",
+                "**/.cargo/config",
+                "**/.cargo/config.toml",
+                "**/rust-toolchain",
+                "**/rust-toolchain.toml",
+                "**/rust-analyzer.toml"
+              ],
+              "exclude": [
+                "target/**",
+                "node_modules/**"
+              ]
             }
           }
         }

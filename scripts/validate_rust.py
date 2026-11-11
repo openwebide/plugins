@@ -1,9 +1,12 @@
 """Check executable plugin sources against a checkout of the public host SDK."""
 
 import argparse
+from contextlib import nullcontext
 import json
 from pathlib import Path
+import shutil
 import subprocess
+import tempfile
 import tomllib
 
 
@@ -13,6 +16,8 @@ def main():
                         help="Path to crates/plugin-sdk in an Open WebIDE checkout")
     parser.add_argument("--package", action="append", type=Path,
                         help="Plugin directory to check; defaults to all executable plugins")
+    parser.add_argument("--language-toolkit", type=Path,
+                        help="Open WebIDE checkout containing a public parser toolkit under development")
     args = parser.parse_args()
     sdk = args.sdk.resolve(strict=True)
     sdk_manifest = tomllib.loads((sdk / "Cargo.toml").read_text())
@@ -38,15 +43,36 @@ def main():
             raise ValueError(f"{manifest}: source releases require Cargo.lock")
         patch = f"patch.crates-io.openwebide-plugin-sdk.path={json.dumps(str(sdk))}"
         cargo = ["cargo", f"+{channel}"]
-        common = ["--locked", "--manifest-path", str(manifest), "--config", patch]
+        configuration = ["--config", patch]
+        if args.language_toolkit:
+            checkout = args.language_toolkit.resolve(strict=True)
+            for name in ["core", "language-grammars", "language-syntax"]:
+                directory = checkout / "crates" / name
+                if not (directory / "Cargo.toml").is_file():
+                    raise ValueError(f"Missing public toolkit crate: {directory}")
+                configuration += ["--config", f'patch."https://github.com/openwebide/openwebide.git".openwebide-{name}.path={json.dumps(str(directory))}']
         print(f"Checking {plugin['displayName']} {plugin['version']}", flush=True)
-        for command in (
-            [*cargo, "test", *common],
-            [*cargo, "clippy", *common, "--all-targets", "--", "-D", "warnings"],
-            [*cargo, "clippy", *common, "--target", "wasm32-wasip2", "--", "-D", "warnings"],
-            [*cargo, "build", *common, "--target", "wasm32-wasip2", "--release"],
-        ):
-            subprocess.run(command, check=True, cwd=root)
+        scratch = (tempfile.TemporaryDirectory(prefix="openwebide-public-toolkit-")
+                   if args.language_toolkit else nullcontext(None))
+        with scratch as directory:
+            if directory is not None:
+                # Path patches need a different lock resolution from the pinned
+                # release. Keep that development-only lock out of package sources.
+                package = Path(directory) / "package"
+                shutil.copytree(path.parent, package, symlinks=True,
+                                ignore=shutil.ignore_patterns("target", ".git"))
+                manifest = package / manifest.relative_to(path.parent)
+                subprocess.run([*cargo, "metadata", "--offline",
+                                "--format-version", "1", "--manifest-path", str(manifest),
+                                *configuration], check=True, cwd=root, stdout=subprocess.DEVNULL)
+            common = ["--locked", "--manifest-path", str(manifest), *configuration]
+            for command in (
+                [*cargo, "test", *common],
+                [*cargo, "clippy", *common, "--all-targets", "--", "-D", "warnings"],
+                [*cargo, "clippy", *common, "--target", "wasm32-wasip2", "--", "-D", "warnings"],
+                [*cargo, "build", *common, "--target", "wasm32-wasip2", "--release"],
+            ):
+                subprocess.run(command, check=True, cwd=root)
         checked += 1
     if checked == 0:
         raise ValueError("No executable plugins selected")

@@ -52,7 +52,8 @@
             5,
             6,
             7,
-            8
+            8,
+            9
           ]
         }
       },
@@ -379,7 +380,8 @@
                     5,
                     6,
                     7,
-                    8
+                    8,
+                    9
                   ]
                 }
               }
@@ -499,7 +501,8 @@
                   5,
                   6,
                   7,
-                  8
+                  8,
+                  9
                 ]
               }
             }
@@ -531,7 +534,8 @@
                   5,
                   6,
                   7,
-                  8
+                  8,
+                  9
                 ]
               }
             }
@@ -596,7 +600,8 @@
               "pluginApi": {
                 "enum": [
                   7,
-                  8
+                  8,
+                  9
                 ]
               }
             }
@@ -649,7 +654,153 @@
           "compatibility": {
             "properties": {
               "pluginApi": {
-                "const": 8
+                "enum": [
+                  8,
+                  9
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "languages"
+            ],
+            "properties": {
+              "languages": {
+                "contains": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "required": [
+                        "languageServer"
+                      ],
+                      "properties": {
+                        "languageServer": {
+                          "type": "object",
+                          "required": [
+                            "role"
+                          ],
+                          "properties": {
+                            "role": {
+                              "const": "diagnostics"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 9
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "languages"
+            ],
+            "properties": {
+              "languages": {
+                "contains": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "required": [
+                        "languageServer"
+                      ],
+                      "properties": {
+                        "languageServer": {
+                          "type": "object",
+                          "required": [
+                            "projectInputs"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 9
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contributions": {
+            "required": [
+              "languages"
+            ],
+            "properties": {
+              "languages": {
+                "contains": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "required": [
+                        "languageServer"
+                      ],
+                      "properties": {
+                        "languageServer": {
+                          "type": "object",
+                          "required": [
+                            "cache"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "pluginApi": {
+                "const": 9
               }
             }
           }

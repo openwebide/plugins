@@ -408,6 +408,23 @@
             "$ref": "#/$defs/virtualDocument"
           },
           "description": "API 8: resolve server-returned virtual navigation URIs to read-only text through declared server requests."
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "language",
+            "diagnostics"
+          ],
+          "default": "language",
+          "description": "API 9 diagnostics-only servers contribute independent lint/analysis without replacing the primary language server."
+        },
+        "projectInputs": {
+          "$ref": "#/$defs/projectInputs",
+          "description": "API 9: project-relative configuration/dependency file patterns. * stays within a segment; ** is a complete recursive segment. Exclusions prune matching directories."
+        },
+        "cache": {
+          "$ref": "#/$defs/serverCache",
+          "description": "API 9: host-managed persistent derived data. ${cache} is an absolute path outside the project; arguments may use --flag=${cache}/directory."
         }
       },
       "required": [
@@ -608,6 +625,82 @@
         "method"
       ],
       "additionalProperties": false
+    },
+    "projectInputs": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*(?:[^/]\\*\\*|\\*\\*[^/]))[^\\\\:?\\[\\]{}\\x00-\\x1f\\x7f-\\x9f]+(?<!/)(?![\\s\\S])"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*(?:[^/]\\*\\*|\\*\\*[^/]))[^\\\\:?\\[\\]{}\\x00-\\x1f\\x7f-\\x9f]+(?<!/)(?![\\s\\S])"
+          }
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "serverCache": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionArgs"
+      ],
+      "properties": {
+        "versionArgs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "[\\x00-\\x1f\\x7f-\\x9f]"
+                }
+              },
+              {
+                "not": {
+                  "pattern": "\\$\\{cache\\}"
+                }
+              }
+            ]
+          }
+        },
+        "environment": {
+          "type": "object",
+          "maxProperties": 32,
+          "propertyNames": {
+            "maxLength": 128,
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 4096,
+            "pattern": "^\\$\\{cache\\}(?:/(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+)*$"
+          }
+        }
+      }
     }
   }
 }

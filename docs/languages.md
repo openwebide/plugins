@@ -40,8 +40,8 @@ API 7 adds optional `features.languageServer.languageId` for the LSP document
 language ID. Keep the contribution's stable `id` for preferences and authority;
 for example, `jsx` maps to `javascriptreact` and `tsx` to `typescriptreact`.
 A mapped ID requires API 7 or newer. Related languages share a service only within the
-same installed package and identical command, arguments, root markers, options
-settings and virtual document declarations. The host synchronizes each open dialect with its own declaration
+same installed package and identical command, arguments, root markers, options,
+settings, project inputs and virtual document declarations. The host synchronizes each open dialect with its own declaration
 and source. Different providers, projects and editing clients remain isolated.
 See the [JavaScript/TypeScript package](../plugins/javascript-typescript/README.md)
 for a four-dialect reference. It lets TypeScript own nested configured projects
@@ -53,6 +53,45 @@ virtual definition URIs. Declare a unique URI `scheme`, custom request `method`,
 root string). The C# package declares `csharp/metadata` with `text_document`
 parameters and `/source` extraction. A community package can declare a different
 scheme, method and response shape without changes to the host.
+
+API 9 adds optional `features.languageServer.projectInputs`, with required
+`files` (1–64 patterns) and optional `exclude` (at most 64). Paths are normalized,
+project-relative and at most 512 UTF-8 bytes. `*` matches within a segment and
+whole `**` segments recurse; no parent segments, backslashes, braces, brackets
+or `?` are accepted. Excluded directories are pruned and directory symlinks are
+not followed. Native collection has explicit time, entry, file, path and content
+limits. Changed matching disk content or file inventory invalidates analysis at
+request boundaries; excluded writes and identical contents keep a service warm.
+For example: `{"files":["**/example.json","dependencies.lock"],"exclude":["generated/**"]}`.
+This does not provide a filesystem watcher or complete project generations.
+
+API 9 also supports `features.languageServer.cache`, for example
+`{"versionArgs":["--version"],"environment":{"EXAMPLE_CACHE":"${cache}/index"}}`.
+The host runs the same declared executable with the version arguments before
+allocation (five seconds, successful exit, 1–16,384 stdout bytes). Cache paths
+resolve outside the opened project in the declared environment, arguments,
+initialization options and settings. Templates contain one `${cache}` token with
+normal relative ASCII segments; arguments also permit `--flag=${cache}/index`.
+No parent segments, backslashes or arbitrary prefixes are allowed. The schema
+and validator enforce argument, environment, template and structure bounds.
+Namespaces include host/account/project/physical folder, provider/configuration,
+executable/reported version and declared disk inputs. Native leases protect data
+until process-tree cleanup is confirmed; unconfirmed owners retain their physical
+directory. Allocation and confirmed retirement enforce count/byte retention
+budgets with idle-only reclamation; these do not impose a hard disk quota while
+a server writes. Broader resource measurements remain host roadmap work. This
+is derived server data, never preference or recovery storage. Only declare cache
+overrides actually supported by the server/toolchain; Rust and Go are the first
+reference declarations.
+
+API 9 also adds `features.languageServer.role`: `language` (the default) or
+`diagnostics`. A diagnostics provider contributes problems and fixes alongside
+the selected language service; it does not replace that service's syntax or
+navigation. Users can enable or disable each diagnostics provider independently.
+Language services also participate in separate formatter selection; diagnostics
+providers do not. Related documents still follow the installed server's declared
+dialects and ordinary project authority. The diagnostics role requires API 9;
+earlier declarations retain their language-service role.
 
 The host issues only these requests to the same installed server. Clients receive
 opaque resource IDs, scoped to the originating source snapshot, document, editing
@@ -118,13 +157,23 @@ The independent [Rust](../plugins/rust/README.md),
 [C/C++](../plugins/c-cpp/README.md) and [Markdown](../plugins/markdown/README.md)
 sources use the optional public syntax toolkit. Set `default-features = false`
 and select the package's family feature, then use `LanguageSyntax::new_delegated`.
+For a new grammar, supply a custom `SyntaxProvider` using the toolkit's neutral
+`SyntaxLanguage::Plain` tag and the package's own public string language IDs.
+Declare bracket pairs in the language configuration. The toolkit uses parsed
+opacity and those declarations to produce source-bound pairing metadata.
+`handle_with` can refine ready analysis for package-owned error recovery while
+reusing source/delta retention, bounds and validation. New toolkit changes must
+be published and pinned before releasing a package that uses them. Development
+checks can use `scripts/validate_rust.py --language-toolkit <app-checkout>`;
+its path overrides and temporary lock stay in a disposable package copy.
 The compatibility `all` default is for legacy consumers. A custom lexer or other
 engine can use the SDK directly, as Notes does. Grammar and parser code belongs
 inside the host component. Browser clients receive metadata and validated results
 and do not execute plugin code.
 
-First-party packages preserve the existing 24 language IDs in 19 independently
-installable families. `javascript-typescript` owns JS/JSX/TS/TSX; `c-cpp` owns C/C++;
+The 19 existing first-party language packages cover 26 language IDs. The Terraform
+source adds a twentieth family with seven IDs; its catalog release is pending.
+`javascript-typescript` owns JS/JSX/TS/TSX; `c-cpp` owns C/C++;
 `markdown` owns block/inline Markdown. JSON/JSONC, CSS/SCSS and INI/EditorConfig
 keep their related formats together. Plain text's optional component supplies
 region folding; core text editing remains available without it. The old aggregate

@@ -3,12 +3,12 @@
   "schemaVersion": 1,
   "publisher": "openwebide",
   "name": "go",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "displayName": "Go",
   "description": "Go syntax and code intelligence through gopls on the project execution host.",
   "license": "MIT",
   "compatibility": {
-    "pluginApi": 6
+    "pluginApi": 9
   },
   "readme": "README.md",
   "executable": {
@@ -162,7 +162,31 @@
             "command": "gopls",
             "args": [
               "serve"
-            ]
+            ],
+            "cache": {
+              "versionArgs": [
+                "version"
+              ],
+              "environment": {
+                "GOPLSCACHE": "${cache}/gopls",
+                "GOCACHE": "${cache}/build",
+                "GOMODCACHE": "${cache}/modules"
+              }
+            },
+            "projectInputs": {
+              "files": [
+                "**/go.mod",
+                "**/go.sum",
+                "go.work",
+                "go.work.sum",
+                ".go-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                "vendor/**",
+                "node_modules/**"
+              ]
+            }
           }
         }
       }

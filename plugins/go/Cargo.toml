@@ -1,6 +1,6 @@
 [package]
 name = "openwebide-language-go"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 license = "MIT"
 
@@ -12,4 +12,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 openwebide-plugin-sdk = "=0.1.0"
-openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "443c68fe3e38a7b14d6b7665a9ca734dbcdf2984", default-features = false, features = ["go"] }
+openwebide-language-syntax = { git = "https://github.com/openwebide/openwebide.git", rev = "41f02adb590a03dad9addf9acff0badb1e584937", default-features = false, features = ["go"] }

@@ -32,7 +32,13 @@ unsaved changes. Open the folder containing `go.work` to edit its modules togeth
 Local projects use the paired native folder; remote projects use the
 server's project folder. Go environment and dependency resolution follow that host.
 
-The independent API 6 component uses the public SDK, ordinary reviewed native
+Version 0.3.0 requires plugin API 9. Its public cache declaration redirects
+`GOPLSCACHE`, `GOCACHE` and `GOMODCACHE` to native derived-data directories outside
+the project. The namespace includes the reported gopls version and declared
+module/workspace inputs. Go owns dependency/build freshness and private module
+credentials remain on the execution host.
+
+The independent component uses the public SDK, ordinary reviewed native
 execution and shared service lifecycle. Both project modes support diagnostics,
 symbol information, completion with imports, definitions, references, document
 symbols, reviewed rename and document formatting. Selected completion edits enter

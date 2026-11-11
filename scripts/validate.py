@@ -20,6 +20,49 @@ class Invalid(ValueError):
     """Invalid repository or package content."""
 
 
+def validate_language_cache(server):
+    cache = server.get("cache")
+    if cache is None:
+        return
+    token = "${cache}"
+    if any(not arg.strip() or len(arg.encode("utf-8")) > 4096 for arg in cache["versionArgs"]):
+        raise Invalid("invalid cache version arguments")
+    environment = cache.get("environment", {})
+    if len({name.upper() for name in environment}) != len(environment):
+        raise Invalid("cache environment names are duplicated ignoring case")
+    references = len(environment)
+
+    def reference(value, argument=False):
+        if token not in value:
+            return 0
+        prefix, suffix = value.split(token, 1)
+        if (len(value.encode("utf-8")) > 4096
+                or (prefix and not (argument and re.fullmatch(r"-[A-Za-z0-9_-]+=", prefix)))
+                or not re.fullmatch(r"(?:/(?!\.{1,2}(?:/|$))[A-Za-z0-9_.-]+)*", suffix)):
+            raise Invalid("cache references require normal paths or argument flag assignments")
+        return 1
+
+    for value in environment.values():
+        reference(value)
+    references += sum(reference(value, True) for value in server.get("args", []))
+    for config in (server.get("initializationOptions"), server.get("settings")):
+        pending = [(config, 0)]
+        count = 0
+        while pending:
+            value, depth = pending.pop()
+            count += 1
+            if count > 4096 or depth > 32:
+                raise Invalid("cache-bound server settings exceed their structure limit")
+            if isinstance(value, str):
+                references += reference(value)
+            elif isinstance(value, list):
+                pending.extend((item, depth + 1) for item in value)
+            elif isinstance(value, dict):
+                pending.extend((item, depth + 1) for item in value.values())
+    if references == 0:
+        raise Invalid("a cache declaration must reference its directory")
+
+
 def unique_pairs(pairs):
     result = {}
     for key, value in pairs:
@@ -215,6 +258,10 @@ def validate_package(root, checks=None):
     if len(json.dumps(languages, ensure_ascii=False).encode("utf-8")) > 256 * 1024:
         raise Invalid("language metadata exceeds 256 KiB")
     for language in languages:
+        validate_language_cache(language.get("features", {}).get("languageServer", {}))
+        inputs = language.get("features", {}).get("languageServer", {}).get("projectInputs", {})
+        if any(len(pattern.encode("utf-8")) > 512 for pattern in inputs.get("files", []) + inputs.get("exclude", [])):
+            raise Invalid("project input patterns exceed 512 UTF-8 bytes")
         documents = language.get("features", {}).get("languageServer", {}).get("virtualDocuments", [])
         if len({document["scheme"] for document in documents}) != len(documents):
             raise Invalid("duplicate virtual document URI scheme")

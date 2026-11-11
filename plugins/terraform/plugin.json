@@ -1,0 +1,908 @@
+{
+  "$schema": "https://raw.githubusercontent.com/openwebide/plugins/main/schemas/plugin.schema.json",
+  "schemaVersion": 1,
+  "publisher": "openwebide",
+  "name": "terraform",
+  "version": "0.1.0",
+  "displayName": "Terraform",
+  "description": "Terraform and related HCL dialects with plugin-owned syntax and terraform-ls code intelligence.",
+  "license": "MIT",
+  "compatibility": {
+    "pluginApi": 9
+  },
+  "readme": "README.md",
+  "executable": {
+    "manifest": "Cargo.toml",
+    "library": "language_terraform",
+    "sdkVersion": "0.1.0",
+    "capabilities": []
+  },
+  "contributions": {
+    "skills": [],
+    "languages": [
+      {
+        "id": "terraform",
+        "name": "Terraform",
+        "extensions": [
+          "tf"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform"
+          }
+        }
+      },
+      {
+        "id": "terraform-vars",
+        "name": "Terraform Variables",
+        "extensions": [
+          "tfvars"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-vars"
+          }
+        }
+      },
+      {
+        "id": "terraform-stack",
+        "name": "Terraform Stack",
+        "extensions": [
+          "tfcomponent.hcl"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-stack"
+          }
+        }
+      },
+      {
+        "id": "terraform-deploy",
+        "name": "Terraform Deployment",
+        "extensions": [
+          "tfdeploy.hcl"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-deploy"
+          }
+        }
+      },
+      {
+        "id": "terraform-search",
+        "name": "Terraform Search",
+        "extensions": [
+          "tfquery.hcl"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-search"
+          }
+        }
+      },
+      {
+        "id": "terraform-policy",
+        "name": "Terraform Policy",
+        "extensions": [
+          "policy.hcl"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-policy"
+          }
+        }
+      },
+      {
+        "id": "terraform-policytest",
+        "name": "Terraform Policy Test",
+        "extensions": [
+          "policytest.hcl"
+        ],
+        "configuration": {
+          "uniformLineComments": true,
+          "lineComment": "#",
+          "blockComment": {
+            "open": "/*",
+            "close": "*/",
+            "nested": false
+          },
+          "brackets": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            }
+          ],
+          "autoClosingPairs": [
+            {
+              "open": "(",
+              "close": ")",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "[",
+              "close": "]",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "{",
+              "close": "}",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            },
+            {
+              "open": "\"",
+              "close": "\"",
+              "notIn": [
+                "String",
+                "Template",
+                "Text",
+                "LineComment",
+                "BlockComment",
+                "Regex"
+              ]
+            }
+          ],
+          "surroundingPairs": [
+            {
+              "open": "(",
+              "close": ")"
+            },
+            {
+              "open": "[",
+              "close": "]"
+            },
+            {
+              "open": "{",
+              "close": "}"
+            },
+            {
+              "open": "\"",
+              "close": "\""
+            }
+          ],
+          "indentation": {
+            "increase": "[({\\[]\\z",
+            "decrease": "^\\s*[)}\\]]"
+          }
+        },
+        "features": {
+          "syntax": true,
+          "folding": true,
+          "structure": true,
+          "languageServer": {
+            "command": "terraform-ls",
+            "args": [
+              "serve"
+            ],
+            "projectInputs": {
+              "files": [
+                "**/.terraform.lock.hcl",
+                "**/.terraform/modules/modules.json",
+                ".terraform-version",
+                ".tool-versions"
+              ],
+              "exclude": [
+                ".git/**",
+                "**/.terraform/providers/**"
+              ]
+            },
+            "languageId": "terraform-policytest"
+          }
+        }
+      }
+    ],
+    "context": false
+  }
+}

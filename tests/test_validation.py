@@ -12,6 +12,71 @@ import validate
 
 
 class ValidationTests(unittest.TestCase):
+    def test_cache_bindings_require_api_nine_and_normalized_paths(self):
+        manifest = copy.deepcopy(self.manifest)
+        server = {"command": "notes-lsp", "args": ["--cache=${cache}/index"], "cache": {"versionArgs": ["--version"], "environment": {"NOTES_CACHE": "${cache}/state"}}}
+        manifest["contributions"] = {"skills": [], "languages": [{"id": "notes", "name": "Notes", "features": {"languageServer": server}}]}
+        for api in range(5, 9):
+            manifest["compatibility"]["pluginApi"] = api
+            with self.subTest(api=api), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 9
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        validate.validate_language_cache(server)
+        for path in ["${cache}/../project", "${cache}//x", "${cache}/a/./x", "${cache}/x\\y", "${cache}/", "${cache}suffix", "project/cache", "${cache}/${cache}"]:
+            server["cache"]["environment"]["NOTES_CACHE"] = path
+            with self.subTest(path=path), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        server["cache"]["environment"]["NOTES_CACHE"] = "${cache}/state"
+        for path in ["project/${cache}/index", "--cache=${cache}/../project"]:
+            server["args"] = [path]
+            with self.subTest(path=path), self.assertRaises(validate.Invalid):
+                validate.validate_language_cache(server)
+        server["args"] = ["--cache=${cache}/index"]
+        server["cache"]["environment"]["notes_cache"] = "${cache}"
+        with self.assertRaisesRegex(validate.Invalid, "ignoring case"):
+            validate.validate_language_cache(server)
+
+    def test_project_inputs_require_api_nine_and_normalized_bounded_patterns(self):
+        manifest = copy.deepcopy(self.manifest)
+        server = {"command": "notes-lsp", "projectInputs": {"files": ["**/notes.json", "**/*.deps"], "exclude": ["vendor/**"]}}
+        manifest["contributions"] = {"skills": [], "languages": [{"id": "notes", "name": "Notes", "features": {"languageServer": server}}]}
+        for api in range(5, 9):
+            manifest["compatibility"]["pluginApi"] = api
+            with self.subTest(api=api), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 9
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        for pattern in ["", "/notes.json", "../notes.json", "src/../notes.json", "src//notes.json", "src/./notes.json", "src/", "C:notes.json", "src\\notes.json", "src**/notes.json", "**.json", "*.{js,ts}", "[ab].json", "file?.json", "file\nname", "file\n", "file\u0085name", "x" * 513]:
+            server["projectInputs"]["files"] = [pattern]
+            with self.subTest(pattern=pattern), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        for files in [[], ["a", "a"], [f"file{i}" for i in range(65)]]:
+            server["projectInputs"]["files"] = files
+            with self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        server["projectInputs"]["files"] = ["文" * 171]
+        self.manifest = manifest
+        self.save_manifest()
+        with self.assertRaisesRegex(validate.Invalid, "512 UTF-8 bytes"):
+            validate.validate_package(self.package, self.checks)
+
+    def test_independent_diagnostics_roles_require_api_nine_without_a_component(self):
+        manifest = copy.deepcopy(self.manifest)
+        manifest["contributions"] = {"skills": [], "languages": [{
+            "id": "notes", "name": "Notes lint", "extensions": ["notes"],
+            "features": {"languageServer": {"command": "notes-linter", "role": "diagnostics"}},
+        }]}
+        for api in range(5, 9):
+            manifest["compatibility"]["pluginApi"] = api
+            with self.subTest(api=api), self.assertRaises(validate.Invalid):
+                validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["compatibility"]["pluginApi"] = 9
+        validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+        manifest["contributions"]["languages"][0]["features"]["languageServer"]["role"] = "arbitrary"
+        with self.assertRaises(validate.Invalid):
+            validate.check_schema(manifest, self.checks["Plugin"], "plugin")
+
     @classmethod
     def setUpClass(cls):
         cls.checks = validate.validators()
@@ -47,7 +112,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (25, 24))
+        self.assertEqual(validate.validate_repository(ROOT), (26, 24))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_rust_source_example_and_required_lockfile(self):
@@ -278,7 +343,7 @@ class ValidationTests(unittest.TestCase):
         families = [json.loads(path.read_text()) for path in (ROOT / "plugins").glob("*/plugin.json")
                     if path.parent.name != "languages" and
                     json.loads(path.read_text())["contributions"].get("languages")]
-        self.assertEqual(len(families), 19)
+        self.assertEqual(len(families), 20)
         self.assertTrue(all(family["contributions"].get("context") is False for family in families))
 
     def test_platform_tool_groups_require_api_two_and_have_bounded_known_capabilities(self):
