@@ -112,7 +112,7 @@ class ValidationTests(unittest.TestCase):
         }
 
     def test_reference_repository_and_standalone_package(self):
-        self.assertEqual(validate.validate_repository(ROOT), (26, 24))
+        self.assertEqual(validate.validate_repository(ROOT), (26, 25))
         self.assertEqual(validate.validate_package(self.package, self.checks)["name"], "pr-review")
 
     def test_rust_source_example_and_required_lockfile(self):

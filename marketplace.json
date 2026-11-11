@@ -238,6 +238,13 @@
       ],
       "releases": [
         {
+          "version": "0.3.0",
+          "source": {
+            "commit": "37677a1de1a5f69c0362d328050133dbb9820b2c",
+            "path": "plugins/rust"
+          }
+        },
+        {
           "version": "0.2.0",
           "source": {
             "commit": "27dd0936cf5f9e043090455fe348c368c6149009",
@@ -473,6 +480,13 @@
       ],
       "releases": [
         {
+          "version": "0.3.0",
+          "source": {
+            "commit": "37677a1de1a5f69c0362d328050133dbb9820b2c",
+            "path": "plugins/go"
+          }
+        },
+        {
           "version": "0.2.0",
           "source": {
             "commit": "e57c8369e8c1f79fbfb44b966ea39054ae8f769e",
@@ -491,6 +505,24 @@
           "source": {
             "commit": "2e0f33b026aec9e2c74350b4c603c0a167834d64",
             "path": "plugins/go"
+          }
+        }
+      ]
+    },
+    {
+      "publisher": "openwebide",
+      "name": "terraform",
+      "displayName": "Terraform",
+      "description": "Terraform and related HCL dialects with plugin-owned syntax and terraform-ls code intelligence.",
+      "categories": [
+        "languages"
+      ],
+      "releases": [
+        {
+          "version": "0.1.0",
+          "source": {
+            "commit": "37677a1de1a5f69c0362d328050133dbb9820b2c",
+            "path": "plugins/terraform"
           }
         }
       ]
